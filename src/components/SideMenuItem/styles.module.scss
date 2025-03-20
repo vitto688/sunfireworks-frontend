@@ -1,0 +1,66 @@
+.sideMenuItemSection{
+    display: flex;
+    flex-direction: column;
+    padding: 0 8px;
+    font-family: 'Open Sauce One', sans-serif;
+    gap: 8px;
+    width: 100%;
+
+    .sideMenu{
+        // margin: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    
+        .name{
+            flex: 1;
+            color: #080808;
+            // color: #98A3B4;
+            margin: 10px 0;
+            font-weight: 500;
+
+            &.selected{
+                color: #ff934b;
+                font-weight: 600;
+                font-size: 15px;
+            }
+        }
+
+        .trailing{
+            font-size: 10px;
+            color: #6f6e6e;
+
+            &.selected{
+                color: #ff934b;
+            }
+        }
+    }
+
+    .subMenusSection{
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+        padding-left: 30px;
+
+
+        .subMenu{
+            display: 'flex'; 
+            margin-bottom: 12px;
+            align-items: 'center';
+
+            .link{
+                text-decoration: none;
+                color:#080808;
+                font-size: 14px;
+                font-weight: 300;
+
+                &.selected{
+                    color: #ff934b;
+                    font-weight: 500;
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+}

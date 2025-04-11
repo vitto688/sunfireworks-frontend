@@ -1,0 +1,32 @@
+@import 'src/mixins.scss';
+
+.inputPasswordSection{
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 316px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: $greyColor;
+
+    &.focus{
+        outline: 2px solid $primaryColor;
+        background-color: $othersColor;
+    }
+
+    .input{
+        flex: 1;
+        padding: 0 8px;
+        margin: 0;
+        font-size: 16px;
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
+
+    .icon{
+        padding: 0 8px; 
+
+    }
+    
+}

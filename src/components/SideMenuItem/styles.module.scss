@@ -1,9 +1,11 @@
+@import 'src/mixins.scss';
+
 .sideMenuItemSection{
     display: flex;
     flex-direction: column;
     padding: 0 8px;
     font-family: 'Open Sauce One', sans-serif;
-    gap: 8px;
+    gap: 16px;
     width: 100%;
 
     .sideMenu{
@@ -14,13 +16,13 @@
     
         .name{
             flex: 1;
-            color: #080808;
-            // color: #98A3B4;
+            color: $greyColor600;
             margin: 10px 0;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 300;
 
             &.selected{
-                color: #ff934b;
+                color: $primaryColor;
                 font-weight: 600;
                 font-size: 15px;
             }
@@ -28,10 +30,10 @@
 
         .trailing{
             font-size: 10px;
-            color: #6f6e6e;
+            color: $greyColor600;
 
             &.selected{
-                color: #ff934b;
+                color: $primaryColor;
             }
         }
     }
@@ -45,18 +47,18 @@
 
 
         .subMenu{
-            display: 'flex'; 
+            display: flex; 
             margin-bottom: 12px;
             align-items: 'center';
 
             .link{
                 text-decoration: none;
-                color:#080808;
+                color: $greyColor600;
                 font-size: 14px;
                 font-weight: 300;
 
                 &.selected{
-                    color: #ff934b;
+                    color: $primaryColor;
                     font-weight: 500;
                     font-size: 15px;
                 }

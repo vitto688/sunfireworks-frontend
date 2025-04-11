@@ -7,33 +7,6 @@
     grid-template-columns: auto 1fr;
     background-color: white;
 
-    .sideBarSection{
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        background-color: white;
-        overflow-y: scroll;
-        padding: 8px;
-
-        .logo{
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 50px;
-            width: 150px;
-
-        }
-
-        .devider{
-            background: #F2F4F7;
-            height: 1px;
-            width: 100%;
-            margin: 8px 0;
-        }
-
-    }
-
     .mainContent{
         display: flex;
         flex-direction: column;
@@ -41,8 +14,8 @@
         gap: 20px;
 
         .topBarSection{
-            padding:0 16px;
-            height: 50px;
+            padding:0 24px;
+            // height: 50px;
             display: grid;
             grid-template-columns: 1fr auto;
             background-color: white;

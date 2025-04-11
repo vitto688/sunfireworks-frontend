@@ -1,0 +1,40 @@
+.sideBarSection{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white;
+    overflow-y: scroll;
+    padding: 30px;
+
+    .logoSection{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 50px;
+    }       
+
+    .icon{
+        width: 24px;
+        height: 24px;
+
+        &.selected{
+
+            path{
+                fill:#0CAF60;
+                stroke: none;
+            }
+            
+        }
+    }
+
+    .devider{
+        background: #F2F4F7;
+        height: 1px;
+        width: 100%;
+        margin: 12px 0;
+    }
+
+}

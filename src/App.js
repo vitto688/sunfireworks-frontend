@@ -1,33 +1,52 @@
-import React from "react";
-import { Provider, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import store from "./redux/store";
-import Login from "./pages/Login";
-import Dashboard from "./pages/DashBoard";
+
+// Import pages
+import Login, { loginPath } from "./pages/Login";
+import Dashboard, { dashboardPath } from "./pages/DashBoard";
+
+// Import actions
+import { validateTokenRequest } from "./redux/actions/authActions";
+
+const LoadingScreen = () => (
+  <div style={{ textAlign: "center", marginTop: "20%" }}>
+    <h2>Loading...</h2>
+  </div>
+);
 
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+
+  console.log("isAuthenticated, isLoading", isAuthenticated, isLoading);
+
+  if (isLoading) return <LoadingScreen />; // ⬅️ Tampilkan loading saat validasi berjalan
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(validateTokenRequest());
+  }, [dispatch]);
+
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/login" />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <Routes>
+        <Route path={loginPath} element={<Login />} />
+        <Route
+          path={dashboardPath}
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="/" element={<Navigate to="/login" />} />s */}
+      </Routes>
+    </BrowserRouter>
   );
 };
 

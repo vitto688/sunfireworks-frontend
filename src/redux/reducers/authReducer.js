@@ -8,7 +8,6 @@ const initialState = {
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case "VALIDATE_TOKEN_REQUEST":
-      console.log("masuk");
       return { ...state, isLoading: true }; // Set isLoading saat request
     case "VALIDATE_TOKEN_SUCCESS":
       return { ...state, isAuthenticated: true, isLoading: false };

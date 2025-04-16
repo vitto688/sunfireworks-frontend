@@ -15,7 +15,7 @@ import { ReactComponent as LogoIcon } from "../../assets/svg/logo.svg";
 import InputText from "../../components/InputText";
 import InputPassword from "../../components/InputPassword";
 
-export const loginPath = "/login";
+export const LOGIN_PATH = "/login";
 
 const Login = () => {
   //#region Hooks
@@ -31,7 +31,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 

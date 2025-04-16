@@ -1,6 +1,6 @@
 import React from "react";
 
-export const gudangPath = "/master-data/gudang";
+export const GUDANG_PATH = "/master-data/gudang";
 
 const Gudang = () => {
   return <div>Gudang</div>;

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Import pages
-import Login, { loginPath } from "./pages/Login";
+import Login, { LOGIN_PATH } from "./pages/Login";
 import Dashboard, { dashboardPath } from "./pages/DashBoard";
 
 // Import actions
@@ -35,7 +35,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={loginPath} element={<Login />} />
+        <Route path={LOGIN_PATH} element={<Login />} />
         <Route
           path={dashboardPath}
           element={

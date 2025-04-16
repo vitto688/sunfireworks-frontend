@@ -7,14 +7,14 @@ import styles from "./style.module.scss";
 // Import components
 import LiveClock from "../../components/LiveClock";
 import SideBar from "./SideBar";
-import Beranda, { berandaPath } from "./Beranda";
-import Produk, { produkPath } from "./MasterData/Produk";
+import Beranda, { BERANDA_PATH } from "./Beranda";
+import Produk, { PRODUK_PATH } from "./MasterData/Produk";
 import KategoriProduk, {
-  kategoriProdukPath,
+  KATEGORI_PRODUK_PATH,
 } from "./MasterData/KategoriProduk";
-import Eksportir, { eksportirPath } from "./MasterData/Eksportir";
-import Pelanggan, { pelangganPath } from "./MasterData/Pelanggan";
-import Gudang, { gudangPath } from "./MasterData/Gudang";
+import Eksportir, { EKSPORTIR_PATH } from "./MasterData/Eksportir";
+import Pelanggan, { PELANGGAN_PATH } from "./MasterData/Pelanggan";
+import Gudang, { GUDANG_PATH } from "./MasterData/Gudang";
 
 export const dashboardPath = "/*";
 
@@ -31,12 +31,12 @@ const Dashboard = () => {
         </div>
         <div className={styles.bodySection}>
           <Routes>
-            <Route path={berandaPath} element={<Beranda />} />
-            <Route path={produkPath} element={<Produk />} />
-            <Route path={kategoriProdukPath} element={<KategoriProduk />} />
-            <Route path={eksportirPath} element={<Eksportir />} />
-            <Route path={pelangganPath} element={<Pelanggan />} />
-            <Route path={gudangPath} element={<Gudang />} />
+            <Route path={BERANDA_PATH} element={<Beranda />} />
+            <Route path={PRODUK_PATH} element={<Produk />} />
+            <Route path={KATEGORI_PRODUK_PATH} element={<KategoriProduk />} />
+            <Route path={EKSPORTIR_PATH} element={<Eksportir />} />
+            <Route path={PELANGGAN_PATH} element={<Pelanggan />} />
+            <Route path={GUDANG_PATH} element={<Gudang />} />
           </Routes>
         </div>
       </div>

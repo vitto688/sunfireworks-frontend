@@ -1,6 +1,6 @@
 import React from "react";
 
-export const eksportirPath = "/master-data/eksportir";
+export const EKSPORTIR_PATH = "/master-data/eksportir";
 
 const Eksportir = () => {
   return <div>Eksportir</div>;

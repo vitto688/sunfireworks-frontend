@@ -19,21 +19,22 @@ const SideMenuItem = ({
 
   // const onExpandCollapse = () => setExpanded((val) => !val);
 
-  const handleOnClick = () => {
-    if (to) {
-      navigate(to);
-    } else {
+  function handleOnClick() {
+    console.log("handleOnClick", to);
+    if (onExpandCollapse) {
       onExpandCollapse();
+    } else {
+      navigate(to);
     }
-  };
+  }
 
   return (
-    <div
-      role="presentation"
-      onClick={handleOnClick}
-      className={styles.sideMenuItemSection}
-    >
-      <div className={styles.sideMenu}>
+    <div className={styles.sideMenuItemSection}>
+      <div
+        role="presentation"
+        className={styles.sideMenu}
+        onClick={() => handleOnClick()}
+      >
         {icon}
         <h5 className={`${styles.name} ${isSelected && styles.selected}`}>
           {name}

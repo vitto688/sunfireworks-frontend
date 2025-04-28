@@ -11,12 +11,16 @@ function* expandMenu(action) {
 
   const path = action.payload.path;
 
+  console.log("expandMenu path", path);
+
   const idx = expandedMenus.indexOf(path);
   if (idx > -1) {
     expandedMenus.splice(idx, 1);
   } else {
     expandedMenus.push(path);
   }
+
+  console.log("expandedMenus", expandedMenus);
 
   yield put(setMenuState({ expandedMenus: [...expandedMenus] }));
 }

@@ -1,0 +1,56 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .modal {
+        background: #fff;
+        padding: 24px;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 360px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 16px;
+
+            button {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 4px;
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            .cancel {
+                background-color: #ccc;
+                color: #000;
+            }
+            
+            .confirm {
+                background-color: #e53935;
+                color: #fff;
+            }
+              
+              
+        }
+    }
+    
+}
+  
+  
+  
+  
+  
+  
+  

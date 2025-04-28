@@ -3,14 +3,12 @@
 .sideMenuItemSection{
     display: flex;
     flex-direction: column;
-    padding: 0 8px;
     font-family: 'Open Sauce One', sans-serif;
     gap: 16px;
     width: 100%;
     cursor: pointer;
 
     .sideMenu{
-        // margin: 8px 0;
         display: flex;
         align-items: center;
         gap: 16px;
@@ -19,7 +17,7 @@
             flex: 1;
             color: $greyColor600;
             margin: 10px 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 300;
 
             &.selected{

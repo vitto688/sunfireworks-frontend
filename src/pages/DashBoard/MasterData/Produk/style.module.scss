@@ -1,0 +1,142 @@
+@import 'src/mixins.scss';
+
+.productSection {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+
+    .productsTable{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        gap: 10px;
+        padding: 16px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 1px 2px 8px -5px rgba(0, 0, 0, 0.2);
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      
+        &::-webkit-scrollbar {
+          display: none; /* Chrome, Safari */
+        }
+
+        .tableHeader{
+            display: flex;
+            align-items: center;
+            min-width: 1000px;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eaeaea;
+            color: $greyColor600;
+            gap: 10px;
+
+            .tableHeaderNo{
+                flex: 1;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .tableHeaderKode{
+                flex: 3;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .tableHeaderBarcode{
+                flex: 3;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .tableHeaderNama{
+                flex: 5;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .tableHeaderKategori{
+                flex: 3;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            
+            .tableHeaderSupplier{
+                flex: 3;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .tableHeaderKemasan{
+                flex: 2;
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+
+        .tableBody{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 1020px;
+            overflow-x: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+          
+            &::-webkit-scrollbar {
+              display: none; /* Chrome, Safari */
+            }
+
+            .tableRow{
+                display: flex;
+                align-items: center;
+                padding: 20px 15px;
+                border-bottom: 1px solid #eaeaea;
+               
+
+                .tableRowNo{
+                    flex: 1;
+                    font-size: 14px;
+                }
+
+                .tableRowKode{
+                    flex: 3;
+                    font-size: 14px;
+                }
+
+                .tableRowBarcode{
+                    flex: 3;
+                    font-size: 14px;
+                }
+
+                .tableRowNama{
+                    flex: 5;
+                    font-size: 14px;
+                }
+
+                .tableRowKategori{
+                    flex: 3;
+                    font-size: 14px;
+                }
+                
+                .tableRowSupplier{
+                    flex: 3;
+                    font-size: 14px;
+                }
+
+                .tableRowKemasan{
+                    flex: 2;
+                    font-size: 14px;
+                }
+            }
+        }
+       
+    }
+    
+}

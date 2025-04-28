@@ -1,0 +1,133 @@
+@import 'src/mixins.scss';
+
+
+.usersSection{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: white;
+  border-radius: 15px;
+
+  .usersTable{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+    padding: 16px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 1px 2px 8px -5px rgba(0, 0, 0, 0.2);
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    .tableHeader{
+      display: flex;
+      align-items: center;
+      min-width: 800px;
+      padding: 15px 10px;
+      border-bottom: 1px solid #eaeaea;
+      color: $greyColor600;
+      gap: 10px;
+
+      .tableHeaderNo{
+        flex: 1;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .tableHeaderNama{
+        flex: 4;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .tableHeaderEmail{
+        flex: 5;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .tableHeaderNoTel{
+        flex: 3;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .tableHeaderRole{
+        flex: 2;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .tableHeaderActions{
+        flex: 1;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+
+    .tableBody{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 800px;
+      overflow-x: scroll;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    
+      &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+      }
+
+      .tableRow{
+        display: flex;
+        align-items: center;
+        padding: 20px 15px;
+        border-bottom: 1px solid #eaeaea;
+
+        .tableRowNo{
+          flex: 1;
+          font-size: 14px;
+        }
+
+        .tableRowNama{
+          flex: 4;
+          font-size: 14px;
+        }
+
+        .tableRowEmail{
+          flex: 5;
+          font-size: 14px;
+        }
+
+        .tableRowNoTel{
+          flex: 3;
+          font-size: 14px;
+        }
+
+        .tableRowRole{
+          flex: 2;
+          font-size: 14px;
+        }
+
+        .tableRowActions{
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+
+          
+        }
+      }
+    } 
+  }
+
+}

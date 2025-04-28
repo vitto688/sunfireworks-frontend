@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
@@ -7,6 +8,7 @@ import styles from "./style.module.scss";
 // Import assets
 import { ReactComponent as LogoIcon } from "../../../assets/svg/logo.svg";
 import { ReactComponent as HomeIcon } from "../../../assets/svg/home.svg";
+import { ReactComponent as UserIcon } from "../../../assets/svg/user.svg";
 import { ReactComponent as MasterDataIcon } from "../../../assets/svg/master-data.svg";
 import { ReactComponent as MutasiDataIcon } from "../../../assets/svg/mutasi.svg";
 import { ReactComponent as PenyesuaianStockDataIcon } from "../../../assets/svg/penyesuaian-stok.svg";
@@ -34,10 +36,16 @@ import { SPK_BARANG_PATH } from "../MutasiKeluar/SPKBarang";
 
 // Import actions
 import { expandMenu } from "../../../redux/actions/menuActions";
+import { PENGGUNA_PATH } from "../Pengguna";
 
 const SideBar = () => {
   const { expandedMenus } = useSelector((state) => state.menu);
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
+
+  console.log("pathname", pathname, expandedMenus);
+
+  const firstPath = pathname.split("/")[1];
 
   return (
     <div className={styles.sideBarSection}>
@@ -53,28 +61,57 @@ const SideBar = () => {
       <SideMenuItem
         name="Beranda"
         to={BERANDA_PATH}
-        icon={<HomeIcon className={`${styles.icon} ${styles.selected}`} />}
+        icon={
+          <HomeIcon
+            className={`${styles.icon} ${
+              BERANDA_PATH === pathname && styles.selected
+            }`}
+          />
+        }
+        isSelected={BERANDA_PATH === pathname}
       />
       <div className={styles.devider}></div>
       <SideMenuItem
         name="Master Data"
         path="/master-data"
-        icon={<MasterDataIcon className={`${styles.icon} `} />}
-        isSelected={false}
+        icon={
+          <MasterDataIcon
+            className={`${styles.icon} ${
+              firstPath === "/master-data" && styles.selected
+            }`}
+          />
+        }
+        isSelected={firstPath === "/master-data"}
         isExpanded={expandedMenus.includes("/master-data")}
         onExpandCollapse={() => {
           dispatch(expandMenu({ path: "/master-data" }));
         }}
         subMenus={[
-          { name: "Data Produk", to: PRODUK_PATH },
+          {
+            name: "Data Produk",
+            to: PRODUK_PATH,
+            isSelected: PRODUK_PATH === pathname,
+          },
           {
             name: "Data Kategori Produk",
             to: KATEGORI_PRODUK_PATH,
-            isSelected: true,
+            isSelected: KATEGORI_PRODUK_PATH === pathname,
           },
-          { name: "Data Eksportir", to: EKSPORTIR_PATH },
-          { name: "Data Pelanggan", to: PELANGGAN_PATH },
-          { name: "Data Gudang", to: GUDANG_PATH },
+          {
+            name: "Data Eksportir",
+            to: EKSPORTIR_PATH,
+            isSelected: EKSPORTIR_PATH === pathname,
+          },
+          {
+            name: "Data Pelanggan",
+            to: PELANGGAN_PATH,
+            isSelected: PELANGGAN_PATH === pathname,
+          },
+          {
+            name: "Data Gudang",
+            to: GUDANG_PATH,
+            isSelected: GUDANG_PATH === pathname,
+          },
         ]}
       />
       <div className={styles.devider}></div>
@@ -144,14 +181,33 @@ const SideBar = () => {
       <SideMenuItem
         name="Penyesuaian Stok"
         to={PENYESUAIAN_STOK_PATH}
-        icon={<PenyesuaianStockDataIcon className={`${styles.icon} `} />}
-        isSelected={false}
+        icon={
+          <PenyesuaianStockDataIcon
+            className={`${styles.icon} ${
+              PENYESUAIAN_STOK_PATH === pathname && styles.selected
+            }`}
+          />
+        }
+        isSelected={PENYESUAIAN_STOK_PATH === pathname}
         // subMenus={[
         //   {
         //     name: "Penyesuaian Stok Barang",
         //     to: "penyesuaian-stok/penyesuaian-stok-barang",
         //   },
         // ]}
+      />
+      <div className={styles.devider}></div>
+      <SideMenuItem
+        name="Pengguna"
+        to={PENGGUNA_PATH}
+        icon={
+          <UserIcon
+            className={`${styles.icon} ${
+              PENGGUNA_PATH === pathname && styles.selected
+            }`}
+          />
+        }
+        isSelected={PENGGUNA_PATH === pathname}
       />
     </div>
   );

@@ -7,6 +7,13 @@
     overflow-y: scroll;
     padding: 30px;
 
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
     .logoSection{
         width: 100%;
         display: flex;

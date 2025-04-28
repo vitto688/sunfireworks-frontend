@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    gap: 6px;
+
+    .label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1a1a1a;
+    }
+
+    .select {
+        padding: 12px 14px;
+        border: none;
+        border-radius: 10px;
+        background-color: #fafafa;
+        font-size: 16px;
+        color: #111;
+        outline: none;
+        appearance: none; // remove default arrow in some browsers
+      
+        &:focus {
+          outline: 2px solid #007bff33;
+        }
+    }
+}
+  
+  
+  
+  
+  

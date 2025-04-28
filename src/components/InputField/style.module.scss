@@ -1,0 +1,31 @@
+.inputFieldSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1a1a1a;
+    }
+
+    .input {
+        padding: 12px 14px;
+        border: none;
+        border-radius: 10px;
+        background-color: #fafafa;
+        font-size: 16px;
+        color: #111;
+        outline: none;
+      
+        &:focus {
+          outline: 2px solid #007bff33;
+        }
+    }
+
+}
+  
+  
+  
+  
+  

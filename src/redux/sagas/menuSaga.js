@@ -3,6 +3,9 @@ import { takeLatest, put, select } from "redux-saga/effects";
 // import actions
 import { setMenuState } from "../actions/menuActions";
 
+// import utils
+import { setLocalStorage } from "../../utils/cookieUtils";
+
 const getMenuState = (state) => state.menu;
 
 function* expandMenu(action) {
@@ -11,8 +14,6 @@ function* expandMenu(action) {
 
   const path = action.payload.path;
 
-  console.log("expandMenu path", path);
-
   const idx = expandedMenus.indexOf(path);
   if (idx > -1) {
     expandedMenus.splice(idx, 1);
@@ -20,7 +21,7 @@ function* expandMenu(action) {
     expandedMenus.push(path);
   }
 
-  console.log("expandedMenus", expandedMenus);
+  setLocalStorage("expandedMenus", JSON.stringify(expandedMenus));
 
   yield put(setMenuState({ expandedMenus: [...expandedMenus] }));
 }

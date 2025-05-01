@@ -32,3 +32,32 @@ export function getCookie(name) {
 export function deleteCookie(name) {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
+
+// Set item ke localStorage
+export function setLocalStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error("Error saving to localStorage", error);
+  }
+}
+
+// Get item dari localStorage
+export function getLocalStorage(key) {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error("Error reading from localStorage", error);
+    return null;
+  }
+}
+
+// Hapus item dari localStorage
+export function deleteLocalStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.error("Error deleting from localStorage", error);
+  }
+}

@@ -3,13 +3,13 @@ import React from "react";
 // Import styles
 import styles from "./style.module.scss";
 
-const ConfirmDeleteModal = ({ open, onClose, onConfirm }) => {
+const ConfirmDeleteModal = ({ label, open, onClose, onConfirm }) => {
   if (!open) return null;
 
   return (
     <div className={styles.backdrop}>
       <div className={styles.modal}>
-        <h3>Apakah anda yakin untuk menghapus pengguna ini?</h3>
+        <h3>{label}</h3>
         <div className={styles.buttons}>
           <button className={styles.cancel} onClick={onClose}>
             Batal

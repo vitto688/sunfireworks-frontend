@@ -46,7 +46,6 @@ const SideMenuItem = ({
       {isExpanded && subMenus.length > 0 && (
         <ul className={styles.subMenusSection}>
           {subMenus.map((subMenu) => {
-            console.log("subMenu", subMenu);
             return (
               <li className={styles.subMenu}>
                 <Link

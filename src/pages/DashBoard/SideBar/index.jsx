@@ -43,8 +43,6 @@ const SideBar = () => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
 
-  console.log("pathname", pathname, expandedMenus);
-
   const firstPath = pathname.split("/")[1];
 
   return (

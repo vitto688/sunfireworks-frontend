@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
@@ -10,19 +10,21 @@ import SelectField from "../../../../../components/SelectField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Product page
-export const TAMBAH_PRODUK_PATH = "/master-data/tambah-produk";
+export const UBAH_PRODUK_PATH = "/master-data/ubah-produk";
 
-const TambahProduk = () => {
-  const [kodeProduk, setKodeProduk] = useState("");
-  const [barcode, setBarcode] = useState("");
-  const [namaProduk, setNamaProduk] = useState("");
-  const [kategori, setKategori] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [kemasan, setKemasan] = useState("");
-  const [kuantitas, setKuantitas] = useState("");
-  const [gudang, setGudang] = useState("");
-
+const UbahProduk = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const produk = location.state || {};
+
+  const [kodeProduk, setKodeProduk] = useState(produk?.product_code ?? "");
+  const [barcode, setBarcode] = useState(produk?.barcode ?? "");
+  const [namaProduk, setNamaProduk] = useState(produk?.product_name ?? "");
+  const [kategori, setKategori] = useState(produk?.category ?? "");
+  const [supplier, setSupplier] = useState(produk?.supplier_name ?? "");
+  const [kemasan, setKemasan] = useState(produk?.packing ?? "");
+  const [kuantitas, setKuantitas] = useState(produk?.quantity ?? "");
+  const [gudang, setGudang] = useState(produk?.warehouse_name ?? "");
 
   // Ambil dari API
   const warehouseOptions = [
@@ -122,4 +124,4 @@ const TambahProduk = () => {
   );
 };
 
-export default TambahProduk;
+export default UbahProduk;

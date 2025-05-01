@@ -49,6 +49,7 @@ const MenuDots = ({ count = 3, onEdit, onDelete }) => {
       )}
 
       <ConfirmDeleteModal
+        label="Apakah anda yakin untuk menghapus pengguna ini?"
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={confirmDelete}

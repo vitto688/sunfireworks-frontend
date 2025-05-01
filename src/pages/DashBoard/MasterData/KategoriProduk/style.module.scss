@@ -1,6 +1,6 @@
 @import 'src/mixins.scss';
 
-.productSection {
+.categoriesSection {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -9,7 +9,7 @@
     border-radius: 15px;
     overflow: hidden;
 
-    .productsTable{
+    .categoriesTable{
         position: relative;
         display: flex;
         flex-direction: column;
@@ -30,10 +30,9 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:  60px  60px 150px 110px 300px 200px 200px 200px 150px 180px;
-            align-items: center;
+            grid-template-columns: 60px 60px 150px;
             padding: 15px 10px;
-            width:1700px;
+            min-width: 280px;
             border-bottom: 1px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -49,7 +48,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            width:1720px;
+            overflow-y: scroll;
+            min-width: 300px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -59,16 +59,17 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns:  60px  60px 150px 110px 300px 200px 200px 200px 150px 180px;
+                grid-template-columns: 60px 60px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
                 cursor: pointer;
-               
+
                 .tableRowItem{
                     font-size: 14px;
 
                 }
+              
             }
         }
        

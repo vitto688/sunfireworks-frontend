@@ -9,6 +9,9 @@ import styles from "./style.module.scss";
 import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
 import { TAMBAH_PRODUK_PATH } from "./TambahProduk";
+import CustomDeleteButton from "../../../../components/CustomDeleteButton";
+import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
+import { UBAH_PRODUK_PATH } from "./UbahProduk";
 
 // import actions
 import { fetchProductsRequest } from "../../../../redux/actions/masterActions";
@@ -19,6 +22,7 @@ const Produk = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { products } = useSelector((state) => state.master);
 
@@ -29,11 +33,19 @@ const Produk = () => {
   }, [dispatch]);
 
   const handleAddClick = () => {
-    console.log("Customer added!");
+    console.log("Product added!");
     navigate(TAMBAH_PRODUK_PATH);
   };
 
-  console.log("products", products);
+  const handleDelete = (value) => {
+    setModalOpen((old) => !old);
+    console.log("Product deleted!", value);
+  };
+
+  const handleItemClick = (value) => {
+    console.log("value", value);
+    navigate(UBAH_PRODUK_PATH, { state: value });
+  };
 
   return (
     <div className={styles.productSection}>
@@ -47,36 +59,47 @@ const Produk = () => {
       </SearchBar>
       <div className={styles.productsTable}>
         <div className={styles.tableHeader}>
-          <div className={styles.tableHeaderNo}>No</div>
-          <div className={styles.tableHeaderKode}>Kode Produk</div>
-          <div className={styles.tableHeaderBarcode}>Barcode</div>
-          <div className={styles.tableHeaderNama}>Nama Produk</div>
-          <div className={styles.tableHeaderKategori}>Kategori</div>
-          <div className={styles.tableHeaderSupplier}>Supplier</div>
-          <div className={styles.tableHeaderKemasan}>Kemasan</div>
-          <div className={styles.tableHeaderKemasan}>Kuantitas</div>
-          <div className={styles.tableHeaderKemasan}>Gudang</div>
+          <div className={styles.tableHeaderItem} />
+          <div className={styles.tableHeaderItem}>No</div>
+          <div className={styles.tableHeaderItem}>Kode Produk</div>
+          <div className={styles.tableHeaderItem}>Barcode</div>
+          <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Kategori</div>
+          <div className={styles.tableHeaderItem}>Supplier</div>
+          <div className={styles.tableHeaderItem}>Kemasan</div>
+          <div className={styles.tableHeaderItem}>Kuantitas</div>
+          <div className={styles.tableHeaderItem}>Gudang</div>
         </div>
         <div className={styles.tableBody}>
           {products.map((product, index) => (
-            <div key={product.product_code} className={styles.tableRow}>
-              <div className={styles.tableRowNo}>{index + 1}</div>
-              <div className={styles.tableRowKode}>{product.product_code}</div>
-              <div className={styles.tableRowBarcode}>{product.barcode}</div>
-              <div className={styles.tableRowNama}>{product.product_name}</div>
-              <div className={styles.tableRowKategori}>{product.category}</div>
-              <div className={styles.tableRowSupplier}>
-                {product.supplier_name}
-              </div>
-              <div className={styles.tableRowKemasan}>{product.packing}</div>
-              <div className={styles.tableRowKemasan}>{product.quantity}</div>
-              <div className={styles.tableRowKemasan}>
+            <div
+              role="presentation"
+              key={product.product_code}
+              className={styles.tableRow}
+              onClick={() => handleItemClick(product)}
+            >
+              <CustomDeleteButton onClick={() => setModalOpen((old) => !old)} />
+              <div className={styles.tableRowItem}>{index + 1}</div>
+              <div className={styles.tableRowItem}>{product.product_code}</div>
+              <div className={styles.tableRowItem}>{product.barcode}</div>
+              <div className={styles.tableRowItem}>{product.product_name}</div>
+              <div className={styles.tableRowItem}>{product.category}</div>
+              <div className={styles.tableRowItem}>{product.supplier_name}</div>
+              <div className={styles.tableRowItem}>{product.packing}</div>
+              <div className={styles.tableRowItem}>{product.quantity}</div>
+              <div className={styles.tableRowItem}>
                 {product.warehouse_name}
               </div>
             </div>
           ))}
         </div>
       </div>
+      <ConfirmDeleteModal
+        label="Apakah anda yakin untuk menghapus produk ini?"
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={() => handleDelete("test")}
+      />
     </div>
   );
 };

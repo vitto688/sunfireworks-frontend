@@ -1,5 +1,7 @@
+import { getLocalStorage } from "../../utils/cookieUtils";
+
 const initialState = {
-  expandedMenus: [],
+  expandedMenus: JSON.parse(getLocalStorage("expandedMenus") ?? "[]"),
   current: "",
   previous: "",
 };

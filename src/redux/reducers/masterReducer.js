@@ -2,13 +2,19 @@ const initialState = {
   products: [],
   categories: [],
   warehouses: [],
+  suppliers: [],
+  customers: [],
   currentProduct: null,
   currentCategory: null,
   currentWarehouse: null,
+  currentSupplier: null,
+  currentCustomer: null,
   isLoading: {
     products: false,
     categories: false,
     warehouses: false,
+    suppliers: false,
+    customers: false,
   },
   error: null,
 };
@@ -212,6 +218,138 @@ const masterReducer = (state = initialState, action) => {
       return { ...state, currentWarehouse: action.payload };
     case "CLEAR_CURRENT_WAREHOUSE":
       return { ...state, currentWarehouse: null };
+    //#endregion
+    //#region suppliers
+    case "FETCH_SUPPLIERS_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, suppliers: true } };
+    case "FETCH_SUPPLIERS_SUCCESS":
+      return {
+        ...state,
+        suppliers: action.payload,
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "FETCH_SUPPLIERS_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "ADD_SUPPLIER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, suppliers: true } };
+    case "ADD_SUPPLIER_SUCCESS":
+      return {
+        ...state,
+        suppliers: [...state.suppliers, action.payload],
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "ADD_SUPPLIER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "UPDATE_SUPPLIER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, suppliers: true } };
+    case "UPDATE_SUPPLIER_SUCCESS":
+      return {
+        ...state,
+        suppliers: state.suppliers.map((supplier) =>
+          supplier.id === action.payload.id ? action.payload : supplier
+        ),
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "UPDATE_SUPPLIER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "DELETE_SUPPLIER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, suppliers: true } };
+    case "DELETE_SUPPLIER_SUCCESS":
+      return {
+        ...state,
+        suppliers: state.suppliers.filter(
+          (supplier) => supplier.id !== action.payload
+        ),
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "DELETE_SUPPLIER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, suppliers: false },
+      };
+    case "SET_CURRENT_SUPPLIER":
+      return { ...state, currentSupplier: action.payload };
+    case "CLEAR_CURRENT_SUPPLIER":
+      return { ...state, currentSupplier: null };
+    //#endregion
+    //#region customers
+    case "FETCH_CUSTOMERS_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, customers: true } };
+    case "FETCH_CUSTOMERS_SUCCESS":
+      return {
+        ...state,
+        customers: action.payload,
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "FETCH_CUSTOMERS_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "ADD_CUSTOMER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, customers: true } };
+    case "ADD_CUSTOMER_SUCCESS":
+      return {
+        ...state,
+        customers: [...state.customers, action.payload],
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "ADD_CUSTOMER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "UPDATE_CUSTOMER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, customers: true } };
+    case "UPDATE_CUSTOMER_SUCCESS":
+      return {
+        ...state,
+        customers: state.customers.map((customer) =>
+          customer.id === action.payload.id ? action.payload : customer
+        ),
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "UPDATE_CUSTOMER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "DELETE_CUSTOMER_REQUEST":
+      return { ...state, isLoading: { ...state.isLoading, customers: true } };
+    case "DELETE_CUSTOMER_SUCCESS":
+      return {
+        ...state,
+        customers: state.customers.filter(
+          (customer) => customer.id !== action.payload
+        ),
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "DELETE_CUSTOMER_FAILURE":
+      return {
+        ...state,
+        error: action.payload,
+        isLoading: { ...state.isLoading, customers: false },
+      };
+    case "SET_CURRENT_CUSTOMER":
+      return { ...state, currentCustomer: action.payload };
+    case "CLEAR_CURRENT_CUSTOMER":
+      return { ...state, currentCustomer: null };
     //#endregion
     default:
       return state;

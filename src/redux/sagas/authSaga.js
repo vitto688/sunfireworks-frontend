@@ -1,7 +1,7 @@
-import { takeLatest, put, call } from "redux-saga/effects";
+import { takeLatest, put } from "redux-saga/effects";
 
 // import services
-import axiosInstance from "../../api/axios";
+// import axiosInstance from "../../api/axios";
 
 // import utils
 import { getCookie, setCookie } from "../../utils/cookieUtils";

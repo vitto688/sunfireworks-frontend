@@ -51,7 +51,10 @@ export const dashboardPath = "/*";
 
 const Dashboard = () => {
   const { pathname } = useLocation();
-  const lastPath = pathname.split("/").slice(-1)[0];
+  let lastPath = pathname.split("/").slice(-1)[0];
+  if (lastPath === "") {
+    lastPath = "beranda";
+  }
 
   return (
     <div className={styles.dashboardSection}>

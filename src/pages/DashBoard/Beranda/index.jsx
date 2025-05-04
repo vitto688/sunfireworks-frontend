@@ -31,7 +31,7 @@ const Beranda = () => {
           title="Pembelian dan Penjualan"
           period="Bulan"
           data={salesData}
-        />{" "}
+        />
       </div>
     </div>
   );

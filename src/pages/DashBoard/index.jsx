@@ -46,6 +46,9 @@ import UbahEksportir, {
   UBAH_EKSPORTIR_PATH,
 } from "./MasterData/Eksportir/UbahEksportir";
 import UbahGudang, { UBAH_GUDANG_PATH } from "./MasterData/Gudang/UbahGudang";
+import ReturPenjualan, {
+  RETUR_PENJUALAN_PATH,
+} from "./MutasiMasuk/ReturPenjualan";
 
 export const dashboardPath = "/*";
 
@@ -90,6 +93,7 @@ const Dashboard = () => {
             <Route path={PENGGUNA_PATH} element={<Pengguna />} />
             <Route path={TAMBAH_PENGGUNA_PATH} element={<TambahPengguna />} />
             <Route path={EDIT_PENGGUNA_PATH} element={<EditPengguna />} />
+            <Route path={RETUR_PENJUALAN_PATH} element={<ReturPenjualan />} />
           </Routes>
         </div>
       </div>

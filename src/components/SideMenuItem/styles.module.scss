@@ -12,6 +12,19 @@
         display: flex;
         align-items: center;
         gap: 16px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+
+            .name {
+                color: black;
+                font-weight: 500;
+            }
+
+            .trailing {
+                color: black;
+            }
+        }
     
         .name{
             flex: 1;
@@ -47,8 +60,19 @@
 
         .subMenu{
             display: flex; 
+            width: 100%;
             margin-bottom: 12px;
             align-items: 'center';
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+
+                .link {
+                    color: black;
+                    font-size: 15px;
+                    font-weight: 400;
+                }
+            }
 
             .link{
                 text-decoration: none;

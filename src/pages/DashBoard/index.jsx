@@ -1,8 +1,12 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
+
+// Import actions
+import { logout } from "../../redux/actions/authActions";
 
 // Import components
 import LiveClock from "../../components/LiveClock";
@@ -49,15 +53,106 @@ import UbahGudang, { UBAH_GUDANG_PATH } from "./MasterData/Gudang/UbahGudang";
 import ReturPenjualan, {
   RETUR_PENJUALAN_PATH,
 } from "./MutasiMasuk/ReturPenjualan";
+import SPGBawang, { SPG_BAWANG_PATH } from "./MutasiMasuk/SPGBawang";
+import SPGImport, { SPG_IMPORT_PATH } from "./MutasiMasuk/SPGImport";
+import SPGKawat, { SPG_KAWAT_PATH } from "./MutasiMasuk/SPGKawat";
+import SPGLain, { SPG_LAIN_PATH } from "./MutasiMasuk/SPGLain";
+import SuratTerimaBarang, {
+  SURAT_TERIMA_BARANG_PATH,
+} from "./MutasiMasuk/SuratTerimaBarang";
+import TransferStok, { TRANSFER_STOK_PATH } from "./MutasiGudang/TransferStok";
+import ReturPembelian, {
+  RETUR_PEMBELIAN_PATH,
+} from "./MutasiKeluar/ReturPembelian";
+import SPKBarang, { SPK_BARANG_PATH } from "./MutasiKeluar/SPKBarang";
+import SuratJalan, { SURAT_JALAN_PATH } from "./MutasiKeluar/SuratJalan";
+import SuratPengeluaranBarang, {
+  SURAT_PENGELUARAN_BARANG_PATH,
+} from "./MutasiKeluar/SuratPengeluaranBarang";
+import PenyesuaianStok, { PENYESUAIAN_STOK_PATH } from "./PenyesuaianStok";
+import TambahReturPenjualan, {
+  TAMBAH_RETUR_PENJUALAN_PATH,
+} from "./MutasiMasuk/ReturPenjualan/TambahReturPenjualan";
+import UbahReturPenjualan, {
+  UBAH_RETUR_PENJUALAN_PATH,
+} from "./MutasiMasuk/ReturPenjualan/UbahReturPenjualan";
+import TambahSPGBawang, {
+  TAMBAH_SPGBAWANG_PATH,
+} from "./MutasiMasuk/SPGBawang/TambahSPGBawang";
+import UbahSPGBawang, {
+  UBAH_SPGBAWANG_PATH,
+} from "./MutasiMasuk/SPGBawang/UbahSPGBawang";
+import TambahSPGImport, {
+  TAMBAH_SPGIMPORT_PATH,
+} from "./MutasiMasuk/SPGImport/TambahSPGImport";
+import UbahSPGImport, {
+  UBAH_SPGIMPORT_PATH,
+} from "./MutasiMasuk/SPGImport/UbahSPGImport";
+import TambahSPGKawat, {
+  TAMBAH_SPG_KAWAT_PATH,
+} from "./MutasiMasuk/SPGKawat/TambahSPGKawat";
+import UbahSPGKawat, {
+  UBAH_SPG_KAWAT_PATH,
+} from "./MutasiMasuk/SPGKawat/UbahSPGKawat";
+import TambahSPGLain, {
+  TAMBAH_SPGLAIN_PATH,
+} from "./MutasiMasuk/SPGLain/TambahSPGLain";
+import UbahSPGLain, {
+  UBAH_SPGLAIN_PATH,
+} from "./MutasiMasuk/SPGLain/UbahSPGLain";
+import TambahSuratTerimaBarang, {
+  TAMBAH_SURAT_TERIMA_BARANG_PATH,
+} from "./MutasiMasuk/SuratTerimaBarang/TambahSuratTerimaBarang";
+import UbahSuratTerimaBarang, {
+  UBAH_SURAT_TERIMA_BARANG_PATH,
+} from "./MutasiMasuk/SuratTerimaBarang/UbahSuratTerimaBarang";
+import TambahTransferStok, {
+  TAMBAH_TRANSFER_STOK_PATH,
+} from "./MutasiGudang/TransferStok/TambahTransferStok";
+import UbahTransferStok, {
+  UBAH_TRANSFER_STOK_PATH,
+} from "./MutasiGudang/TransferStok/UbahTransferStok";
+import TambahReturPembelian, {
+  TAMBAH_RETUR_PEMBELIAN_PATH,
+} from "./MutasiKeluar/ReturPembelian/TambahReturPembelian";
+import UbahReturPembelian, {
+  UBAH_RETUR_PEMBELIAN_PATH,
+} from "./MutasiKeluar/ReturPembelian/UbahReturPembelian";
+import TambahSPKBarang, {
+  TAMBAH_SPK_BARANG_PATH,
+} from "./MutasiKeluar/SPKBarang/TambahSPKBarang";
+import UbahSPKBarang, {
+  UBAH_SPK_BARANG_PATH,
+} from "./MutasiKeluar/SPKBarang/UbahSPKBarang ";
+import TambahSuratJalan, {
+  TAMBAH_SURAT_JALAN_PATH,
+} from "./MutasiKeluar/SuratJalan/TambahSuratJalan";
+import UbahSuratJalan, {
+  UBAH_SURAT_JALAN_PATH,
+} from "./MutasiKeluar/SuratJalan/UbahSuratJalan";
+import TambahSPB, {
+  TAMBAH_SPB_PATH,
+} from "./MutasiKeluar/SuratPengeluaranBarang/TambahSPB";
+import UbahSPB, {
+  UBAH_SPB_PATH,
+} from "./MutasiKeluar/SuratPengeluaranBarang/UbahSPB";
+import LogoutButton from "../../components/LogoutButton";
 
 export const dashboardPath = "/*";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
   let lastPath = pathname.split("/").slice(-1)[0];
   if (lastPath === "") {
     lastPath = "beranda";
   }
+
+  //#region Local functions
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+  //#endregion
 
   return (
     <div className={styles.dashboardSection}>
@@ -67,6 +162,7 @@ const Dashboard = () => {
           {lastPath && <h5>{lastPath.replace("-", " ").toUpperCase()}</h5>}
           <div className={styles.trailingSection}>
             <LiveClock />
+            <LogoutButton onClick={handleLogout} />
           </div>
         </div>
         <div className={styles.bodySection}>
@@ -94,6 +190,75 @@ const Dashboard = () => {
             <Route path={TAMBAH_PENGGUNA_PATH} element={<TambahPengguna />} />
             <Route path={EDIT_PENGGUNA_PATH} element={<EditPengguna />} />
             <Route path={RETUR_PENJUALAN_PATH} element={<ReturPenjualan />} />
+            <Route
+              path={TAMBAH_RETUR_PENJUALAN_PATH}
+              element={<TambahReturPenjualan />}
+            />
+            <Route
+              path={UBAH_RETUR_PENJUALAN_PATH}
+              element={<UbahReturPenjualan />}
+            />
+            <Route path={SPG_BAWANG_PATH} element={<SPGBawang />} />
+            <Route path={TAMBAH_SPGBAWANG_PATH} element={<UbahSPGBawang />} />
+            <Route path={UBAH_SPGBAWANG_PATH} element={<TambahSPGBawang />} />
+            <Route path={SPG_IMPORT_PATH} element={<SPGImport />} />
+            <Route path={TAMBAH_SPGIMPORT_PATH} element={<TambahSPGImport />} />
+            <Route path={UBAH_SPGIMPORT_PATH} element={<UbahSPGImport />} />
+            <Route path={SPG_KAWAT_PATH} element={<SPGKawat />} />
+            <Route path={TAMBAH_SPG_KAWAT_PATH} element={<TambahSPGKawat />} />
+            <Route path={UBAH_SPG_KAWAT_PATH} element={<UbahSPGKawat />} />
+            <Route path={SPG_LAIN_PATH} element={<SPGLain />} />
+            <Route path={TAMBAH_SPGLAIN_PATH} element={<TambahSPGLain />} />
+            <Route path={UBAH_SPGLAIN_PATH} element={<UbahSPGLain />} />
+            <Route
+              path={SURAT_TERIMA_BARANG_PATH}
+              element={<SuratTerimaBarang />}
+            />
+            <Route
+              path={TAMBAH_SURAT_TERIMA_BARANG_PATH}
+              element={<TambahSuratTerimaBarang />}
+            />
+            <Route
+              path={UBAH_SURAT_TERIMA_BARANG_PATH}
+              element={<UbahSuratTerimaBarang />}
+            />
+            <Route path={TRANSFER_STOK_PATH} element={<TransferStok />} />
+            <Route
+              path={TAMBAH_TRANSFER_STOK_PATH}
+              element={<TambahTransferStok />}
+            />
+            <Route
+              path={UBAH_TRANSFER_STOK_PATH}
+              element={<UbahTransferStok />}
+            />
+            <Route path={RETUR_PEMBELIAN_PATH} element={<ReturPembelian />} />
+            <Route
+              path={TAMBAH_RETUR_PEMBELIAN_PATH}
+              element={<TambahReturPembelian />}
+            />
+            <Route
+              path={UBAH_RETUR_PEMBELIAN_PATH}
+              element={<UbahReturPembelian />}
+            />
+            <Route path={SPK_BARANG_PATH} element={<SPKBarang />} />
+            <Route
+              path={TAMBAH_SPK_BARANG_PATH}
+              element={<TambahSPKBarang />}
+            />
+            <Route path={UBAH_SPK_BARANG_PATH} element={<UbahSPKBarang />} />
+            <Route path={SURAT_JALAN_PATH} element={<SuratJalan />} />
+            <Route
+              path={TAMBAH_SURAT_JALAN_PATH}
+              element={<TambahSuratJalan />}
+            />
+            <Route path={UBAH_SURAT_JALAN_PATH} element={<UbahSuratJalan />} />
+            <Route
+              path={SURAT_PENGELUARAN_BARANG_PATH}
+              element={<SuratPengeluaranBarang />}
+            />
+            <Route path={TAMBAH_SPB_PATH} element={<TambahSPB />} />
+            <Route path={UBAH_SPB_PATH} element={<UbahSPB />} />
+            <Route path={PENYESUAIAN_STOK_PATH} element={<PenyesuaianStok />} />
           </Routes>
         </div>
       </div>

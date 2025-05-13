@@ -9,6 +9,28 @@
     border-radius: 15px;
     overflow: hidden;
 
+    .actionsSection{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 16px 16px 0 16px;
+    }
+
+    .searchFilterSection{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 16px 0 16px;
+        gap: 10px;
+
+        .filterSection{
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    }
+
     .productsTable{
         position: relative;
         display: flex;

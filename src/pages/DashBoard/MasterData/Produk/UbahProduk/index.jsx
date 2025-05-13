@@ -10,7 +10,7 @@ import SelectField from "../../../../../components/SelectField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Product page
-export const UBAH_PRODUK_PATH = "/master-data/ubah-produk";
+export const UBAH_PRODUK_PATH = "/master-data/produk/ubah-produk";
 
 const UbahProduk = () => {
   const navigate = useNavigate();

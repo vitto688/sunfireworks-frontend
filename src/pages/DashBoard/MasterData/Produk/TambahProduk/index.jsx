@@ -10,7 +10,7 @@ import SelectField from "../../../../../components/SelectField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Product page
-export const TAMBAH_PRODUK_PATH = "/master-data/tambah-produk";
+export const TAMBAH_PRODUK_PATH = "/master-data/produk/tambah-produk";
 
 const TambahProduk = () => {
   const [kodeProduk, setKodeProduk] = useState("");

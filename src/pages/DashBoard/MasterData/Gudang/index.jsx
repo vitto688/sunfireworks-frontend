@@ -32,6 +32,11 @@ const Gudang = () => {
     dispatch(fetchWarehousesRequest());
   }, [dispatch]);
 
+  const handleFindClick = () => {
+    console.log("Warehouse added!");
+    navigate(TAMBAH_GUDANG_PATH);
+  };
+
   const handleAddClick = () => {
     console.log("Warehouse added!");
     navigate(TAMBAH_GUDANG_PATH);
@@ -55,7 +60,12 @@ const Gudang = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       >
-        <CustomButton label="Tambah" onClick={handleAddClick} />
+        <CustomButton label="Cari" onClick={handleFindClick} />
+        <CustomButton
+          variant="outline"
+          label="Tambah"
+          onClick={handleAddClick}
+        />
       </SearchBar>
       <div className={styles.warehousesTable}>
         <div className={styles.tableHeader}>

@@ -1,3 +1,4 @@
+import { FiSearch } from "react-icons/fi";
 // Import styles
 import styles from "./style.module.scss";
 
@@ -10,6 +11,7 @@ const SearchBar = ({
 }) => {
   return (
     <div className={styles.searchBarSection}>
+      <FiSearch className={styles.icon} />
       <input
         type={type}
         placeholder={placeholder}

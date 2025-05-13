@@ -32,6 +32,11 @@ const Eksportir = () => {
     dispatch(fetchSuppliersRequest());
   }, [dispatch]);
 
+  const handleFindClick = () => {
+    console.log("Product added!");
+    navigate(TAMBAH_EKSPORTIR_PATH);
+  };
+
   const handleAddClick = () => {
     console.log("Supplier added!");
     navigate(TAMBAH_EKSPORTIR_PATH);
@@ -55,7 +60,12 @@ const Eksportir = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       >
-        <CustomButton label="Tambah" onClick={handleAddClick} />
+        <CustomButton label="Cari" onClick={handleFindClick} />
+        <CustomButton
+          variant="outline"
+          label="Tambah"
+          onClick={handleAddClick}
+        />
       </SearchBar>
       <div className={styles.suppliersTable}>
         <div className={styles.tableHeader}>

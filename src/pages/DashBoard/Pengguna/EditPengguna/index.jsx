@@ -10,7 +10,7 @@ import SelectField from "../../../../components/SelectField";
 import CustomButton from "../../../../components/CustomButton";
 
 // Define the path for the Edit User page
-export const EDIT_PENGGUNA_PATH = "/edit-pengguna";
+export const EDIT_PENGGUNA_PATH = "/pengguna/edit-pengguna";
 
 const EditPengguna = () => {
   const [nama, setNama] = useState("");

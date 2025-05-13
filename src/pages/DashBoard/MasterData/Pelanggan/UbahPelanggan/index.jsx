@@ -9,7 +9,7 @@ import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Customer page
-export const UBAH_PELANGGAN_PATH = "/master-data/ubah-pelanggan";
+export const UBAH_PELANGGAN_PATH = "/master-data/pelanggan/ubah-pelanggan";
 
 const UbahPelanggan = () => {
   const navigate = useNavigate();

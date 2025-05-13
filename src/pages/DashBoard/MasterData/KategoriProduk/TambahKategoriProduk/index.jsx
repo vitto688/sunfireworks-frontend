@@ -9,7 +9,8 @@ import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Category page
-export const TAMBAH_KATEGORI_PATH = "/master-data/tambah-kategori";
+export const TAMBAH_KATEGORI_PATH =
+  "/master-data/kategori-produk/tambah-kategori";
 
 const TambahKategoriProduk = () => {
   const [namaKategori, setNamaKategori] = useState("");

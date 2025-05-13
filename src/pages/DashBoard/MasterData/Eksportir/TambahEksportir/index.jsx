@@ -8,7 +8,7 @@ import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
-export const TAMBAH_EKSPORTIR_PATH = "/master-data/tambah-eksportir";
+export const TAMBAH_EKSPORTIR_PATH = "/master-data/eksportir/tambah-eksportir";
 
 const TambahEksportir = () => {
   const [kodePrincipal, setKodePrincipal] = useState("");

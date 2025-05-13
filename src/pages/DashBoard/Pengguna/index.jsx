@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
+
+// Import actions
+import { fetchUsersRequest } from "../../../redux/actions/authActions";
 
 // Import components
 import CustomButton from "../../../components/CustomButton";
@@ -10,17 +14,26 @@ import MenuDots from "../../../components/MenuDots";
 import { TAMBAH_PENGGUNA_PATH } from "./TambahPengguna";
 import { EDIT_PENGGUNA_PATH } from "./EditPengguna";
 import SearchBar from "../../../components/SearchBar";
-
-// Import dummy data
-import { usersData } from "../../../dummy_data/user";
+import { useSelector } from "react-redux";
 
 // Define the path for the Users page
 export const PENGGUNA_PATH = "/pengguna";
 
 const Pengguna = () => {
+  const dispatch = useDispatch();
+
   // State to manage the search query
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+
+  // Get the users data from the Redux store with selectors
+  const { users, loading } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    // This effect runs when the component mounts
+    // You can add any initialization logic here if needed
+    dispatch(fetchUsersRequest());
+  }, [dispatch]);
 
   const handleAddClick = () => {
     console.log("Customer added!");
@@ -47,7 +60,7 @@ const Pengguna = () => {
           <div className={styles.tableHeaderActions} />
         </div>
         <div className={styles.tableBody}>
-          {usersData.map((user, index) => (
+          {users.map((user, index) => (
             <div key={user.id} className={styles.tableRow}>
               <div className={styles.tableRowNo}>{index + 1}</div>
               <div className={styles.tableRowNama}>{user.username}</div>

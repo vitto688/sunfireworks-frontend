@@ -8,15 +8,22 @@ import styles from "./style.module.scss";
 // import components
 import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
-import { TAMBAH_PRODUK_PATH } from "./TambahProduk";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
+import { TAMBAH_PRODUK_PATH } from "./TambahProduk";
 import { UBAH_PRODUK_PATH } from "./UbahProduk";
+import FilterDropdown from "../../../../components/FilterDropdown";
 
 // import actions
 import { fetchProductsRequest } from "../../../../redux/actions/masterActions";
 
 export const PRODUK_PATH = "/master-data/produk";
+
+const filterOptions = [
+  { label: "All", value: "all" },
+  { label: "Today", value: "today" },
+  { label: "This Week", value: "week" },
+];
 
 const Produk = () => {
   const dispatch = useDispatch();
@@ -31,6 +38,11 @@ const Produk = () => {
     // For now, we are using dummy data
     dispatch(fetchProductsRequest());
   }, [dispatch]);
+
+  const handleFindClick = () => {
+    console.log("Product added!");
+    navigate(TAMBAH_PRODUK_PATH);
+  };
 
   const handleAddClick = () => {
     console.log("Product added!");
@@ -49,14 +61,39 @@ const Produk = () => {
 
   return (
     <div className={styles.productSection}>
-      <SearchBar
-        type="text"
-        placeholder="Cari produk..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      >
-        <CustomButton label="Tambah" onClick={handleAddClick} />
-      </SearchBar>
+      <div className={styles.actionsSection}>
+        <CustomButton
+          // variant="outline"
+          label="+ Tambah"
+          onClick={handleAddClick}
+        />
+      </div>
+      <div className={styles.searchFilterSection}>
+        <SearchBar
+          type="text"
+          placeholder="Cari produk..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        >
+          {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
+        </SearchBar>
+        <div className={styles.filterSection}>
+          <FilterDropdown
+            options={filterOptions}
+            onChange={(val) => console.log(val)}
+          />
+
+          <FilterDropdown
+            options={filterOptions}
+            onChange={(val) => console.log(val)}
+          />
+          <FilterDropdown
+            options={filterOptions}
+            onChange={(val) => console.log(val)}
+          />
+        </div>
+      </div>
+
       <div className={styles.productsTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem} />

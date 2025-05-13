@@ -7,7 +7,12 @@ import axiosInstance from "../../api/axios";
 import { getCookie, setCookie } from "../../utils/cookieUtils";
 
 // import actions
-import { loginSuccess, loginFailure } from "../actions/authActions";
+import {
+  loginSuccess,
+  loginFailure,
+  validateTokenSuccess,
+  validateTokenFailure,
+} from "../actions/authActions";
 
 function* validateTokenRequest() {
   try {
@@ -16,12 +21,12 @@ function* validateTokenRequest() {
     console.log("token", token);
 
     if (token) {
-      yield put(loginSuccess({ id: "123", username: token }));
+      yield put(validateTokenSuccess({ id: "123", username: token }));
     } else {
-      yield put(loginFailure());
+      yield put(validateTokenFailure());
     }
   } catch (error) {
-    yield put(loginFailure());
+    yield put(validateTokenFailure());
   }
 }
 
@@ -34,39 +39,51 @@ function* loginRequest(action) {
       action.payload
     );
 
-    // const response = {
-    //   user: {
-    //     id: 1,
-    //     email: "alexandervitto116@gmail.com",
-    //     username: "vitto",
-    //     role: null,
-    //     phone_number: null,
-    //     is_active: true,
-    //     is_superuser: true,
-    //     is_deleted: false,
-    //     deleted_at: null,
-    //     created_at: "2025-03-25T10:40:15.793772Z",
-    //     updated_at: "2025-03-25T10:40:15.793781Z",
-    //   },
-    //   tokens: {
-    //     refresh:
-    //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NTIyNTkwMywiaWF0IjoxNzQ1MTM5NTAzLCJqdGkiOiI0MGE4MzRkODBkNTQ0N2UxYmIzOTc5YjlkMDZmZDBkZCIsInVzZXJfaWQiOjF9.Qom9ciIubBNdzwT6JG1KyRMJ5TUgG4WEo_gmrzFlsYk",
-    //     access:
-    //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MTQzMTAzLCJpYXQiOjE3NDUxMzk1MDMsImp0aSI6IjUyMjY1YWVjZmQ3MjRmNzNiYmQwOWE3ZmViNThmMzUwIiwidXNlcl9pZCI6MX0.2GrooC4kcwmBoyfvHrPleeQpo2eUDlagKq7lTE-ZxTM",
-    //   },
-    //   message: "Login successful",
-    // };
+    if (response.status !== 200) {
+      yield put(loginFailure());
+      return;
+    }
 
     console.log("response", response);
-    setCookie("accessToken", response.tokens.access, 5); // 1 hari expired
-    yield put(loginSuccess(response));
-    // yield put(loginSuccess({ id: "123", username: action.payload.username }));
+    setCookie("accessToken", response.data.tokens.access, 1); // 1 hari expired
+    setCookie("refreshToken", response.data.tokens.refresh, 7); // 1 hari expired
+    yield put(loginSuccess(response.data.user));
   } catch (error) {
+    console.log("error", error);
+    console.log("error", error.response.status);
     yield put(loginFailure());
+  }
+}
+
+function* logoutRequest() {
+  try {
+    const refresh = getCookie("refreshToken");
+    yield call(axiosInstance.post, "/auth/logout/", { refresh });
+    setCookie("accessToken", "", -1);
+    setCookie("refreshToken", "", -1);
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+function* fetchUsersRequest() {
+  try {
+    const response = yield call(axiosInstance.get, "/users/?view=all");
+    if (response.status === 200) {
+      console.log("response", response);
+      yield put({ type: "FETCH_USERS_SUCCESS", payload: response.data });
+    } else {
+      yield put({ type: "FETCH_USERS_FAILURE", payload: response.status });
+    }
+  } catch (error) {
+    console.log("error", error);
+    yield put({ type: "FETCH_USERS_FAILURE", payload: error });
   }
 }
 
 export default function* authSaga() {
   yield takeLatest("VALIDATE_TOKEN_REQUEST", validateTokenRequest);
   yield takeLatest("LOGIN_REQUEST", loginRequest);
+  yield takeLatest("LOGOUT", logoutRequest);
+  yield takeLatest("FETCH_USERS_REQUEST", fetchUsersRequest);
 }

@@ -8,7 +8,7 @@ import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
-export const TAMBAH_GUDANG_PATH = "/master-data/tambah-gudang";
+export const TAMBAH_GUDANG_PATH = "/master-data/gudang/tambah-gudang";
 
 const TambahGudang = () => {
   const [nama, setNama] = useState("");

@@ -10,7 +10,7 @@ import SelectField from "../../../../components/SelectField";
 import CustomButton from "../../../../components/CustomButton";
 
 // Define the path for the Add User page
-export const TAMBAH_PENGGUNA_PATH = "/tambah-pengguna";
+export const TAMBAH_PENGGUNA_PATH = "/pengguna/tambah-pengguna";
 
 const TambahPengguna = () => {
   const [nama, setNama] = useState("");

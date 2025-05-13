@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCookie } from "../utils/cookieUtils";
 
 // Create an Axios instance
 const axiosInstance = axios.create({
@@ -6,8 +7,8 @@ const axiosInstance = axios.create({
   timeout: 10000, // Request timeout in milliseconds
   headers: {
     "Content-Type": "application/json",
-    withCredentials: true,
-    "Access-Control-Allow-Origin": "*",
+    // withCredentials: true,
+    // "Access-Control-Allow-Origin": "*",
   },
 });
 
@@ -15,7 +16,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Add authorization token or other custom headers if needed
-    const token = localStorage.getItem("accessToken");
+    const token = getCookie("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -14,12 +14,13 @@ import { ReactComponent as LogoIcon } from "../../assets/svg/logo.svg";
 // Import components
 import InputText from "../../components/InputText";
 import InputPassword from "../../components/InputPassword";
+import AlertDialog from "../../components/AlertDialog";
 
 export const LOGIN_PATH = "/login";
 
 const Login = () => {
   //#region Hooks
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isPasswrodFocused, setIsPasswrodFocused] = useState(false);
@@ -27,21 +28,24 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, isAuthenticated, errorCode, errorMessage } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
+    console.log("isAuthenticated", isAuthenticated);
     if (isAuthenticated) {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    if (username !== "" && password !== "") {
+    if (email !== "" && password !== "") {
       setIsFilled(true);
     } else {
       setIsFilled(false);
     }
-  }, [username, password]);
+  }, [email, password]);
 
   //#endregion
 
@@ -49,12 +53,13 @@ const Login = () => {
   const handleSubmit = (e) => {
     console.log("test");
     e.preventDefault();
-    dispatch(loginRequest({ username, password }));
+    dispatch(loginRequest({ email, password }));
   };
   //#endregion
 
   return (
     <div className={styles.loginSection}>
+      <AlertDialog show={errorCode} message={errorMessage} />
       <LogoIcon
         style={{
           width: "120px",
@@ -67,9 +72,9 @@ const Login = () => {
       <form onSubmit={handleSubmit} className={styles.formInputSection}>
         <InputText
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
         />
         <InputPassword
           value={password}
@@ -82,10 +87,10 @@ const Login = () => {
         />
         <button
           type="submit"
-          disabled={loading || !isFilled}
+          disabled={loading.login || !isFilled}
           className={`${styles.button} ${isFilled && styles.active}`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading.login ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

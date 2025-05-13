@@ -9,7 +9,7 @@ import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Customer page
-export const TAMBAH_PELANGGAN_PATH = "/master-data/tambah-pelanggan";
+export const TAMBAH_PELANGGAN_PATH = "/master-data/pelanggan/tambah-pelanggan";
 
 const TambahPelanggan = () => {
   const [kodePelanggan, setKodePelanggan] = useState("");

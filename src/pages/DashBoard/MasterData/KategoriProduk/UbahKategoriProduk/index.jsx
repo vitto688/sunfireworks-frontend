@@ -9,7 +9,7 @@ import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
 // Define the path for the Add Category page
-export const UBAH_KATEGORI_PATH = "/master-data/ubah-kategori";
+export const UBAH_KATEGORI_PATH = "/master-data/kategori-produk/ubah-kategori";
 
 const UbahKategoriProduk = () => {
   const navigate = useNavigate();

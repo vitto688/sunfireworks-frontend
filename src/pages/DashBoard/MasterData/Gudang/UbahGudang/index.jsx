@@ -8,7 +8,7 @@ import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
-export const UBAH_GUDANG_PATH = "/master-data/ubah-gudang";
+export const UBAH_GUDANG_PATH = "/master-data/gudang/ubah-gudang";
 
 const UbahGudang = () => {
   const navigate = useNavigate();

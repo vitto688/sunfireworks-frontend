@@ -8,7 +8,7 @@ import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
 
-export const UBAH_EKSPORTIR_PATH = "/master-data/ubah-eksportir";
+export const UBAH_EKSPORTIR_PATH = "/master-data/eksportir/ubah-eksportir";
 
 const UbahEksportir = () => {
   const navigate = useNavigate();

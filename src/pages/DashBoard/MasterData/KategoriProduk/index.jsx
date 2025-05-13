@@ -32,6 +32,11 @@ const KategoriProduk = () => {
     dispatch(fetchCategoriesRequest());
   }, [dispatch]);
 
+  const handleFindClick = () => {
+    console.log("Cateogry added!");
+    navigate(TAMBAH_KATEGORI_PATH);
+  };
+
   const handleAddClick = () => {
     console.log("Cateogry added!");
     navigate(TAMBAH_KATEGORI_PATH);
@@ -55,7 +60,12 @@ const KategoriProduk = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       >
-        <CustomButton label="Tambah" onClick={handleAddClick} />
+        <CustomButton label="Cari" onClick={handleFindClick} />
+        <CustomButton
+          variant="outline"
+          label="Tambah"
+          onClick={handleAddClick}
+        />
       </SearchBar>
       <div className={styles.categoriesTable}>
         <div className={styles.tableHeader}>

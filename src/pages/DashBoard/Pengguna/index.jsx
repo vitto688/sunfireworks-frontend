@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
 
 // Import actions
-import { fetchUsersRequest } from "../../../redux/actions/authActions";
+import {
+  deleteUserRequest,
+  fetchUsersRequest,
+  resetUserReducer,
+} from "../../../redux/actions/authActions";
 
 // Import components
 import CustomButton from "../../../components/CustomButton";
@@ -14,20 +18,34 @@ import MenuDots from "../../../components/MenuDots";
 import { TAMBAH_PENGGUNA_PATH } from "./TambahPengguna";
 import { EDIT_PENGGUNA_PATH } from "./EditPengguna";
 import SearchBar from "../../../components/SearchBar";
-import { useSelector } from "react-redux";
+import FilterDropdown from "../../../components/FilterDropdown";
+import { EDIT_ROLE_PATH } from "./EditRole";
+import Loading from "../../../components/Loading";
 
 // Define the path for the Users page
 export const PENGGUNA_PATH = "/pengguna";
 
+const filterOptionsActive = [
+  { label: "Semua pengguna", value: "all" },
+  { label: "Aktif pengguna", value: false },
+  { label: "Non-aktif pengguna", value: true },
+];
+
 const Pengguna = () => {
+  //#region Hooks
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // State to manage the search query
-  const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [pengguna, setPengguna] = useState([]);
+  const [filterOptions, setFilterOptions] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState(0);
+  const [selectedActiveFilter, setSelectedActiveFilter] = useState("all");
 
   // Get the users data from the Redux store with selectors
-  const { users, loading } = useSelector((state) => state.auth);
+  const { users, roles, loading, message, errorMessage, errorCode } =
+    useSelector((state) => state.auth);
 
   useEffect(() => {
     // This effect runs when the component mounts
@@ -35,21 +53,112 @@ const Pengguna = () => {
     dispatch(fetchUsersRequest());
   }, [dispatch]);
 
+  // Filter users based on the search query
+  useEffect(() => {
+    const filteredUsers = users.filter((user) =>
+      user.username.toLowerCase().includes(query.toLowerCase())
+    );
+    setPengguna(filteredUsers);
+  }, [query, users]);
+
+  // Filter users based on role
+  useEffect(() => {
+    const newFilterOptions = [
+      {
+        value: 0,
+        label: "Semua",
+      },
+      ...roles.map((role) => {
+        return {
+          value: role.id,
+          label: role.name,
+        };
+      }),
+    ];
+    setFilterOptions(newFilterOptions);
+  }, [roles]);
+
+  useEffect(() => {
+    // Filter users based on the selected filter
+    if (selectedFilter !== 0 && selectedActiveFilter !== "all") {
+      const filteredUsers = users.filter(
+        (user) =>
+          user.role === selectedFilter &&
+          user.is_deleted === selectedActiveFilter
+      );
+      setPengguna(filteredUsers);
+    } else if (selectedFilter !== 0) {
+      const filteredUsers = users.filter(
+        (user) => user.role === selectedFilter
+      );
+      setPengguna(filteredUsers);
+    } else if (selectedActiveFilter !== "all") {
+      const filteredUsers = users.filter(
+        (user) => user.is_deleted === selectedActiveFilter
+      );
+      setPengguna(filteredUsers);
+    }
+    // If no filter is selected, show all users
+    else {
+      setPengguna(users);
+    }
+  }, [selectedFilter, selectedActiveFilter, users]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetUserReducer());
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+  //#endregion
+
+  console.log(roles, selectedFilter);
+
+  //#region Local functions
   const handleAddClick = () => {
-    console.log("Customer added!");
     navigate(TAMBAH_PENGGUNA_PATH);
   };
 
+  const handleItemClick = (value) => {
+    navigate(EDIT_PENGGUNA_PATH, { state: value });
+  };
+  //#endregion
+
   return (
     <div className={styles.usersSection}>
-      <SearchBar
-        type="text"
-        placeholder="Cari pengguna..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      >
-        <CustomButton label="Tambah" onClick={handleAddClick} />
-      </SearchBar>
+      <div className={styles.actionsSection}>
+        <CustomButton
+          // variant="outline"
+          label="+ Tambah"
+          onClick={handleAddClick}
+        />
+      </div>
+      <div className={styles.searchFilterSection}>
+        <SearchBar
+          type="text"
+          placeholder="Cari pengguna..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        >
+          {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
+        </SearchBar>
+        <div className={styles.filterSection}>
+          <FilterDropdown
+            options={filterOptions}
+            placeholder="Filter role"
+            onChange={(val) => setSelectedFilter(val.value)}
+          />
+          <FilterDropdown
+            options={filterOptionsActive}
+            placeholder="Filter pengguna aktif"
+            onChange={(val) => setSelectedActiveFilter(val.value)}
+          />
+        </div>
+      </div>
       <div className={styles.usersTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderNo}>No</div>
@@ -60,23 +169,47 @@ const Pengguna = () => {
           <div className={styles.tableHeaderActions} />
         </div>
         <div className={styles.tableBody}>
-          {users.map((user, index) => (
-            <div key={user.id} className={styles.tableRow}>
+          {pengguna.map((user, index) => (
+            <div
+              key={user.id}
+              role="presentation"
+              className={`${styles.tableRow} ${
+                user.is_deleted && styles.inactive
+              }`}
+              onClick={() => handleItemClick(user)}
+            >
               <div className={styles.tableRowNo}>{index + 1}</div>
               <div className={styles.tableRowNama}>{user.username}</div>
               <div className={styles.tableRowEmail}>{user.email}</div>
               <div className={styles.tableRowNoTel}>{user.phone_number}</div>
-              <div className={styles.tableRowRole}>{user.role}</div>
+              <div className={styles.tableRowRole}>
+                {roles.find((role) => role.id === user.role)?.name ?? ""}
+              </div>
               <div className={styles.tableRowActions}>
-                <MenuDots
-                  onEdit={() => navigate(EDIT_PENGGUNA_PATH)}
-                  onDelete={() => console.log("Confirmed delete")}
-                />
+                {user.is_deleted ? (
+                  <div />
+                ) : (
+                  <MenuDots
+                    onEdit={(e) => {
+                      e.stopPropagation();
+                      navigate(EDIT_ROLE_PATH, { state: user });
+                    }}
+                    onDelete={() => {
+                      dispatch(
+                        deleteUserRequest({
+                          id: user.id,
+                        })
+                      );
+                    }}
+                  />
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {loading.users && <Loading message="Menghapus data, mohon tunggu..." />}
     </div>
   );
 };

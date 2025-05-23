@@ -1,34 +1,80 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// Import actions
+import {
+  resetUserReducer,
+  restoreUserRequest,
+  updateUserRequest,
+} from "../../../../redux/actions/authActions";
 
 // Import styles
 import styles from "./style.module.scss";
 
 // Import components
 import InputField from "../../../../components/InputField";
-import SelectField from "../../../../components/SelectField";
 import CustomButton from "../../../../components/CustomButton";
+import Loading from "../../../../components/Loading";
 
 // Define the path for the Edit User page
 export const EDIT_PENGGUNA_PATH = "/pengguna/edit-pengguna";
 
 const EditPengguna = () => {
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const [nomorTelepon, setNomorTelepon] = useState("");
-
-  const [role, setRole] = useState("");
+  //#region Hooks
   const navigate = useNavigate();
+  const location = useLocation();
+  const user = location.state || {};
 
-  // Ambil dari API
-  const roleOptions = [
-    { label: "Owner", value: "owner" },
-    { label: "Finance", value: "finance" },
-    { label: "Warehouse", value: "warehouse" },
-  ];
+  const [nama, setNama] = useState(user?.username ?? "");
+  // const [email, setEmail] = useState(user?.email ?? "");
+  const [nomorTelepon, setNomorTelepon] = useState(user?.phone_number ?? "");
+  // const [role, setRole] = useState(user?.role ?? "");
+
+  const dispatch = useDispatch();
+
+  const { loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+
+      dispatch(resetUserReducer());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+
+  //#endregion
 
   const handleSimpanClick = () => {
-    console.log("Customer save!");
+    if (user?.is_deleted) {
+      if (window.confirm("Apakah anda yakin ingin memulihkan pengguna ini?")) {
+        dispatch(
+          restoreUserRequest({
+            id: user.id,
+          })
+        );
+        return;
+      }
+    } else {
+      if (window.confirm("Apakah anda yakin ingin menyimpan perubahan?")) {
+        dispatch(
+          updateUserRequest({
+            id: user.id,
+            body: {
+              username: nama,
+              phone_number: nomorTelepon,
+            },
+          })
+        );
+      }
+    }
   };
 
   const handleBatalClick = () => {
@@ -44,9 +90,8 @@ const EditPengguna = () => {
           onClick={handleBatalClick}
         />
         <CustomButton
-          label="Simpan"
+          label={user?.is_deleted ? "Pulihkan" : "Simpan"}
           onClick={handleSimpanClick}
-          inactive={true}
         />
       </div>
       <div className={styles.formSection}>
@@ -57,15 +102,9 @@ const EditPengguna = () => {
           name="nama"
           value={nama}
           onChange={(e) => setNama(e.target.value)}
+          disabled={user?.is_deleted}
         />
-        <InputField
-          label="Email"
-          type="email"
-          id="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+
         <InputField
           label="Nomor Telepon"
           type="text"
@@ -73,15 +112,10 @@ const EditPengguna = () => {
           name="nomorTelepon"
           value={nomorTelepon}
           onChange={(e) => setNomorTelepon(e.target.value)}
-        />
-        <SelectField
-          label="Role"
-          name="role"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          options={roleOptions}
+          disabled={user?.is_deleted}
         />
       </div>
+      {loading.users && <Loading message="Menyimpan data, mohon tunggu..." />}
     </div>
   );
 };

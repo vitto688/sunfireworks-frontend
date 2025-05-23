@@ -9,6 +9,28 @@
   background-color: white;
   border-radius: 15px;
 
+  .actionsSection{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 16px 16px 0 16px;
+  }
+
+  .searchFilterSection{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 16px 0 16px;
+      gap: 10px;
+
+      .filterSection{
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 10px;
+      }
+  }
+
   .usersTable{
     display: flex;
     flex-direction: column;
@@ -92,6 +114,14 @@
         padding: 20px 15px;
         border-bottom: 1px solid #eaeaea;
         cursor: pointer;
+
+        &:hover{
+          background-color: #f5f7fa;
+        }
+        
+        &.inactive{
+          color: #b6b9bd;
+        }
 
         .tableRowNo{
           flex: 1;

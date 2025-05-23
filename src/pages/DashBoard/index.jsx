@@ -137,6 +137,7 @@ import UbahSPB, {
   UBAH_SPB_PATH,
 } from "./MutasiKeluar/SuratPengeluaranBarang/UbahSPB";
 import LogoutButton from "../../components/LogoutButton";
+import EditRole, { EDIT_ROLE_PATH } from "./Pengguna/EditRole";
 
 export const dashboardPath = "/*";
 
@@ -189,6 +190,7 @@ const Dashboard = () => {
             <Route path={PENGGUNA_PATH} element={<Pengguna />} />
             <Route path={TAMBAH_PENGGUNA_PATH} element={<TambahPengguna />} />
             <Route path={EDIT_PENGGUNA_PATH} element={<EditPengguna />} />
+            <Route path={EDIT_ROLE_PATH} element={<EditRole />} />
             <Route path={RETUR_PENJUALAN_PATH} element={<ReturPenjualan />} />
             <Route
               path={TAMBAH_RETUR_PENJUALAN_PATH}

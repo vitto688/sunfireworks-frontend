@@ -20,8 +20,8 @@ const SelectField = ({ label, name, value, onChange, options = [] }) => {
           Select role
         </option>
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
+          <option key={opt.id} value={opt.id}>
+            {opt.name}
           </option>
         ))}
       </select>

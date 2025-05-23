@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+// Import actions
+import {
+  addUserRequest,
+  resetUserReducer,
+} from "../../../../redux/actions/authActions";
 
 // Import styles
 import styles from "./style.module.scss";
@@ -8,33 +15,78 @@ import styles from "./style.module.scss";
 import InputField from "../../../../components/InputField";
 import SelectField from "../../../../components/SelectField";
 import CustomButton from "../../../../components/CustomButton";
+import Loading from "../../../../components/Loading";
 
 // Define the path for the Add User page
 export const TAMBAH_PENGGUNA_PATH = "/pengguna/tambah-pengguna";
 
 const TambahPengguna = () => {
+  //#region Hooks
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nomorTelepon, setNomorTelepon] = useState("");
+  const [role, setRole] = useState(0);
+  const [isFilled, setIsFilled] = useState(false);
 
-  const [role, setRole] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Ambil dari API
-  const roleOptions = [
-    { label: "Owner", value: "owner" },
-    { label: "Finance", value: "finance" },
-    { label: "Warehouse", value: "warehouse" },
-  ];
+  const { roles, loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.auth
+  );
+  console.log("password", password);
 
+  useEffect(() => {
+    dispatch(resetUserReducer());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (
+      nama !== "" &&
+      email !== "" &&
+      password !== "" &&
+      nomorTelepon !== "" &&
+      role !== 0
+    ) {
+      setIsFilled(true);
+    } else {
+      setIsFilled(false);
+    }
+    console.log(role);
+  }, [nama, email, password, nomorTelepon, role]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+
+      dispatch(resetUserReducer());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+  //#endregion
+
+  //#region Local functions
   const handleSimpanClick = () => {
-    console.log("Customer save!");
+    dispatch(
+      addUserRequest({
+        username: nama,
+        email,
+        password,
+        phone_number: nomorTelepon,
+        role: Number(role),
+      })
+    );
   };
 
   const handleBatalClick = () => {
     navigate(-1);
   };
+  //#endregion
 
   return (
     <div className={styles.tambahPenggunaSection}>
@@ -47,7 +99,7 @@ const TambahPengguna = () => {
         <CustomButton
           label="Simpan"
           onClick={handleSimpanClick}
-          inactive={true}
+          inactive={!isFilled}
         />
       </div>
       <div className={styles.formSection}>
@@ -55,7 +107,7 @@ const TambahPengguna = () => {
           label="Nama Pengguna"
           type="text"
           id="nama"
-          name="nama"
+          name="nama_tp"
           value={nama}
           onChange={(e) => setNama(e.target.value)}
         />
@@ -63,34 +115,39 @@ const TambahPengguna = () => {
           label="Email"
           type="email"
           id="email"
-          name="email"
+          name="email_tp"
+          autoComplete="new-email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <InputField
           label="Password"
           type="password"
-          id="password"
-          name="password"
+          id="password_tp"
+          name="password_tp"
           value={password}
+          autoComplete="new-password"
           onChange={(e) => setPassword(e.target.value)}
         />
         <InputField
           label="Nomor Telepon"
           type="text"
           id="nomorTelepon"
-          name="nomorTelepon"
+          name="nomorTelepon_tp"
           value={nomorTelepon}
           onChange={(e) => setNomorTelepon(e.target.value)}
         />
         <SelectField
           label="Role"
-          name="role"
+          name="role_tp"
+          autoComplete="new-role"
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          options={roleOptions}
+          options={roles}
         />
       </div>
+
+      {loading.users && <Loading message="Menyimpan data, mohon tunggu..." />}
     </div>
   );
 };

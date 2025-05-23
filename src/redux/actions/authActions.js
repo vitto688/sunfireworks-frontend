@@ -39,6 +39,9 @@ export const fetchUsersFailure = (error) => ({
   type: "FETCH_USERS_FAILURE",
   payload: error,
 });
+export const resetUserReducer = () => ({
+  type: "RESET_USER_REDUCER",
+});
 export const addUserRequest = (user) => ({
   type: "ADD_USER_REQUEST",
   payload: user,
@@ -73,6 +76,18 @@ export const deleteUserSuccess = (userId) => ({
 });
 export const deleteUserFailure = (error) => ({
   type: "DELETE_USER_FAILURE",
+  payload: error,
+});
+export const restoreUserRequest = (userId) => ({
+  type: "RESTORE_USER_REQUEST",
+  payload: userId,
+});
+export const restoreUserSuccess = (userId) => ({
+  type: "RESTORE_USER_SUCCESS",
+  payload: userId,
+});
+export const restoreUserFailure = (error) => ({
+  type: "RESTORE_USER_FAILURE",
   payload: error,
 });
 export const fetchRolesRequest = () => ({

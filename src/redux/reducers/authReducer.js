@@ -3,6 +3,7 @@ const initialState = {
   user: null,
   users: [],
   roles: [],
+  message: null,
   errorCode: null,
   errorMessage: null,
   loading: {
@@ -77,9 +78,18 @@ const authReducer = (state = initialState, action) => {
         errorMessage: "Gagal mengambil data user.",
         loading: { users: false },
       };
+    case "RESET_USER_REDUCER":
+      return {
+        ...state,
+        message: null,
+        errorCode: null,
+        errorMessage: null,
+        loading: { users: false },
+      };
     case "ADD_USER_REQUEST":
       return {
         ...state,
+        message: null,
         errorCode: null,
         errorMessage: null,
         loading: { users: true },
@@ -88,11 +98,13 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         users: [...state.users, action.payload],
+        message: "User berhasil ditambahkan.",
         loading: { users: false },
       };
     case "ADD_USER_FAILURE":
       return {
         ...state,
+        message: null,
         errorCode: action.payload,
         errorMessage: "Gagal menambah user.",
         loading: { users: false },
@@ -100,6 +112,7 @@ const authReducer = (state = initialState, action) => {
     case "UPDATE_USER_REQUEST":
       return {
         ...state,
+        message: null,
         errorCode: null,
         errorMessage: null,
         loading: { users: true },
@@ -107,6 +120,7 @@ const authReducer = (state = initialState, action) => {
     case "UPDATE_USER_SUCCESS":
       return {
         ...state,
+        message: "User berhasil diperbarui.",
         users: state.users.map((user) =>
           user.id === action.payload.id ? action.payload : user
         ),
@@ -115,6 +129,7 @@ const authReducer = (state = initialState, action) => {
     case "UPDATE_USER_FAILURE":
       return {
         ...state,
+        message: null,
         errorCode: action.payload,
         errorMessage: "Gagal memperbarui user.",
         loading: { users: false },
@@ -122,6 +137,7 @@ const authReducer = (state = initialState, action) => {
     case "DELETE_USER_REQUEST":
       return {
         ...state,
+        message: null,
         errorCode: null,
         errorMessage: null,
         loading: { users: true },
@@ -129,14 +145,41 @@ const authReducer = (state = initialState, action) => {
     case "DELETE_USER_SUCCESS":
       return {
         ...state,
+        message: "User berhasil dihapus.",
         users: state.users.filter((user) => user.id !== action.payload),
         loading: { users: false },
       };
     case "DELETE_USER_FAILURE":
       return {
         ...state,
+        message: null,
         errorCode: action.payload,
         errorMessage: "Gagal menghapus user.",
+        loading: { users: false },
+      };
+    case "RESTORE_USER_REQUEST":
+      return {
+        ...state,
+        message: null,
+        errorCode: null,
+        errorMessage: null,
+        loading: { users: true },
+      };
+    case "RESTORE_USER_SUCCESS":
+      return {
+        ...state,
+        message: "User berhasil dipulihkan.",
+        users: state.users.map((user) =>
+          user.id === action.payload.id ? action.payload : user
+        ),
+        loading: { users: false },
+      };
+    case "RESTORE_USER_FAILURE":
+      return {
+        ...state,
+        message: null,
+        errorCode: action.payload,
+        errorMessage: "Gagal memulihkan user.",
         loading: { users: false },
       };
     case "FETCH_ROLES_REQUEST":

@@ -3,7 +3,15 @@ import React from "react";
 // Import styles
 import styles from "./style.module.scss";
 
-const InputField = ({ label, value, onChange, name, type = "text" }) => {
+const InputField = ({
+  label,
+  value,
+  onChange,
+  name,
+  type = "text",
+  autoComplete = "off",
+  disabled = false,
+}) => {
   return (
     <div className={styles.inputFieldSection}>
       <label className={styles.label} htmlFor={name}>
@@ -16,6 +24,8 @@ const InputField = ({ label, value, onChange, name, type = "text" }) => {
         type={type}
         value={value}
         onChange={onChange}
+        autoComplete={autoComplete}
+        disabled={disabled}
       />
     </div>
   );

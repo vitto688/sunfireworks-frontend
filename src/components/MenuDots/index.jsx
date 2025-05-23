@@ -21,12 +21,14 @@ const MenuDots = ({ count = 3, onEdit, onDelete }) => {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
     setDropdownOpen(false);
     setModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (e) => {
+    e.stopPropagation();
     setModalOpen(false);
     onDelete();
   };
@@ -35,7 +37,10 @@ const MenuDots = ({ count = 3, onEdit, onDelete }) => {
     <div className={styles.menuDotsSection} ref={menuRef}>
       <button
         className={styles.dotsButton}
-        onClick={() => setDropdownOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setDropdownOpen((prev) => !prev);
+        }}
       >
         {Array.from({ length: count }).map((_, i) => (
           <div key={i} className={styles.dot}></div>
@@ -43,7 +48,7 @@ const MenuDots = ({ count = 3, onEdit, onDelete }) => {
       </button>
       {dropdownOpen && (
         <div className={styles.dropdown}>
-          <button onClick={onEdit}>Edit</button>
+          <button onClick={onEdit}>Edit Role</button>
           <button onClick={handleDeleteClick}>Delete</button>
         </div>
       )}
@@ -51,7 +56,10 @@ const MenuDots = ({ count = 3, onEdit, onDelete }) => {
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus pengguna ini?"
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={(e) => {
+          e.stopPropagation();
+          setModalOpen(false);
+        }}
         onConfirm={confirmDelete}
       />
     </div>

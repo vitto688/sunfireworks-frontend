@@ -4,7 +4,12 @@ import { takeLatest, put, call, all } from "redux-saga/effects";
 import axiosInstance from "../../api/axios";
 
 // import utils
-import { getCookie, setCookie } from "../../utils/cookieUtils";
+import {
+  getCookie,
+  getLocalStorage,
+  setCookie,
+  setLocalStorage,
+} from "../../utils/cookieUtils";
 
 // import actions
 import {
@@ -27,33 +32,41 @@ import {
   restoreUserSuccess,
   restoreUserFailure,
 } from "../actions/authActions";
+import { loadInitialMasterData } from "./masterSaga";
 
 function* loadInitialData() {
-  console.log("loadInitialData");
-
-  yield all([fetchRolesRequest()]);
+  yield all([fetchRolesRequest(), loadInitialMasterData()]);
 }
 
 function* validateTokenRequest() {
   try {
-    const token = getCookie("accessToken");
-
-    console.log("token", token);
+    const token = getCookie("refreshToken");
+    const user = getLocalStorage("user");
 
     if (token) {
+      const response = yield call(axiosInstance.post, "/auth/refresh/", {
+        refresh: token,
+      });
+
+      if (response.status !== 200) {
+        yield put(validateTokenFailure("Token not found"));
+        return;
+      }
+
+      setCookie("accessToken", response.data.access, 1); // 1 hari expired
+
       yield call(loadInitialData);
-      yield put(validateTokenSuccess({ id: "123", username: token }));
+      yield put(validateTokenSuccess(user));
     } else {
-      yield put(validateTokenFailure());
+      yield put(validateTokenFailure("Token not found"));
     }
   } catch (error) {
-    yield put(validateTokenFailure());
+    yield put(validateTokenFailure(error));
   }
 }
 
 function* loginRequest(action) {
   try {
-    console.log("action.payload)", action.payload);
     const response = yield call(
       axiosInstance.post,
       "/auth/login/",
@@ -65,17 +78,15 @@ function* loginRequest(action) {
       return;
     }
 
-    console.log("response", response);
+    setCookie("accessToken", response.data.tokens.access, 1); // 1 hari expired
+    setCookie("refreshToken", response.data.tokens.refresh, 7); // 1 hari expired
+    setLocalStorage("user", response.data.user);
 
     yield call(loadInitialData);
 
-    setCookie("accessToken", response.data.tokens.access, 1); // 1 hari expired
-    setCookie("refreshToken", response.data.tokens.refresh, 7); // 1 hari expired
     yield put(loginSuccess(response.data.user));
   } catch (error) {
-    console.log("error", error);
-    console.log("error", error.response.status);
-    yield put(loginFailure());
+    yield put(loginFailure(error));
   }
 }
 
@@ -94,35 +105,29 @@ function* fetchUsersRequest() {
   try {
     const response = yield call(axiosInstance.get, "/users/?view=all");
     if (response.status === 200) {
-      console.log("response", response);
       yield put(fetchUsersSuccess(response.data));
     } else {
       yield put(fetchUsersFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(fetchUsersFailure(error));
   }
 }
 
 function* addUserRequest(action) {
-  console.log("addUserRequest", action.payload);
   try {
     const response = yield call(axiosInstance.post, "/users/", action.payload);
     if (response.status === 201) {
-      console.log("response", response);
       yield put(addUserSuccess(response.data));
     } else {
       yield put(addUserFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(addUserFailure(error));
   }
 }
 
 function* updateUserRequest(action) {
-  console.log("updateUserRequest", action.payload);
   try {
     const response = yield call(
       axiosInstance.put,
@@ -130,35 +135,29 @@ function* updateUserRequest(action) {
       action.payload.body
     );
     if (response.status === 200) {
-      console.log("response", response);
       yield put(updateUserSuccess(response.data));
     } else {
       yield put(updateUserFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(updateUserFailure(error));
   }
 }
 
 function* fetchRolesRequest() {
   try {
-    console.log("fetchRolesRequest");
     const response = yield call(axiosInstance.get, "/roles/");
     if (response.status === 200) {
-      console.log("response", response);
       yield put(fetchRolesSuccess(response.data));
     } else {
       yield put(fetchRolesFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(fetchRolesFailure(error));
   }
 }
 
 function* updateRoleRequest(action) {
-  console.log("updateRoleRequest", action.payload);
   try {
     const response = yield call(
       axiosInstance.post,
@@ -166,51 +165,43 @@ function* updateRoleRequest(action) {
       action.payload.body
     );
     if (response.status === 200) {
-      console.log("response", response);
       yield put(updateRoleSuccess(response.data));
     } else {
       yield put(updateRoleFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(updateRoleFailure(error));
   }
 }
 
 function* deleteUserRequest(action) {
-  console.log("deleteUserRequest", action.payload);
   try {
     const response = yield call(
       axiosInstance.delete,
       `/users/${action.payload.id}/s`
     );
     if (response.status === 200) {
-      console.log("response", response);
-      yield put(deleteUserSuccess(action.payload));
+      yield put(deleteUserSuccess(action.payload.id));
     } else {
       yield put(deleteUserFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(deleteUserFailure(error));
   }
 }
 
 function* restoreUserRequest(action) {
-  console.log("restoreUserRequest", action.payload);
   try {
     const response = yield call(
       axiosInstance.post,
       `/users/${action.payload.id}/restore/`
     );
     if (response.status === 200) {
-      console.log("response", response);
       yield put(restoreUserSuccess(response.data));
     } else {
       yield put(restoreUserFailure(response.status));
     }
   } catch (error) {
-    console.log("error", error);
     yield put(restoreUserFailure(error));
   }
 }

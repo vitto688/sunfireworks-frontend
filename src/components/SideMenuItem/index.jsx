@@ -20,7 +20,6 @@ const SideMenuItem = ({
   // const onExpandCollapse = () => setExpanded((val) => !val);
 
   function handleOnClick() {
-    console.log("handleOnClick", to);
     if (onExpandCollapse) {
       onExpandCollapse();
     } else {

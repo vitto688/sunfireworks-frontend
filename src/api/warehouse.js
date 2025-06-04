@@ -1,11 +1,11 @@
 import axiosInstance from "./axios";
-import { warehousesData } from "../dummy_data/warehouse";
+// import { warehousesData } from "../dummy_data/warehouse";
 
 const warehouseAPI = {
   getWarehouses: async () => {
     try {
-      // const response = await axiosInstance.get('/warehouses');
-      return warehousesData;
+      const response = await axiosInstance.get("/warehouses");
+      return response.data;
     } catch (error) {
       console.error("Error fetching warehouses:", error);
       throw error;
@@ -22,7 +22,7 @@ const warehouseAPI = {
   },
   createWarehouse: async (data) => {
     try {
-      const response = await axiosInstance.post("/warehouses", data);
+      const response = await axiosInstance.post("/warehouses/", data);
       return response.data;
     } catch (error) {
       console.error("Error creating warehouse:", error);
@@ -31,7 +31,7 @@ const warehouseAPI = {
   },
   updateWarehouse: async (id, data) => {
     try {
-      const response = await axiosInstance.put(`/warehouses/${id}`, data);
+      const response = await axiosInstance.put(`/warehouses/${id}/`, data);
       return response.data;
     } catch (error) {
       console.error(`Error updating warehouse with id ${id}:`, error);
@@ -40,8 +40,8 @@ const warehouseAPI = {
   },
   deleteWarehouse: async (id) => {
     try {
-      const response = await axiosInstance.delete(`/warehouses/${id}`);
-      return response.data;
+      const response = await axiosInstance.delete(`/warehouses/${id}/`);
+      return response;
     } catch (error) {
       console.error(`Error deleting warehouse with id ${id}:`, error);
       throw error;

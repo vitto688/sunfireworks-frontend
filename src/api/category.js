@@ -1,11 +1,10 @@
 import axiosInstance from "./axios";
-import { categoriesData } from "../dummy_data/category";
 
 const categoryAPI = {
   getAllCategories: async () => {
     try {
-      //   const response = await axiosInstance.get("/categories");
-      return categoriesData;
+      const response = await axiosInstance.get("/categories/");
+      return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);
       throw error;
@@ -24,7 +23,7 @@ const categoryAPI = {
 
   createCategory: async (categoryData) => {
     try {
-      const response = await axiosInstance.post("/categories", categoryData);
+      const response = await axiosInstance.post("/categories/", categoryData);
       return response.data;
     } catch (error) {
       console.error("Error creating category:", error);
@@ -35,7 +34,7 @@ const categoryAPI = {
   updateCategory: async (id, categoryData) => {
     try {
       const response = await axiosInstance.put(
-        `/categories/${id}`,
+        `/categories/${id}/`,
         categoryData
       );
       return response.data;
@@ -47,8 +46,8 @@ const categoryAPI = {
 
   deleteCategory: async (id) => {
     try {
-      const response = await axiosInstance.delete(`/categories/${id}`);
-      return response.data;
+      const response = await axiosInstance.delete(`/categories/${id}/`);
+      return response;
     } catch (error) {
       console.error(`Error deleting category with id ${id}:`, error);
       throw error;

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 // Import actions
 import {
-  resetUserReducer,
+  resetUserMessages,
   updateRoleRequest,
 } from "../../../../redux/actions/authActions";
 
@@ -37,7 +37,7 @@ const EditRole = () => {
     if (message !== null) {
       alert(message);
 
-      dispatch(resetUserReducer());
+      dispatch(resetUserMessages());
       navigate(-1);
     }
 
@@ -49,17 +49,24 @@ const EditRole = () => {
   //#endregion
 
   const handleSimpanClick = () => {
-    dispatch(
-      updateRoleRequest({
-        id: user.id,
-        body: {
-          role,
-        },
-      })
-    );
+    if (role === "") {
+      alert("Role tidak boleh kosong");
+      return;
+    }
+    if (window.confirm("Apakah anda yakin ingin mengubah role pengguna ini?")) {
+      dispatch(
+        updateRoleRequest({
+          id: user.id,
+          body: {
+            role,
+          },
+        })
+      );
+    }
   };
 
   const handleBatalClick = () => {
+    dispatch(resetUserMessages());
     navigate(-1);
   };
 

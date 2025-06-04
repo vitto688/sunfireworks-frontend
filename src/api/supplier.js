@@ -1,11 +1,10 @@
 import axiosInstance from "./axios";
-import { suppliersData } from "../dummy_data/supplier";
 
 const supplierAPI = {
   getSuppliers: async () => {
     try {
-      // const response = await axiosInstance.get('/suppliers');
-      return suppliersData;
+      const response = await axiosInstance.get("/suppliers");
+      return response.data;
     } catch (error) {
       console.error("Error fetching suppliers:", error);
       throw error;
@@ -14,7 +13,7 @@ const supplierAPI = {
 
   createSupplier: async (supplierData) => {
     try {
-      const response = await axiosInstance.post("/suppliers", supplierData);
+      const response = await axiosInstance.post("/suppliers/", supplierData);
       return response.data;
     } catch (error) {
       console.error("Error creating supplier:", error);
@@ -25,7 +24,7 @@ const supplierAPI = {
   updateSupplier: async (id, supplierData) => {
     try {
       const response = await axiosInstance.put(
-        `/suppliers/${id}`,
+        `/suppliers/${id}/`,
         supplierData
       );
       return response.data;
@@ -37,8 +36,8 @@ const supplierAPI = {
 
   deleteSupplier: async (id) => {
     try {
-      const response = await axiosInstance.delete(`/suppliers/${id}`);
-      return response.data;
+      const response = await axiosInstance.delete(`/suppliers/${id}/`);
+      return response;
     } catch (error) {
       console.error("Error deleting supplier:", error);
       throw error;

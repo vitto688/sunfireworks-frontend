@@ -5,6 +5,13 @@ import { useNavigate } from "react-router-dom";
 // import styles
 import styles from "./style.module.scss";
 
+// import actions
+import {
+  deleteSupplierRequest,
+  fetchSuppliersRequest,
+  resetMasterMessages,
+} from "../../../../redux/actions/masterActions";
+
 // import components
 import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
@@ -12,19 +19,22 @@ import { TAMBAH_EKSPORTIR_PATH } from "./TambahEksportir";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import { UBAH_EKSPORTIR_PATH } from "./UbahEksportir";
-
-// import actions
-import { fetchSuppliersRequest } from "../../../../redux/actions/masterActions";
+import Loading from "../../../../components/Loading";
 
 export const EKSPORTIR_PATH = "/master-data/eksportir";
 
 const Eksportir = () => {
+  //#region Hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [query, setQuery] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
 
-  const { suppliers } = useSelector((state) => state.master);
+  const [eksportir, setEksportir] = useState([]);
+  const [query, setQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(null);
+
+  const { suppliers, loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.master
+  );
 
   useEffect(() => {
     // Fetch suppliers data from API or state management
@@ -32,86 +42,109 @@ const Eksportir = () => {
     dispatch(fetchSuppliersRequest());
   }, [dispatch]);
 
-  const handleFindClick = () => {
-    console.log("Product added!");
-    navigate(TAMBAH_EKSPORTIR_PATH);
-  };
+  // Filter suppliers based on the search query
+  useEffect(() => {
+    const filteredSuppliers = suppliers.filter((supplier) =>
+      supplier.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setEksportir(filteredSuppliers);
+  }, [query, suppliers]);
 
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      setModalOpen(null);
+
+      dispatch(resetMasterMessages());
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+  //#endregion
+
+  //#region handlers
   const handleAddClick = () => {
-    console.log("Supplier added!");
     navigate(TAMBAH_EKSPORTIR_PATH);
-  };
-
-  const handleDelete = (value) => {
-    setModalOpen((old) => !old);
-    console.log("Product deleted!", value);
   };
 
   const handleItemClick = (value) => {
-    console.log("value", value);
     navigate(UBAH_EKSPORTIR_PATH, { state: value });
   };
+  //#endregion
 
   return (
     <div className={styles.suppliersSection}>
-      <SearchBar
-        type="text"
-        placeholder="Cari eksportir..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      >
-        <CustomButton label="Cari" onClick={handleFindClick} />
-        <CustomButton
-          variant="outline"
-          label="Tambah"
-          onClick={handleAddClick}
+      <div className={styles.actionsSection}>
+        <CustomButton label="+ Tambah" onClick={handleAddClick} />
+      </div>
+      <div className={styles.searchFilterSection}>
+        <SearchBar
+          type="text"
+          placeholder="Cari eksportir..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-      </SearchBar>
+        <div className={styles.filterSection}>
+          {/* <FilterDropdown
+            options={filterOptions}
+            placeholder="Filter role"
+            onChange={(val) => setSelectedFilter(val.value)}
+          />
+          <FilterDropdown
+            options={filterOptionsActive}
+            placeholder="Filter pengguna aktif"
+            onChange={(val) => setSelectedActiveFilter(val.value)}
+          /> */}
+        </div>
+      </div>
       <div className={styles.suppliersTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
-          <div className={styles.tableHeaderItem}>Kode Principal</div>
           <div className={styles.tableHeaderItem}>Nama</div>
+          <div className={styles.tableHeaderItem}>email</div>
           <div className={styles.tableHeaderItem}>Alamat</div>
-          <div className={styles.tableHeaderItem}>Email</div>
+          <div className={styles.tableHeaderItem}>PIC</div>
           <div className={styles.tableHeaderItem}>Nomor Telepon</div>
         </div>
         <div className={styles.tableBody}>
-          {suppliers.map((supplier, index) => (
+          {eksportir.map((supplier, index) => (
             <div
               role="presentation"
               key={index}
               className={styles.tableRow}
               onClick={() => handleItemClick(supplier)}
             >
-              <CustomDeleteButton onClick={() => setModalOpen((old) => !old)} />
+              <CustomDeleteButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalOpen(supplier);
+                }}
+              />
               <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>
-                {supplier.kode_principal}
-              </div>
-              <div className={styles.tableRowItem}>
-                {supplier.nama_principal}
-              </div>
-              <div className={styles.tableRowItem}>
-                {supplier.alamat_principal}
-              </div>
-              <div className={styles.tableRowItem}>
-                {supplier.email_principal}
-              </div>
-              <div className={styles.tableRowItem}>
-                {supplier.telp_principal}
-              </div>
+              <div className={styles.tableRowItem}>{supplier.name}</div>
+              <div className={styles.tableRowItem}>{supplier.email}</div>
+              <div className={styles.tableRowItem}>{supplier.address}</div>
+              <div className={styles.tableRowItem}>{supplier.pic_name}</div>
+              <div className={styles.tableRowItem}>{supplier.pic_contact}</div>
             </div>
           ))}
         </div>
       </div>
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus eksportir ini?"
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={() => handleDelete("test")}
+        open={modalOpen !== null}
+        onClose={(e) => {
+          e.stopPropagation();
+          setModalOpen(null);
+        }}
+        onConfirm={() => dispatch(deleteSupplierRequest({ id: modalOpen.id }))}
       />
+      {loading.suppliers && (
+        <Loading message="Sedamg memproses data, mohon tunggu..." />
+      )}
     </div>
   );
 };

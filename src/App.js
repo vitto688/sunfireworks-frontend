@@ -18,8 +18,6 @@ const LoadingScreen = () => (
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
-  console.log("isAuthenticated, loading", isAuthenticated, loading);
-
   if (loading.validateToken) return <LoadingScreen />; // ⬅️ Tampilkan loading saat validasi berjalan
 
   return isAuthenticated ? children : <Navigate to="/login" />;

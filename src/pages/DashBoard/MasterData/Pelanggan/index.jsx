@@ -32,29 +32,44 @@ const Pelanggan = () => {
     dispatch(fetchCustomersRequest());
   }, [dispatch]);
 
-  const handleFindClick = () => {
-    console.log("Customer added!");
-    navigate(TAMBAH_PELANGGAN_PATH);
-  };
-
   const handleAddClick = () => {
-    console.log("Customer added!");
     navigate(TAMBAH_PELANGGAN_PATH);
   };
 
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
-    console.log("Product deleted!", value);
   };
 
   const handleItemClick = (value) => {
-    console.log("value", value);
     navigate(UBAH_PELANGGAN_PATH, { state: value });
   };
 
   return (
     <div className={styles.customersSection}>
-      <SearchBar
+      <div className={styles.actionsSection}>
+        <CustomButton label="+ Tambah" onClick={handleAddClick} />
+      </div>
+      <div className={styles.searchFilterSection}>
+        <SearchBar
+          type="text"
+          placeholder="Cari pengguna..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className={styles.filterSection}>
+          {/* <FilterDropdown
+            options={filterOptions}
+            placeholder="Filter role"
+            onChange={(val) => setSelectedFilter(val.value)}
+          />
+          <FilterDropdown
+            options={filterOptionsActive}
+            placeholder="Filter pengguna aktif"
+            onChange={(val) => setSelectedActiveFilter(val.value)}
+          /> */}
+        </div>
+      </div>
+      {/* <SearchBar
         type="text"
         placeholder="Cari pelanggan..."
         value={query}
@@ -66,7 +81,7 @@ const Pelanggan = () => {
           label="Tambah"
           onClick={handleAddClick}
         />
-      </SearchBar>
+      </SearchBar> */}
       <div className={styles.customersTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem} />

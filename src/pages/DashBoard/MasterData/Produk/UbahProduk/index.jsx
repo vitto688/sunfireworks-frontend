@@ -1,45 +1,97 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 // Import styles
 import styles from "./style.module.scss";
 
+// Import actions
+import {
+  resetMasterMessages,
+  updateProductRequest,
+} from "../../../../../redux/actions/masterActions";
+
 // Import components
 import InputField from "../../../../../components/InputField";
-import SelectField from "../../../../../components/SelectField";
 import CustomButton from "../../../../../components/CustomButton";
+import SearchField from "../../../../../components/SearchField";
+import Loading from "../../../../../components/Loading";
 
 // Define the path for the Add Product page
 export const UBAH_PRODUK_PATH = "/master-data/produk/ubah-produk";
 
 const UbahProduk = () => {
+  //#region Hooks
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const produk = location.state || {};
 
-  const [kodeProduk, setKodeProduk] = useState(produk?.product_code ?? "");
-  const [barcode, setBarcode] = useState(produk?.barcode ?? "");
-  const [namaProduk, setNamaProduk] = useState(produk?.product_name ?? "");
-  const [kategori, setKategori] = useState(produk?.category ?? "");
-  const [supplier, setSupplier] = useState(produk?.supplier_name ?? "");
+  const { categories, suppliers, loading, message, errorMessage, errorCode } =
+    useSelector((state) => state.master);
+
+  const [kodeProduk, setKodeProduk] = useState(produk?.code ?? "");
+  // const [barcode, setBarcode] = useState(produk?.barcode ?? "");
+  const [namaProduk, setNamaProduk] = useState(produk?.name ?? "");
+  const [kategori, setKategori] = useState(null);
+  const [supplier, setSupplier] = useState(null);
   const [kemasan, setKemasan] = useState(produk?.packing ?? "");
-  const [kuantitas, setKuantitas] = useState(produk?.quantity ?? "");
-  const [gudang, setGudang] = useState(produk?.warehouse_name ?? "");
+  // const [kuantitas, setKuantitas] = useState(produk?.kuantitas ?? "");
+  // const [gudang, setGudang] = useState(produk?.gudang ?? "");
 
-  // Ambil dari API
-  const warehouseOptions = [
-    // { label: "Global", value: "global" },
-    { label: "Gudang 1", value: "gudang1" },
-    { label: "Gudang 2", value: "gudang2" },
-  ];
+  useEffect(() => {
+    const selectedCategory = categories.find(
+      (cat) => cat.id === produk.category
+    );
+    if (selectedCategory) {
+      setKategori({ id: selectedCategory.id, name: selectedCategory.name });
+    }
+    const selectedSupplier = suppliers.find(
+      (sup) => sup.id === produk.supplier
+    );
+    if (selectedSupplier) {
+      setSupplier({ id: selectedSupplier.id, name: selectedSupplier.name });
+    }
+  }, [categories, suppliers, produk.category, produk.supplier]);
 
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetMasterMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+
+  //#endregion
+
+  //#region Handlers
   const handleSimpanClick = () => {
-    console.log("Product save!");
+    if (window.confirm("Apakah anda yakin ingin mengubah produk ini?")) {
+      dispatch(
+        updateProductRequest({
+          id: produk.id,
+          body: {
+            code: kodeProduk,
+            name: namaProduk,
+            category: kategori.id,
+            supplier: supplier.id,
+            supplier_price: 0,
+            packing: kemasan,
+          },
+        })
+      );
+    }
   };
 
   const handleBatalClick = () => {
+    dispatch(resetMasterMessages());
     navigate(-1);
   };
+  //#endregion
 
   return (
     <div className={styles.addProductSection}>
@@ -49,11 +101,7 @@ const UbahProduk = () => {
           variant="outline"
           onClick={handleBatalClick}
         />
-        <CustomButton
-          label="Simpan"
-          onClick={handleSimpanClick}
-          inactive={true}
-        />
+        <CustomButton label="Simpan" onClick={handleSimpanClick} />
       </div>
       <div className={styles.formSection}>
         <InputField
@@ -64,14 +112,7 @@ const UbahProduk = () => {
           value={kodeProduk}
           onChange={(e) => setKodeProduk(e.target.value)}
         />
-        <InputField
-          label="Barcode"
-          type="text"
-          id="barcode"
-          name="barcode"
-          value={barcode}
-          onChange={(e) => setBarcode(e.target.value)}
-        />
+
         <InputField
           label="Nama Produk"
           type="text"
@@ -80,21 +121,32 @@ const UbahProduk = () => {
           value={namaProduk}
           onChange={(e) => setNamaProduk(e.target.value)}
         />
-        <InputField
+        <SearchField
+          title="Cari Kategori"
           label="Kategori"
           type="text"
           id="kategori"
           name="kategori"
-          value={kategori}
-          onChange={(e) => setKategori(e.target.value)}
+          defaultValue={{ id: kategori?.id, name: kategori?.name }}
+          data={categories.map((category) => ({
+            id: category.id,
+            name: category.name,
+          }))}
+          onChange={(category) => setKategori(category)}
         />
-        <InputField
-          label="Supplier"
+
+        <SearchField
+          title="Cari Eksportir"
+          label="Eksportir"
           type="text"
-          id="supplier"
-          name="supplier"
-          value={supplier}
-          onChange={(e) => setSupplier(e.target.value)}
+          id="eksportir"
+          name="eksportir"
+          defaultValue={{ id: supplier?.id, name: supplier?.name }}
+          data={suppliers.map((supplier) => ({
+            id: supplier.id,
+            name: supplier.name,
+          }))}
+          onChange={(supplier) => setSupplier(supplier)}
         />
         <InputField
           label="Kemasan"
@@ -104,22 +156,10 @@ const UbahProduk = () => {
           value={kemasan}
           onChange={(e) => setKemasan(e.target.value)}
         />
-        <InputField
-          label="Kuantitas"
-          type="text"
-          id="kuantitas"
-          name="kuantitas"
-          value={kuantitas}
-          onChange={(e) => setKuantitas(e.target.value)}
-        />
-        <SelectField
-          label="Gudang"
-          name="gudang"
-          value={gudang}
-          onChange={(e) => setGudang(e.target.value)}
-          options={warehouseOptions}
-        />
       </div>
+      {loading.products && (
+        <Loading message="Menyimpan data, mohon tunggu..." />
+      )}
     </div>
   );
 };

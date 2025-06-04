@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 // Import actions
 import {
-  resetUserReducer,
+  resetUserMessages,
   restoreUserRequest,
   updateUserRequest,
 } from "../../../../redux/actions/authActions";
@@ -27,9 +27,7 @@ const EditPengguna = () => {
   const user = location.state || {};
 
   const [nama, setNama] = useState(user?.username ?? "");
-  // const [email, setEmail] = useState(user?.email ?? "");
   const [nomorTelepon, setNomorTelepon] = useState(user?.phone_number ?? "");
-  // const [role, setRole] = useState(user?.role ?? "");
 
   const dispatch = useDispatch();
 
@@ -41,7 +39,7 @@ const EditPengguna = () => {
     if (message !== null) {
       alert(message);
 
-      dispatch(resetUserReducer());
+      dispatch(resetUserMessages());
       navigate(-1);
     }
 
@@ -78,6 +76,7 @@ const EditPengguna = () => {
   };
 
   const handleBatalClick = () => {
+    dispatch(resetUserMessages());
     navigate(-1);
   };
 

@@ -6,8 +6,9 @@ export const validateTokenSuccess = () => ({
   type: "VALIDATE_TOKEN_SUCCESS",
 });
 
-export const validateTokenFailure = () => ({
+export const validateTokenFailure = (error) => ({
   type: "VALIDATE_TOKEN_FAILURE",
+  payload: error,
 });
 
 export const loginRequest = ({ email, password }) => ({
@@ -20,8 +21,9 @@ export const loginSuccess = (user) => ({
   payload: user,
 });
 
-export const loginFailure = () => ({
+export const loginFailure = (error) => ({
   type: "LOGIN_FAILURE",
+  payload: error,
 });
 
 export const logout = () => ({
@@ -39,8 +41,8 @@ export const fetchUsersFailure = (error) => ({
   type: "FETCH_USERS_FAILURE",
   payload: error,
 });
-export const resetUserReducer = () => ({
-  type: "RESET_USER_REDUCER",
+export const resetUserMessages = () => ({
+  type: "RESET_USER_MESSAGES",
 });
 export const addUserRequest = (user) => ({
   type: "ADD_USER_REQUEST",

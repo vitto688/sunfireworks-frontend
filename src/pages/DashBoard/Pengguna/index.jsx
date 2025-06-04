@@ -9,7 +9,7 @@ import styles from "./style.module.scss";
 import {
   deleteUserRequest,
   fetchUsersRequest,
-  resetUserReducer,
+  resetUserMessages,
 } from "../../../redux/actions/authActions";
 
 // Import components
@@ -107,7 +107,7 @@ const Pengguna = () => {
   useEffect(() => {
     if (message !== null) {
       alert(message);
-      dispatch(resetUserReducer());
+      dispatch(resetUserMessages());
     }
 
     if (errorMessage !== null) {
@@ -143,9 +143,7 @@ const Pengguna = () => {
           placeholder="Cari pengguna..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-        >
-          {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
-        </SearchBar>
+        />
         <div className={styles.filterSection}>
           <FilterDropdown
             options={filterOptions}
@@ -209,7 +207,9 @@ const Pengguna = () => {
         </div>
       </div>
 
-      {loading.users && <Loading message="Menghapus data, mohon tunggu..." />}
+      {loading.users && (
+        <Loading message="Sedamg memproses data, mohon tunggu..." />
+      )}
     </div>
   );
 };

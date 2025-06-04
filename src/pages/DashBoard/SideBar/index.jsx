@@ -18,7 +18,7 @@ import SideMenuItem from "../../../components/SideMenuItem";
 import { BERANDA_PATH } from "../Beranda";
 import { PRODUK_PATH } from "../MasterData/Produk";
 import { KATEGORI_PRODUK_PATH } from "../MasterData/KategoriProduk";
-import { PELANGGAN_PATH } from "../MasterData/Pelanggan";
+// import { PELANGGAN_PATH } from "../MasterData/Pelanggan";
 import { GUDANG_PATH } from "../MasterData/Gudang";
 import { EKSPORTIR_PATH } from "../MasterData/Eksportir";
 import { RETUR_PENJUALAN_PATH } from "../MutasiMasuk/ReturPenjualan";
@@ -100,11 +100,11 @@ const SideBar = () => {
             to: EKSPORTIR_PATH,
             isSelected: EKSPORTIR_PATH === pathname,
           },
-          {
-            name: "Data Pelanggan",
-            to: PELANGGAN_PATH,
-            isSelected: PELANGGAN_PATH === pathname,
-          },
+          // {
+          //   name: "Data Pelanggan",
+          //   to: PELANGGAN_PATH,
+          //   isSelected: PELANGGAN_PATH === pathname,
+          // },
           {
             name: "Data Gudang",
             to: GUDANG_PATH,

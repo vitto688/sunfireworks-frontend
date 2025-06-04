@@ -4,7 +4,7 @@ import { getCookie } from "../utils/cookieUtils";
 // Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: "https://www.sfwarehouse.app/api", // Replace with your API base URL
-  timeout: 10000, // Request timeout in milliseconds
+  timeout: 30000, // Request timeout in milliseconds
   headers: {
     "Content-Type": "application/json",
     // withCredentials: true,

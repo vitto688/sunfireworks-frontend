@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 // Import actions
 import {
   addUserRequest,
-  resetUserReducer,
+  resetUserMessages,
 } from "../../../../redux/actions/authActions";
 
 // Import styles
@@ -35,10 +35,9 @@ const TambahPengguna = () => {
   const { roles, loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.auth
   );
-  console.log("password", password);
 
   useEffect(() => {
-    dispatch(resetUserReducer());
+    dispatch(resetUserMessages());
   }, [dispatch]);
 
   useEffect(() => {
@@ -53,14 +52,13 @@ const TambahPengguna = () => {
     } else {
       setIsFilled(false);
     }
-    console.log(role);
   }, [nama, email, password, nomorTelepon, role]);
 
   useEffect(() => {
     if (message !== null) {
       alert(message);
 
-      dispatch(resetUserReducer());
+      dispatch(resetUserMessages());
       navigate(-1);
     }
 
@@ -72,18 +70,21 @@ const TambahPengguna = () => {
 
   //#region Local functions
   const handleSimpanClick = () => {
-    dispatch(
-      addUserRequest({
-        username: nama,
-        email,
-        password,
-        phone_number: nomorTelepon,
-        role: Number(role),
-      })
-    );
+    if (window.confirm("Apakah anda yakin ingin menyimpan pengguna ini?")) {
+      dispatch(
+        addUserRequest({
+          username: nama,
+          email,
+          password,
+          phone_number: nomorTelepon,
+          role: Number(role),
+        })
+      );
+    }
   };
 
   const handleBatalClick = () => {
+    dispatch(resetUserMessages());
     navigate(-1);
   };
   //#endregion

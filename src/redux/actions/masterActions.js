@@ -292,3 +292,7 @@ export const clearCurrentCustomer = () => ({
   type: "CLEAR_CURRENT_CUSTOMER",
 });
 //#endregion
+
+export const resetMasterMessages = () => ({
+  type: "RESET_MASTER_MESSAGES",
+});

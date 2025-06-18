@@ -1,36 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 // Import styles
 import styles from "./style.module.scss";
 
+// Import actions
+import {
+  resetMasterMessages,
+  updateCustomerRequest,
+} from "../../../../../redux/actions/masterActions";
+
 // Import components
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
+import Loading from "../../../../../components/Loading";
 
 // Define the path for the Add Customer page
 export const UBAH_PELANGGAN_PATH = "/master-data/pelanggan/ubah-pelanggan";
 
 const UbahPelanggan = () => {
+  //#region Hooks
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const pelanggan = location.state || {};
 
-  const [kodePelanggan, setKodePelanggan] = useState(
-    pelanggan?.kode_pelanggan ?? ""
-  );
-  const [nama, setNama] = useState(pelanggan?.nama_pelanggan ?? "");
-  const [alamat, setAlamat] = useState(pelanggan?.alamat_pelanggan ?? "");
-  const [email, setEmail] = useState(pelanggan?.telp_pelanggan ?? "");
-  const [noTel, setNoTel] = useState(pelanggan?.email_pelanggan ?? "");
+  const [nama, setNama] = useState(pelanggan?.name ?? "");
+  const [alamat, setAlamat] = useState(pelanggan?.address ?? "");
+  const [noTel, setNoTel] = useState(pelanggan?.contact_number ?? "");
 
+  const { loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.master
+  );
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetMasterMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetMasterMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+  //#endregion
+
+  //#region Handlers
   const handleSimpanClick = () => {
-    console.log("Customer save!");
+    if (window.confirm("Apakah anda yakin ingin mengubah pelanggan ini?")) {
+      dispatch(
+        updateCustomerRequest({
+          id: pelanggan.id,
+          body: {
+            name: nama,
+            address: alamat,
+            contact_number: noTel,
+          },
+        })
+      );
+    }
   };
 
   const handleBatalClick = () => {
+    dispatch(resetMasterMessages());
     navigate(-1);
   };
+  //#endregion
 
   return (
     <div className={styles.addCustomerSection}>
@@ -40,21 +78,9 @@ const UbahPelanggan = () => {
           variant="outline"
           onClick={handleBatalClick}
         />
-        <CustomButton
-          label="Simpan"
-          onClick={handleSimpanClick}
-          inactive={true}
-        />
+        <CustomButton label="Simpan" onClick={handleSimpanClick} />
       </div>
       <div className={styles.formSection}>
-        <InputField
-          label="Kode Pelanggan"
-          type="text"
-          id="kodePelanggan"
-          name="kodePelanggan"
-          value={kodePelanggan}
-          onChange={(e) => setKodePelanggan(e.target.value)}
-        />
         <InputField
           label="Nama"
           type="text"
@@ -71,14 +97,7 @@ const UbahPelanggan = () => {
           value={alamat}
           onChange={(e) => setAlamat(e.target.value)}
         />
-        <InputField
-          label="Email"
-          type="text"
-          id="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+
         <InputField
           label="Nomor Telepon"
           type="text"
@@ -88,6 +107,9 @@ const UbahPelanggan = () => {
           onChange={(e) => setNoTel(e.target.value)}
         />
       </div>
+      {loading.pelanggan && (
+        <Loading message="Menyimpan data, mohon tunggu..." />
+      )}
     </div>
   );
 };

@@ -23,7 +23,7 @@ import { EDIT_ROLE_PATH } from "./EditRole";
 import Loading from "../../../components/Loading";
 
 // Define the path for the Users page
-export const PENGGUNA_PATH = "/pengguna";
+export const PENGGUNA_PATH = "/pengaturan/pengguna";
 
 const filterOptionsActive = [
   { label: "Semua pengguna", value: "all" },
@@ -39,6 +39,7 @@ const Pengguna = () => {
   // State to manage the search query
   const [query, setQuery] = useState("");
   const [pengguna, setPengguna] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(0);
   const [selectedActiveFilter, setSelectedActiveFilter] = useState("all");
@@ -55,13 +56,13 @@ const Pengguna = () => {
 
   // Filter users based on the search query
   useEffect(() => {
-    const filteredUsers = users.filter((user) =>
+    const filteredUsers = filteredData.filter((user) =>
       user.username.toLowerCase().includes(query.toLowerCase())
     );
     setPengguna(filteredUsers);
-  }, [query, users]);
+  }, [query, filteredData]);
 
-  // Filter users based on role
+  // Filter users
   useEffect(() => {
     const newFilterOptions = [
       {
@@ -86,37 +87,35 @@ const Pengguna = () => {
           user.role === selectedFilter &&
           user.is_deleted === selectedActiveFilter
       );
-      setPengguna(filteredUsers);
+      setFilteredData(filteredUsers);
     } else if (selectedFilter !== 0) {
       const filteredUsers = users.filter(
         (user) => user.role === selectedFilter
       );
-      setPengguna(filteredUsers);
+      setFilteredData(filteredUsers);
     } else if (selectedActiveFilter !== "all") {
       const filteredUsers = users.filter(
         (user) => user.is_deleted === selectedActiveFilter
       );
-      setPengguna(filteredUsers);
+      setFilteredData(filteredUsers);
     }
     // If no filter is selected, show all users
     else {
-      setPengguna(users);
+      setFilteredData(users);
     }
   }, [selectedFilter, selectedActiveFilter, users]);
 
   useEffect(() => {
     if (message !== null) {
       alert(message);
-      dispatch(resetUserMessages());
     }
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
     }
+    dispatch(resetUserMessages());
   }, [message, errorMessage, errorCode, navigate, dispatch]);
   //#endregion
-
-  console.log(roles, selectedFilter);
 
   //#region Local functions
   const handleAddClick = () => {

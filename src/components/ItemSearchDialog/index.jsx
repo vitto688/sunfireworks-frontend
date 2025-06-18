@@ -6,33 +6,6 @@ import styles from "./style.module.scss";
 // Import components
 import SearchBar from "../SearchBar";
 
-// const dummyProducts = [
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-//   { code: "P001", name: "Kembang Api A" },
-//   { code: "P002", name: "Kembang Api B" },
-//   { code: "P003", name: "Kembang Api C" },
-// ];
-
 const ItemSearchDialog = ({
   title = "Cari",
   data = [],

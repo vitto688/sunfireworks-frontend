@@ -53,13 +53,12 @@ const Gudang = () => {
     if (message !== null) {
       alert(message);
       setModalOpen(null);
-
-      dispatch(resetMasterMessages());
     }
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
     }
+    dispatch(resetMasterMessages());
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 
   const handleAddClick = () => {

@@ -15,7 +15,7 @@ const FilterDropdown = ({ options = [], placeholder = "Filter", onChange }) => {
   return (
     <div className={styles.dropdown}>
       <button className={styles.toggle} onClick={() => setIsOpen(!isOpen)}>
-        {selected?.label || placeholder}
+        <p>{selected?.label || placeholder}</p>
         <FaChevronDown className={styles.icon} />
       </button>
       {isOpen && (

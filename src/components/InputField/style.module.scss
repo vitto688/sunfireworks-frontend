@@ -13,13 +13,17 @@
         padding: 12px 14px;
         border: none;
         border-radius: 10px;
-        background-color: #fafafa;
+        background-color: #f0f3f7;
         font-size: 16px;
         color: #111;
         outline: none;
       
         &:focus {
           outline: 2px solid #007bff33;
+        }
+
+        &:disabled{
+            background-color: #f9fbff;
         }
     }
 

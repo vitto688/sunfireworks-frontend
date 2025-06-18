@@ -43,6 +43,7 @@ const EditRole = () => {
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetUserMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 

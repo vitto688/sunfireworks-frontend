@@ -20,6 +20,9 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import { TAMBAH_PRODUK_PATH } from "./TambahProduk";
 import { UBAH_PRODUK_PATH } from "./UbahProduk";
 import Loading from "../../../../components/Loading";
+import FilterDropdown from "../../../../components/FilterDropdown";
+import EditButton from "../../../../components/EditButton";
+import { UBAH_STOK_PRODUK_PATH } from "./UbahStokProduk";
 // import FilterDropdown from "../../../../components/FilterDropdown";
 
 export const PRODUK_PATH = "/master-data/produk";
@@ -32,10 +35,21 @@ const Produk = () => {
   const [produk, setProduk] = useState([]);
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [categoryFilterOptions, setCategoryFilterOptions] = useState([]);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(0);
+  const [supplierFilterOptions, setSupplierFilterOptions] = useState([]);
+  const [selectedSupplierFilter, setSelectedSupplierFilter] = useState(0);
 
-  const { products, loading, message, errorMessage, errorCode } = useSelector(
-    (state) => state.master
-  );
+  const {
+    products,
+    categories,
+    suppliers,
+    loading,
+    message,
+    errorMessage,
+    errorCode,
+  } = useSelector((state) => state.master);
 
   useEffect(() => {
     // Fetch products data from API or state management
@@ -45,23 +59,74 @@ const Produk = () => {
 
   // Filter products based on the search query
   useEffect(() => {
-    const filteredProducts = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
+    const filteredProducts = filteredData.filter(
+      (product) =>
+        product.name.toLowerCase().includes(query.toLowerCase()) ||
+        product.code.toLowerCase().includes(query.toLowerCase())
     );
     setProduk(filteredProducts);
-  }, [query, products]);
+  }, [query, filteredData]);
+
+  // Filter categories
+  useEffect(() => {
+    if (categories.length > 0) {
+      const options = [
+        { label: "Semua Kategori", value: 0 },
+        ...categories.map((category) => ({
+          label: category.name,
+          value: category.id,
+        })),
+      ];
+      setCategoryFilterOptions(options);
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    if (suppliers.length > 0) {
+      const options = [
+        { label: "Semua Eksportir", value: 0 },
+        ...suppliers.map((supplier) => ({
+          label: supplier.name,
+          value: supplier.id,
+        })),
+      ];
+      setSupplierFilterOptions(options);
+    }
+  }, [suppliers]);
+
+  useEffect(() => {
+    if (selectedCategoryFilter === 0 && selectedSupplierFilter === 0) {
+      setFilteredData(products);
+    } else if (selectedCategoryFilter !== 0 && selectedSupplierFilter === 0) {
+      const filteredProducts = products.filter(
+        (product) => product.category === selectedCategoryFilter
+      );
+      setFilteredData(filteredProducts);
+    } else if (selectedCategoryFilter === 0 && selectedSupplierFilter !== 0) {
+      const filteredProducts = products.filter(
+        (product) => product.supplier === selectedSupplierFilter
+      );
+      setFilteredData(filteredProducts);
+    } else {
+      const filteredProducts = products.filter(
+        (product) =>
+          product.category === selectedCategoryFilter &&
+          product.supplier === selectedSupplierFilter
+      );
+      setFilteredData(filteredProducts);
+    }
+  }, [selectedCategoryFilter, selectedSupplierFilter, products]);
 
   useEffect(() => {
     if (message !== null) {
       alert(message);
       setModalOpen(null);
-
-      dispatch(resetMasterMessages());
     }
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
     }
+    dispatch(resetMasterMessages());
   }, [message, errorMessage, errorCode, navigate, dispatch]);
   //#endregion
 
@@ -73,6 +138,13 @@ const Produk = () => {
   const handleItemClick = (value) => {
     navigate(UBAH_PRODUK_PATH, { state: value });
   };
+
+  const handleEdit = (e, value) => {
+    e.stopPropagation();
+
+    navigate(UBAH_STOK_PRODUK_PATH, { state: value });
+  };
+
   //#endregion
 
   return (
@@ -94,6 +166,16 @@ const Produk = () => {
           {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
         </SearchBar>
         <div className={styles.filterSection}>
+          <FilterDropdown
+            options={categoryFilterOptions}
+            placeholder="Filter Kategori"
+            onChange={(val) => setSelectedCategoryFilter(val.value)}
+          />
+          <FilterDropdown
+            options={supplierFilterOptions}
+            placeholder="Filter Eksportir"
+            onChange={(val) => setSelectedSupplierFilter(val.value)}
+          />
           {/* <FilterDropdown
             options={filterOptions}
             onChange={(val) => console.log(val)}
@@ -118,8 +200,9 @@ const Produk = () => {
           {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Kategori</div>
-          <div className={styles.tableHeaderItem}>Supplier</div>
+          <div className={styles.tableHeaderItem}>Eksportir</div>
           <div className={styles.tableHeaderItem}>Kemasan</div>
+          <div className={styles.tableHeaderItem}>Stok Global</div>
           {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
           <div className={styles.tableHeaderItem}>Gudang</div> */}
         </div>
@@ -144,6 +227,10 @@ const Produk = () => {
               <div className={styles.tableRowItem}>{product.category_name}</div>
               <div className={styles.tableRowItem}>{product.supplier_name}</div>
               <div className={styles.tableRowItem}>{product.packing}</div>
+              <div>
+                <EditButton onClick={(e) => handleEdit(e, product)} />
+              </div>
+
               {/* <div className={styles.tableRowItem}>{product.quantity}</div>
               <div className={styles.tableRowItem}>
                 {product.warehouse_name}
@@ -162,7 +249,7 @@ const Produk = () => {
         onConfirm={() => dispatch(deleteProductRequest({ id: modalOpen.id }))}
       />
       {loading.products && (
-        <Loading message="Sedamg memproses data, mohon tunggu..." />
+        <Loading message="Sedang memproses data, mohon tunggu..." />
       )}
     </div>
   );

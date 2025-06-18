@@ -1,12 +1,11 @@
 import axiosInstance from "./axios";
-import { customerData } from "../dummy_data/customer";
 
 const customerAPI = {
   // Fetch all customers
   fetchCustomers: async () => {
     try {
-      // const response = await axiosInstance.get("/customers");
-      return customerData;
+      const response = await axiosInstance.get("/customers/");
+      return response.data;
     } catch (error) {
       console.error("Error fetching customers:", error);
       throw error;
@@ -27,7 +26,7 @@ const customerAPI = {
   // Create a new customer
   createCustomer: async (customerData) => {
     try {
-      const response = await axiosInstance.post("/customers", customerData);
+      const response = await axiosInstance.post("/customers/", customerData);
       return response.data;
     } catch (error) {
       console.error("Error creating customer:", error);
@@ -39,7 +38,7 @@ const customerAPI = {
   updateCustomer: async (customerId, customerData) => {
     try {
       const response = await axiosInstance.put(
-        `/customers/${customerId}`,
+        `/customers/${customerId}/`,
         customerData
       );
       return response.data;
@@ -52,8 +51,8 @@ const customerAPI = {
   // Delete a customer
   deleteCustomer: async (customerId) => {
     try {
-      const response = await axiosInstance.delete(`/customers/${customerId}`);
-      return response.data;
+      const response = await axiosInstance.delete(`/customers/${customerId}/`);
+      return response;
     } catch (error) {
       console.error(`Error deleting customer with ID ${customerId}:`, error);
       throw error;

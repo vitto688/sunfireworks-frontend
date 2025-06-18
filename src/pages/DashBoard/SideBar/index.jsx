@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
@@ -18,7 +18,7 @@ import SideMenuItem from "../../../components/SideMenuItem";
 import { BERANDA_PATH } from "../Beranda";
 import { PRODUK_PATH } from "../MasterData/Produk";
 import { KATEGORI_PRODUK_PATH } from "../MasterData/KategoriProduk";
-// import { PELANGGAN_PATH } from "../MasterData/Pelanggan";
+import { PELANGGAN_PATH } from "../MasterData/Pelanggan";
 import { GUDANG_PATH } from "../MasterData/Gudang";
 import { EKSPORTIR_PATH } from "../MasterData/Eksportir";
 import { RETUR_PENJUALAN_PATH } from "../MutasiMasuk/ReturPenjualan";
@@ -31,31 +31,65 @@ import { RETUR_PEMBELIAN_PATH } from "../MutasiKeluar/ReturPembelian";
 import { SURAT_JALAN_PATH } from "../MutasiKeluar/SuratJalan";
 import { SURAT_PENGELUARAN_BARANG_PATH } from "../MutasiKeluar/SuratPengeluaranBarang";
 import { TRANSFER_STOK_PATH } from "../MutasiGudang/TransferStok";
-import { PENYESUAIAN_STOK_PATH } from "../PenyesuaianStok";
 import { SPK_BARANG_PATH } from "../MutasiKeluar/SPKBarang";
+import { PENGGUNA_PATH } from "../Pengguna";
+import { CHANGE_PASSWORD_PATH } from "../ChangePassword";
 
 // Import actions
 import { expandMenu } from "../../../redux/actions/menuActions";
-import { PENGGUNA_PATH } from "../Pengguna";
+import { STOCK_PATH } from "../Stock";
 
 const SideBar = () => {
-  const { expandedMenus } = useSelector((state) => state.menu);
-  const { pathname } = useLocation();
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
+
+  const [pengaturanSubMenus, setPengaturanSubMenus] = useState([]);
+
+  const { expandedMenus } = useSelector((state) => state.menu);
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user?.role === null || user?.role === 1) {
+      setPengaturanSubMenus([
+        {
+          name: "Pengguna",
+          to: PENGGUNA_PATH,
+          isSelected: PENGGUNA_PATH === pathname,
+        },
+        {
+          name: "Ubah Password",
+          to: CHANGE_PASSWORD_PATH,
+          isSelected: CHANGE_PASSWORD_PATH === pathname,
+        },
+      ]);
+    } else {
+      setPengaturanSubMenus([
+        {
+          name: "Ubah Password",
+          to: CHANGE_PASSWORD_PATH,
+          isSelected: CHANGE_PASSWORD_PATH === pathname,
+        },
+      ]);
+    }
+  }, [user, pathname]);
 
   const firstPath = pathname.split("/")[1];
 
   return (
     <div className={styles.sideBarSection}>
-      <div className={styles.logoSection}>
-        <LogoIcon
-          style={{
-            width: "36px",
-            height: "36px",
-          }}
-        />
-        <h2>Simple Data</h2>
+      <div className={styles.topSection}>
+        <div className={styles.logoSection}>
+          <LogoIcon
+            style={{
+              width: "36px",
+              height: "36px",
+            }}
+          />
+          <h2>Simple Data</h2>
+        </div>
+        <h4>Selamat datang, {(user?.username ?? "").toUpperCase()}</h4>
       </div>
+
       <SideMenuItem
         name="Beranda"
         to={BERANDA_PATH}
@@ -100,11 +134,11 @@ const SideBar = () => {
             to: EKSPORTIR_PATH,
             isSelected: EKSPORTIR_PATH === pathname,
           },
-          // {
-          //   name: "Data Pelanggan",
-          //   to: PELANGGAN_PATH,
-          //   isSelected: PELANGGAN_PATH === pathname,
-          // },
+          {
+            name: "Data Pelanggan",
+            to: PELANGGAN_PATH,
+            isSelected: PELANGGAN_PATH === pathname,
+          },
           {
             name: "Data Gudang",
             to: GUDANG_PATH,
@@ -122,16 +156,36 @@ const SideBar = () => {
           dispatch(expandMenu({ path: "/mutasi-masuk" }));
         }}
         subMenus={[
-          { name: "Retur Penjualan", to: RETUR_PENJUALAN_PATH },
+          {
+            name: "Retur Penjualan",
+            to: RETUR_PENJUALAN_PATH,
+            isSelected: RETUR_PENJUALAN_PATH === pathname,
+          },
           {
             name: "SPG Import",
             to: SPG_IMPORT_PATH,
-            isSelected: false,
+            isSelected: SPG_IMPORT_PATH === pathname,
           },
-          { name: "SPG Bawang", to: SPG_BAWANG_PATH },
-          { name: "SPG Kawat", to: SPG_KAWAT_PATH },
-          { name: "SPG Lain-lain", to: SPG_LAIN_PATH },
-          { name: "Surat Terima Barang", to: SURAT_TERIMA_BARANG_PATH },
+          {
+            name: "SPG Bawang",
+            to: SPG_BAWANG_PATH,
+            isSelected: SPG_BAWANG_PATH === pathname,
+          },
+          {
+            name: "SPG Kawat",
+            to: SPG_KAWAT_PATH,
+            isSelected: SPG_KAWAT_PATH === pathname,
+          },
+          {
+            name: "SPG Lain-lain",
+            to: SPG_LAIN_PATH,
+            isSelected: SPG_LAIN_PATH === pathname,
+          },
+          {
+            name: "Surat Terima Barang",
+            to: SURAT_TERIMA_BARANG_PATH,
+            isSelected: SURAT_TERIMA_BARANG_PATH === pathname,
+          },
         ]}
       />
       <div className={styles.devider}></div>
@@ -145,16 +199,25 @@ const SideBar = () => {
           dispatch(expandMenu({ path: "/mutasi-keluar" }));
         }}
         subMenus={[
-          { name: "Retur Pembelian", to: RETUR_PEMBELIAN_PATH },
+          {
+            name: "Retur Pembelian",
+            to: RETUR_PEMBELIAN_PATH,
+            isSelected: RETUR_PEMBELIAN_PATH === pathname,
+          },
           {
             name: "SPK Barang",
             to: SPK_BARANG_PATH,
-            isSelected: false,
+            isSelected: SPK_BARANG_PATH === pathname,
           },
-          { name: "Surat Jalan", to: SURAT_JALAN_PATH },
+          {
+            name: "Surat Jalan",
+            to: SURAT_JALAN_PATH,
+            isSelected: SURAT_JALAN_PATH === pathname,
+          },
           {
             name: "Surat Pengeluaran Barang",
             to: SURAT_PENGELUARAN_BARANG_PATH,
+            isSelected: SURAT_PENGELUARAN_BARANG_PATH === pathname,
           },
         ]}
       />
@@ -172,21 +235,22 @@ const SideBar = () => {
           {
             name: "Transfer Stok Barang",
             to: TRANSFER_STOK_PATH,
+            isSelected: TRANSFER_STOK_PATH === pathname,
           },
         ]}
       />
       <div className={styles.devider}></div>
       <SideMenuItem
-        name="Penyesuaian Stok"
-        to={PENYESUAIAN_STOK_PATH}
+        name="Stok"
+        to={STOCK_PATH}
         icon={
           <PenyesuaianStockDataIcon
             className={`${styles.icon} ${
-              PENYESUAIAN_STOK_PATH === pathname && styles.selected
+              STOCK_PATH === pathname && styles.selected
             }`}
           />
         }
-        isSelected={PENYESUAIAN_STOK_PATH === pathname}
+        isSelected={STOCK_PATH === pathname}
         // subMenus={[
         //   {
         //     name: "Penyesuaian Stok Barang",
@@ -195,9 +259,9 @@ const SideBar = () => {
         // ]}
       />
       <div className={styles.devider}></div>
+
       <SideMenuItem
-        name="Pengguna"
-        to={PENGGUNA_PATH}
+        name="Pengaturan"
         icon={
           <UserIcon
             className={`${styles.icon} ${
@@ -205,7 +269,12 @@ const SideBar = () => {
             }`}
           />
         }
-        isSelected={PENGGUNA_PATH === pathname}
+        isSelected={false}
+        isExpanded={expandedMenus.includes("/pengaturan")}
+        onExpandCollapse={() => {
+          dispatch(expandMenu({ path: "/pengaturan" }));
+        }}
+        subMenus={pengaturanSubMenus}
       />
     </div>
   );

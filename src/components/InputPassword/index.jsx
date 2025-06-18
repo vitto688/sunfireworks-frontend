@@ -8,6 +8,7 @@ const InputPassword = ({
   value,
   showPassword,
   isPasswrodFocused,
+  placeholder = "Password",
   onFocus,
   onBlur,
   onChange,
@@ -25,7 +26,7 @@ const InputPassword = ({
         onFocus={onFocus}
         onBlur={onBlur}
         onChange={onChange}
-        placeholder="Password"
+        placeholder={placeholder}
         className={styles.input}
       />
       <div role="presentation" className={styles.icon} onClick={onClick}>

@@ -64,11 +64,12 @@ const TambahPengguna = () => {
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetUserMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
   //#endregion
 
-  //#region Local functions
+  //#region Handlers
   const handleSimpanClick = () => {
     if (window.confirm("Apakah anda yakin ingin menyimpan pengguna ini?")) {
       dispatch(

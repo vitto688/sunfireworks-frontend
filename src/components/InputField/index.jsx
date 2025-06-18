@@ -14,9 +14,11 @@ const InputField = ({
 }) => {
   return (
     <div className={styles.inputFieldSection}>
-      <label className={styles.label} htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label className={styles.label} htmlFor={name}>
+          {label}
+        </label>
+      )}
       <input
         className={styles.input}
         id={name}

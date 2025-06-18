@@ -20,20 +20,19 @@ export const LOGIN_PATH = "/login";
 
 const Login = () => {
   //#region Hooks
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isPasswrodFocused, setIsPasswrodFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, isAuthenticated, errorCode, errorMessage } = useSelector(
     (state) => state.auth
   );
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+
   useEffect(() => {
-    console.log("isAuthenticated", isAuthenticated);
     if (isAuthenticated) {
       navigate("/");
     }
@@ -51,7 +50,6 @@ const Login = () => {
 
   //#region Local functions
   const handleSubmit = (e) => {
-    console.log("test");
     e.preventDefault();
     dispatch(loginRequest({ email, password }));
   };
@@ -79,9 +77,9 @@ const Login = () => {
         <InputPassword
           value={password}
           showPassword={showPassword}
-          isPasswrodFocused={isPasswrodFocused}
-          onFocus={() => setIsPasswrodFocused(true)}
-          onBlur={() => setIsPasswrodFocused(false)}
+          isPasswordFocused={isPasswordFocused}
+          onFocus={() => setIsPasswordFocused(true)}
+          onBlur={() => setIsPasswordFocused(false)}
           onChange={(e) => setPassword(e.target.value)}
           onClick={() => setShowPassword((val) => !val)}
         />

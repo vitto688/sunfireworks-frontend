@@ -1,0 +1,26 @@
+.datePicker {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap:10px;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+
+  input[type='date'] {
+    padding:6px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px; // Rounded border
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      border-color: #5a67d8; // Biru keunguan saat focus
+      box-shadow: 0 0 0 2px rgba(90, 103, 216, 0.2);
+    }
+  }
+}

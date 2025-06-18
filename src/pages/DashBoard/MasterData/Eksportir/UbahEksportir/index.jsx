@@ -42,6 +42,7 @@ const UbahEksportir = () => {
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetMasterMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
   //#endregion

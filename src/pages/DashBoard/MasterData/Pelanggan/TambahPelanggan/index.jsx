@@ -1,32 +1,85 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // Import styles
 import styles from "./style.module.scss";
 
+// Import actions
+import {
+  addCustomerRequest,
+  resetMasterMessages,
+} from "../../../../../redux/actions/masterActions";
+
 // Import components
 import InputField from "../../../../../components/InputField";
 import CustomButton from "../../../../../components/CustomButton";
+import Loading from "../../../../../components/Loading";
 
 // Define the path for the Add Customer page
 export const TAMBAH_PELANGGAN_PATH = "/master-data/pelanggan/tambah-pelanggan";
 
 const TambahPelanggan = () => {
-  const [kodePelanggan, setKodePelanggan] = useState("");
-  const [nama, setNama] = useState("");
-  const [alamat, setAlamat] = useState("");
-  const [email, setEmail] = useState("");
-  const [noTel, setNoTel] = useState("");
-
+  //#region Hooks
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [nama, setNama] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [noTel, setNoTel] = useState("");
+  const [isFilled, setIsFilled] = useState(false);
+
+  const { loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.master
+  );
+
+  useEffect(() => {
+    dispatch(resetMasterMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (nama !== "" && alamat !== "" && noTel !== "") {
+      setIsFilled(true);
+    } else {
+      setIsFilled(false);
+    }
+  }, [nama, alamat, noTel]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetMasterMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetMasterMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+
+  //#endregion
+
+  //#region Handlers
   const handleSimpanClick = () => {
-    console.log("Customer save!");
+    if (window.confirm("Apakah anda yakin ingin menambah pengguna ini?")) {
+      dispatch(
+        addCustomerRequest({
+          body: {
+            name: nama,
+            address: alamat,
+            contact_number: noTel,
+          },
+        })
+      );
+    }
   };
 
   const handleBatalClick = () => {
+    dispatch(resetMasterMessages());
     navigate(-1);
   };
+  //#endregion
 
   return (
     <div className={styles.addCustomerSection}>
@@ -39,18 +92,10 @@ const TambahPelanggan = () => {
         <CustomButton
           label="Simpan"
           onClick={handleSimpanClick}
-          inactive={true}
+          inactive={!isFilled}
         />
       </div>
       <div className={styles.formSection}>
-        <InputField
-          label="Kode Pelanggan"
-          type="text"
-          id="kodePelanggan"
-          name="kodePelanggan"
-          value={kodePelanggan}
-          onChange={(e) => setKodePelanggan(e.target.value)}
-        />
         <InputField
           label="Nama"
           type="text"
@@ -67,14 +112,7 @@ const TambahPelanggan = () => {
           value={alamat}
           onChange={(e) => setAlamat(e.target.value)}
         />
-        <InputField
-          label="Email"
-          type="text"
-          id="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+
         <InputField
           label="Nomor Telepon"
           type="text"
@@ -84,6 +122,9 @@ const TambahPelanggan = () => {
           onChange={(e) => setNoTel(e.target.value)}
         />
       </div>
+      {loading.customers && (
+        <Loading message="Menyimpan data, mohon tunggu..." />
+      )}
     </div>
   );
 };

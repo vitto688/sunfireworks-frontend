@@ -41,12 +41,13 @@ const UbahGudang = () => {
 
     if (errorMessage !== null) {
       alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetMasterMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 
   //#endregion
 
-  //#region Functions
+  //#region Handlers
 
   const handleSimpanClick = () => {
     if (window.confirm("Apakah anda yakin ingin mengubah gudang ini?")) {

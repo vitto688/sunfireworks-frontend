@@ -69,7 +69,6 @@ import SuratJalan, { SURAT_JALAN_PATH } from "./MutasiKeluar/SuratJalan";
 import SuratPengeluaranBarang, {
   SURAT_PENGELUARAN_BARANG_PATH,
 } from "./MutasiKeluar/SuratPengeluaranBarang";
-import PenyesuaianStok, { PENYESUAIAN_STOK_PATH } from "./PenyesuaianStok";
 import TambahReturPenjualan, {
   TAMBAH_RETUR_PENJUALAN_PATH,
 } from "./MutasiMasuk/ReturPenjualan/TambahReturPenjualan";
@@ -138,6 +137,12 @@ import UbahSPB, {
 } from "./MutasiKeluar/SuratPengeluaranBarang/UbahSPB";
 import LogoutButton from "../../components/LogoutButton";
 import EditRole, { EDIT_ROLE_PATH } from "./Pengguna/EditRole";
+import ChangePassword, { CHANGE_PASSWORD_PATH } from "./ChangePassword";
+import Stock, { STOCK_PATH } from "./Stock";
+import UbahStok, { UBAH_STOK_PATH } from "./Stock/UbahStok";
+import UbahStokProduk, {
+  UBAH_STOK_PRODUK_PATH,
+} from "./MasterData/Produk/UbahStokProduk";
 
 export const dashboardPath = "/*";
 
@@ -172,6 +177,7 @@ const Dashboard = () => {
             <Route path={PRODUK_PATH} element={<Produk />} />
             <Route path={TAMBAH_PRODUK_PATH} element={<TambahProduk />} />
             <Route path={UBAH_PRODUK_PATH} element={<UbahProduk />} />
+            <Route path={UBAH_STOK_PRODUK_PATH} element={<UbahStokProduk />} />
             <Route path={KATEGORI_PRODUK_PATH} element={<KategoriProduk />} />
             <Route
               path={TAMBAH_KATEGORI_PATH}
@@ -201,8 +207,8 @@ const Dashboard = () => {
               element={<UbahReturPenjualan />}
             />
             <Route path={SPG_BAWANG_PATH} element={<SPGBawang />} />
-            <Route path={TAMBAH_SPGBAWANG_PATH} element={<UbahSPGBawang />} />
-            <Route path={UBAH_SPGBAWANG_PATH} element={<TambahSPGBawang />} />
+            <Route path={TAMBAH_SPGBAWANG_PATH} element={<TambahSPGBawang />} />
+            <Route path={UBAH_SPGBAWANG_PATH} element={<UbahSPGBawang />} />
             <Route path={SPG_IMPORT_PATH} element={<SPGImport />} />
             <Route path={TAMBAH_SPGIMPORT_PATH} element={<TambahSPGImport />} />
             <Route path={UBAH_SPGIMPORT_PATH} element={<UbahSPGImport />} />
@@ -260,7 +266,9 @@ const Dashboard = () => {
             />
             <Route path={TAMBAH_SPB_PATH} element={<TambahSPB />} />
             <Route path={UBAH_SPB_PATH} element={<UbahSPB />} />
-            <Route path={PENYESUAIAN_STOK_PATH} element={<PenyesuaianStok />} />
+            <Route path={STOCK_PATH} element={<Stock />} />
+            <Route path={UBAH_STOK_PATH} element={<UbahStok />} />
+            <Route path={CHANGE_PASSWORD_PATH} element={<ChangePassword />} />
           </Routes>
         </div>
       </div>

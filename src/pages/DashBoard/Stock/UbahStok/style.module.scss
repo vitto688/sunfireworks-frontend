@@ -1,0 +1,49 @@
+.ubahStokSection{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    height: 100%;
+    background-color: white;
+    border-radius: 15px;
+    gap: 20px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    .actionsSection{
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        min-width: 350px;
+
+    }
+
+    .formSection{
+        display: flex;
+        flex-direction: column;
+        padding: 20px 2px;
+        gap: 20px;
+        min-width: 350px;
+        overflow-x: scroll;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      
+        &::-webkit-scrollbar {
+          display: none; /* Chrome, Safari */
+        }
+
+        .quantitySection{
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+    }
+
+    
+}

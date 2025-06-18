@@ -27,6 +27,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isAuthenticated: true,
+        user: action.payload,
         loading: { ...state.loading, validateToken: false },
       };
     case "VALIDATE_TOKEN_FAILURE":
@@ -214,6 +215,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         roles: [...state.roles, action.payload],
+        message: "Role berhasil ditambahkan.",
         loading: { ...state.loading, roles: false },
       };
     case "ADD_ROLE_FAILURE":
@@ -236,6 +238,7 @@ const authReducer = (state = initialState, action) => {
         roles: state.roles.map((role) =>
           role.id === action.payload.id ? action.payload : role
         ),
+        message: "Role berhasil diperbarui.",
         loading: { ...state.loading, roles: false },
       };
     case "UPDATE_ROLE_FAILURE":
@@ -256,6 +259,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         roles: state.roles.filter((role) => role.id !== action.payload),
+        message: "Role berhasil dihapus.",
         loading: { ...state.loading, roles: false },
       };
     case "DELETE_ROLE_FAILURE":
@@ -264,6 +268,26 @@ const authReducer = (state = initialState, action) => {
         errorCode: action.payload,
         errorMessage: "Gagal menghapus role.",
         loading: { ...state.loading, roles: false },
+      };
+    case "CHANGE_PASSWORD_REQUEST":
+      return {
+        ...state,
+        errorCode: null,
+        errorMessage: null,
+        loading: { ...state.loading, users: true },
+      };
+    case "CHANGE_PASSWORD_SUCCESS":
+      return {
+        ...state,
+        message: "Password berhasil diubah.",
+        loading: { ...state.loading, users: false },
+      };
+    case "CHANGE_PASSWORD_FAILURE":
+      return {
+        ...state,
+        errorCode: action.payload,
+        errorMessage: "Gagal mengubah password.",
+        loading: { ...state.loading, users: false },
       };
     default:
       return state;

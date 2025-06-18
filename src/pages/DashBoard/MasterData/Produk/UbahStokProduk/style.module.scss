@@ -1,0 +1,85 @@
+.ubahStokSection{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    height: 100%;
+    background-color: white;
+    border-radius: 15px;
+    gap: 20px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    .actionsSection{
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        min-width: 350px;
+
+    }
+
+    .formSection{
+        display: flex;
+        flex-direction: column;
+        padding: 20px 2px;
+        gap: 20px;
+        min-width: 350px;
+        overflow-x: scroll;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      
+        &::-webkit-scrollbar {
+          display: none; /* Chrome, Safari */
+        }
+
+        .quantitySection{
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+
+        .stokGudang{
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          .stokItem{
+            display: grid;
+            grid-template-columns: 1fr 150px 150px;
+            gap: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9fbff;
+            
+
+            &:hover {
+              background-color: #e0e0e0;
+              transition: background-color 0.2s;
+            }
+
+            .label {
+              display: flex;
+              align-items: center;
+              font-weight: 600;
+              font-size: 12px;
+              color: #1a1a1a;
+            }
+          }
+        }
+
+    }
+
+    
+}

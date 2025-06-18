@@ -2,8 +2,9 @@ export const validateTokenRequest = () => ({
   type: "VALIDATE_TOKEN_REQUEST",
 });
 
-export const validateTokenSuccess = () => ({
+export const validateTokenSuccess = (user) => ({
   type: "VALIDATE_TOKEN_SUCCESS",
+  payload: user,
 });
 
 export const validateTokenFailure = (error) => ({
@@ -137,5 +138,16 @@ export const deleteRoleSuccess = (roleId) => ({
 });
 export const deleteRoleFailure = (error) => ({
   type: "DELETE_ROLE_FAILURE",
+  payload: error,
+});
+export const changePasswordRequest = (data) => ({
+  type: "CHANGE_PASSWORD_REQUEST",
+  payload: data,
+});
+export const changePasswordSuccess = () => ({
+  type: "CHANGE_PASSWORD_SUCCESS",
+});
+export const changePasswordFailure = (error) => ({
+  type: "CHANGE_PASSWORD_FAILURE",
   payload: error,
 });

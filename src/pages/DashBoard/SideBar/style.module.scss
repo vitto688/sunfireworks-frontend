@@ -14,14 +14,23 @@
       display: none; /* Chrome, Safari */
     }
 
-    .logoSection{
-        width: 100%;
+    .topSection{
         display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 30px;
-    }       
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 10px;
+
+
+        .logoSection{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 8px;
+           
+        }     
+    }
+
+     
 
     .icon{
         width: 24px;

@@ -31,14 +31,17 @@ import {
   updateRoleFailure,
   restoreUserSuccess,
   restoreUserFailure,
+  changePasswordSuccess,
+  changePasswordFailure,
 } from "../actions/authActions";
 import { loadInitialMasterData } from "./masterSaga";
+import { fetchStocks } from "./stockSaga";
 
 function* loadInitialData() {
-  yield all([fetchRolesRequest(), loadInitialMasterData()]);
+  yield all([fetchRoles(), loadInitialMasterData(), fetchStocks()]);
 }
 
-function* validateTokenRequest() {
+function* validateToken() {
   try {
     const token = getCookie("refreshToken");
     const user = getLocalStorage("user");
@@ -65,7 +68,7 @@ function* validateTokenRequest() {
   }
 }
 
-function* loginRequest(action) {
+function* login(action) {
   try {
     const response = yield call(
       axiosInstance.post,
@@ -90,7 +93,7 @@ function* loginRequest(action) {
   }
 }
 
-function* logoutRequest() {
+function* logout() {
   try {
     const refresh = getCookie("refreshToken");
     yield call(axiosInstance.post, "/auth/logout/", { refresh });
@@ -101,7 +104,7 @@ function* logoutRequest() {
   }
 }
 
-function* fetchUsersRequest() {
+function* fetchUsers() {
   try {
     const response = yield call(axiosInstance.get, "/users/?view=all");
     if (response.status === 200) {
@@ -114,7 +117,7 @@ function* fetchUsersRequest() {
   }
 }
 
-function* addUserRequest(action) {
+function* addUser(action) {
   try {
     const response = yield call(axiosInstance.post, "/users/", action.payload);
     if (response.status === 201) {
@@ -127,7 +130,7 @@ function* addUserRequest(action) {
   }
 }
 
-function* updateUserRequest(action) {
+function* updateUser(action) {
   try {
     const response = yield call(
       axiosInstance.put,
@@ -144,7 +147,7 @@ function* updateUserRequest(action) {
   }
 }
 
-function* fetchRolesRequest() {
+function* fetchRoles() {
   try {
     const response = yield call(axiosInstance.get, "/roles/");
     if (response.status === 200) {
@@ -157,7 +160,7 @@ function* fetchRolesRequest() {
   }
 }
 
-function* updateRoleRequest(action) {
+function* updateRole(action) {
   try {
     const response = yield call(
       axiosInstance.post,
@@ -174,7 +177,7 @@ function* updateRoleRequest(action) {
   }
 }
 
-function* deleteUserRequest(action) {
+function* deleteUser(action) {
   try {
     const response = yield call(
       axiosInstance.delete,
@@ -190,7 +193,7 @@ function* deleteUserRequest(action) {
   }
 }
 
-function* restoreUserRequest(action) {
+function* restoreUser(action) {
   try {
     const response = yield call(
       axiosInstance.post,
@@ -206,15 +209,34 @@ function* restoreUserRequest(action) {
   }
 }
 
+function* changePassword(action) {
+  try {
+    const response = yield call(
+      axiosInstance.post,
+      `/users/${action.payload.id}/change_password/`,
+      action.payload.body
+    );
+
+    if (response.status === 200) {
+      yield put(changePasswordSuccess());
+    } else {
+      yield put(changePasswordFailure(response.status));
+    }
+  } catch (error) {
+    yield put(changePasswordFailure(error));
+  }
+}
+
 export default function* authSaga() {
-  yield takeLatest("VALIDATE_TOKEN_REQUEST", validateTokenRequest);
-  yield takeLatest("LOGIN_REQUEST", loginRequest);
-  yield takeLatest("LOGOUT", logoutRequest);
-  yield takeLatest("FETCH_USERS_REQUEST", fetchUsersRequest);
-  yield takeLatest("ADD_USER_REQUEST", addUserRequest);
-  yield takeLatest("UPDATE_USER_REQUEST", updateUserRequest);
-  yield takeLatest("FETCH_ROLES_REQUEST", fetchRolesRequest);
-  yield takeLatest("UPDATE_ROLE_REQUEST", updateRoleRequest);
-  yield takeLatest("DELETE_USER_REQUEST", deleteUserRequest);
-  yield takeLatest("RESTORE_USER_REQUEST", restoreUserRequest);
+  yield takeLatest("VALIDATE_TOKEN_REQUEST", validateToken);
+  yield takeLatest("LOGIN_REQUEST", login);
+  yield takeLatest("LOGOUT", logout);
+  yield takeLatest("FETCH_USERS_REQUEST", fetchUsers);
+  yield takeLatest("ADD_USER_REQUEST", addUser);
+  yield takeLatest("UPDATE_USER_REQUEST", updateUser);
+  yield takeLatest("FETCH_ROLES_REQUEST", fetchRoles);
+  yield takeLatest("UPDATE_ROLE_REQUEST", updateRole);
+  yield takeLatest("DELETE_USER_REQUEST", deleteUser);
+  yield takeLatest("RESTORE_USER_REQUEST", restoreUser);
+  yield takeLatest("CHANGE_PASSWORD_REQUEST", changePassword);
 }

@@ -35,6 +35,12 @@ import {
   addProductFailure,
   updateProductSuccess,
   updateProductFailure,
+  deleteCustomerSuccess,
+  deleteCustomerFailure,
+  addCustomerSuccess,
+  addCustomerFailure,
+  updateCustomerSuccess,
+  updateCustomerFailure,
 } from "../actions/masterActions";
 
 // import API functions
@@ -190,7 +196,6 @@ function* deleteWarehouse(action) {
       action.payload.id
     ); //
 
-    console.log("response", response);
     if (response.status === 204 || response.status === 200) {
       yield put(deleteWarehouseSuccess(action.payload.id));
     } else {
@@ -259,6 +264,44 @@ function* fetchCustomers() {
   }
 }
 
+function* addCustomer(action) {
+  try {
+    const customer = yield call(
+      customerAPI.createCustomer,
+      action.payload.body
+    ); // Call the API function
+    yield put(addCustomerSuccess(customer)); // Dispatch success action with customers
+  } catch (error) {
+    yield put(addCustomerFailure(error.message)); // Dispatch failure action with error message
+  }
+}
+
+function* updateCustomer(action) {
+  try {
+    const customer = yield call(
+      customerAPI.updateCustomer,
+      action.payload.id,
+      action.payload.body
+    ); // Call the API function
+    yield put(updateCustomerSuccess(customer)); // Dispatch success action with customers
+  } catch (error) {
+    yield put(updateCustomerFailure(error.message)); // Dispatch failure action with error message
+  }
+}
+
+function* deleteCustomer(action) {
+  try {
+    const response = yield call(customerAPI.deleteCustomer, action.payload.id); // Call the API function
+    if (response.status === 204 || response.status === 200) {
+      yield put(deleteCustomerSuccess(action.payload.id)); // Dispatch success action with customer ID
+    } else {
+      yield put(deleteCustomerFailure(response.status)); // Dispatch failure action with error status
+    }
+  } catch (error) {
+    yield put(deleteCustomerFailure(error.message)); // Dispatch failure action with error message
+  }
+}
+
 function* productSaga() {
   yield takeLatest("FETCH_PRODUCTS_REQUEST", fetchProducts);
   yield takeLatest("ADD_PRODUCT_REQUEST", addProduct); // Assuming this is to refresh products after adding
@@ -277,6 +320,9 @@ function* productSaga() {
   yield takeLatest("UPDATE_SUPPLIER_REQUEST", updateSupplier);
   yield takeLatest("DELETE_SUPPLIER_REQUEST", deleteSupplier);
   yield takeLatest("FETCH_CUSTOMERS_REQUEST", fetchCustomers);
+  yield takeLatest("ADD_CUSTOMER_REQUEST", addCustomer); // Assuming this is to refresh customers after adding
+  yield takeLatest("UPDATE_CUSTOMER_REQUEST", updateCustomer); // Assuming this is to refresh customers after updatin
+  yield takeLatest("DELETE_CUSTOMER_REQUEST", deleteCustomer);
 }
 
 export default productSaga;

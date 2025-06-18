@@ -1,0 +1,23 @@
+.addStockButton{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2563eb; // Tailwind blue-600
+    color: white;
+    padding: 3px 5px;
+    border-radius: 0.75rem;
+    border: 1px solid #2563eb;
+    font-weight: 600;
+    font-size: 12px;
+    box-shadow: 0 1px 3px #2563eb;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #1d4ed8; // Tailwind blue-700
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}

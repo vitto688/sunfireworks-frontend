@@ -129,7 +129,7 @@ const SPGBawang = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
           <div className={styles.tableHeaderItem}>No SPG</div>
-          <div className={styles.tableHeaderItem}>Gudang</div>
+          <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>No SJ</div>
         </div>

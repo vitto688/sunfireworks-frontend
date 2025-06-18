@@ -118,10 +118,10 @@ const TambahSPGBawang = () => {
         <div className={styles.row}>
           <SearchField
             title="Cari Gudang"
-            label="Gudang"
+            label="Gudang Tujuan"
             type="text"
-            id="gudang"
-            name="gudang"
+            id="gudangTujuan"
+            name="gudangTujuan"
             data={warehouses.map((warehouse) => ({
               id: warehouse.id,
               name: warehouse.name,

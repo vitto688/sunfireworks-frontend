@@ -130,7 +130,10 @@ const SPGImport = () => {
           <div className={styles.tableHeaderItem}>No SPG</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
-          <div className={styles.tableHeaderItem}>No SJ</div>
+          <div className={styles.tableHeaderItem}>No Kontainer</div>
+          <div className={styles.tableHeaderItem}>No Polisi</div>
+          <div className={styles.tableHeaderItem}>Mulai Bongkar</div>
+          <div className={styles.tableHeaderItem}>Selesai Muat</div>
         </div>
         <div className={styles.tableBody}>
           {data.map((item) => (
@@ -152,7 +155,10 @@ const SPGImport = () => {
               <div className={styles.tableRowItem}>{item.no_faktur}</div>
               <div className={styles.tableRowItem}>{item.gudang}</div>
               <div className={styles.tableRowItem}>{item.diinput_oleh}</div>
-              <div className={styles.tableRowItem}>{item.no_surat_jalan}</div>
+              <div className={styles.tableRowItem}>-</div>
+              <div className={styles.tableRowItem}>-</div>
+              <div className={styles.tableRowItem}>-</div>
+              <div className={styles.tableRowItem}>-</div>
             </div>
           ))}
         </div>

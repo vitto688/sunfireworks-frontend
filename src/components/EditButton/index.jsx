@@ -6,7 +6,7 @@ const EditButton = ({ onClick }) => {
   return (
     <button className={styles.editButton} onClick={onClick}>
       <FaEdit className={styles.icon} />
-      Ubah Stok
+      Ubah
     </button>
   );
 };

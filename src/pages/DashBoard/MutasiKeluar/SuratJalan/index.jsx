@@ -1,13 +1,170 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+// import styles
+import styles from "./style.module.scss";
+
+// import components
+import SearchBar from "../../../../components/SearchBar";
+import CustomButton from "../../../../components/CustomButton";
+import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
+import CustomDeleteButton from "../../../../components/CustomDeleteButton";
+import { dataTransaksi } from "../../../../dummy_data/transactions";
+import FilterDropdown from "../../../../components/FilterDropdown";
+import DatePicker from "../../../../components/DatePicker";
+import { UBAH_SURAT_JALAN_PATH } from "./UbahSuratJalan";
+import { TAMBAH_SURAT_JALAN_PATH } from "./TambahSuratJalan";
 
 // Define the path for the Surat Jalan page
 export const SURAT_JALAN_PATH = "/mutasi-keluar/surat-jalan";
 
 const SuratJalan = () => {
+  //#region Hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
+  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const { warehouses } = useSelector((state) => state.master);
+
+  useEffect(() => {
+    // Fetch data or perform any necessary actions on component mount
+  }, []);
+
+  useEffect(() => {
+    const filteredTransaksi = filteredData.filter((item) =>
+      item.no_faktur.toLowerCase().includes(query.toLowerCase())
+    );
+    setData(filteredTransaksi);
+  }, [query, filteredData]);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      const filtered = filteredData.filter((item) => {
+        const itemDate = new Date(item.tanggal_transaksi);
+        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+      });
+      setData(filtered);
+    }
+  }, [startDate, endDate, filteredData]);
+
+  useEffect(() => {
+    if (warehouses.length > 0) {
+      const options = [
+        { label: "Semua Gudang", value: 0 },
+        ...warehouses.map((warehouse) => ({
+          label: warehouse.name,
+          value: warehouse.name, // Assuming warehouse.name is unique
+        })),
+      ];
+      setWarehouseFilterOptions(options);
+    }
+  }, [warehouses]);
+
+  useEffect(() => {
+    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
+    if (selectedWarehouseFilter === 0) {
+      setFilteredData(dataTransaksi);
+    } else {
+      const filtered = dataTransaksi.filter(
+        (item) => item.gudang === selectedWarehouseFilter
+      );
+      setFilteredData(filtered);
+    }
+  }, [selectedWarehouseFilter]);
+  //#endregion
+
+  //#region Handlers
+
+  const handleAddClick = () => {
+    navigate(TAMBAH_SURAT_JALAN_PATH);
+  };
+
+  const handleDelete = (value) => {
+    setModalOpen((old) => !old);
+  };
+
+  const handleItemClick = (value) => {
+    navigate(UBAH_SURAT_JALAN_PATH, { state: value });
+  };
+  //#endregion
+
   return (
-    <div>
-      <h1>Surat Jalan</h1>
-      <p>This is the Surat Jalan component.</p>
+    <div className={styles.suratJalanSection}>
+      <div className={styles.actionsSection}>
+        {/* <CustomButton
+          // variant="outline"
+          label="+ Tambah"
+          onClick={handleAddClick}
+        /> */}
+      </div>
+      <div className={styles.searchFilterSection}>
+        <SearchBar
+          type="text"
+          placeholder="Cari Surat Jalan..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className={styles.filterSection}>
+          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
+          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
+          <FilterDropdown
+            options={warehouseFilterOptions}
+            placeholder="Filter Gudang"
+            onChange={(val) => setSelectedWarehouseFilter(val.value)}
+          />
+        </div>
+      </div>
+      <div className={styles.returPenjualanTable}>
+        <div className={styles.tableHeader}>
+          <div className={styles.tableHeaderItem} />
+          <div className={styles.tableHeaderItem}>No</div>
+          <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
+          <div className={styles.tableHeaderItem}>No Bukti</div>
+          <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
+          <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
+          <div className={styles.tableHeaderItem}>Di Input Oleh</div>
+        </div>
+        <div className={styles.tableBody}>
+          {data.map((item) => (
+            <div
+              role="presentation"
+              className={styles.tableRow}
+              onClick={() => handleItemClick(item)}
+            >
+              <CustomDeleteButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalOpen(item);
+                }}
+              />
+              <div className={styles.tableRowItem}>{item.no}</div>
+              <div className={styles.tableRowItem}>
+                {item.tanggal_transaksi}
+              </div>
+              <div className={styles.tableRowItem}>{item.no_faktur}</div>
+              <div className={styles.tableRowItem}>{item.nama_pelanggan}</div>
+              <div className={styles.tableRowItem}>{item.gudang}</div>
+              <div className={styles.tableRowItem}>{item.diinput_oleh}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <ConfirmDeleteModal
+        label="Apakah anda yakin untuk menghapus item ini?"
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={() => handleDelete("test")}
+      />
     </div>
   );
 };

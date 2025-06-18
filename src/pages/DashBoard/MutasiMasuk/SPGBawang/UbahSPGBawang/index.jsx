@@ -302,10 +302,10 @@ const UbahSPGBawang = () => {
 
         <div className={styles.row}>
           <InputField
-            label="Gudang"
+            label="Gudang Tujuan"
             type="text"
-            id="gudang"
-            name="gudang"
+            id="gudangTujuan"
+            name="gudangTujuan"
             value={gudang}
             onChange={(e) => setGudang(e.target.value)}
           />

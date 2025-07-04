@@ -5,11 +5,15 @@ import { useLocation } from "react-router-dom";
 // Import styles
 import styles from "./style.module.scss";
 
+// Import actions
+import { expandMenu } from "../../../redux/actions/menuActions";
+
 // Import assets
 import { ReactComponent as LogoIcon } from "../../../assets/svg/logo.svg";
 import { ReactComponent as HomeIcon } from "../../../assets/svg/home.svg";
 import { ReactComponent as UserIcon } from "../../../assets/svg/user.svg";
 import { ReactComponent as MasterDataIcon } from "../../../assets/svg/master-data.svg";
+import { ReactComponent as LaporanIcon } from "../../../assets/svg/laporan.svg";
 import { ReactComponent as MutasiDataIcon } from "../../../assets/svg/mutasi.svg";
 import { ReactComponent as PenyesuaianStockDataIcon } from "../../../assets/svg/penyesuaian-stok.svg";
 
@@ -34,10 +38,13 @@ import { TRANSFER_STOK_PATH } from "../MutasiGudang/TransferStok";
 import { SPK_BARANG_PATH } from "../MutasiKeluar/SPKBarang";
 import { PENGGUNA_PATH } from "../Pengguna";
 import { CHANGE_PASSWORD_PATH } from "../ChangePassword";
-
-// Import actions
-import { expandMenu } from "../../../redux/actions/menuActions";
 import { STOCK_PATH } from "../Stock";
+import { LAPORAN_RETUR_PENJUALAN_PATH } from "../Laporan/ReturPenjualan";
+import { LAPORAN_STOK_BARANG_PATH } from "../Laporan/StokBarang";
+import { LAPORAN_MUTASI_BARANG_PATH } from "../Laporan/MutasiBarang";
+import { LAPORAN_RETUR_PEMBELIAN_PATH } from "../Laporan/ReturPembelian";
+import { LAPORAN_PENERIMAAN_BARANG_PATH } from "../Laporan/PenerimaanBarang";
+import { LAPORAN_PENGELUARAN_BARANG_PATH } from "../Laporan/PengeluaranBarang";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -251,12 +258,55 @@ const SideBar = () => {
           />
         }
         isSelected={STOCK_PATH === pathname}
-        // subMenus={[
-        //   {
-        //     name: "Penyesuaian Stok Barang",
-        //     to: "penyesuaian-stok/penyesuaian-stok-barang",
-        //   },
-        // ]}
+      />
+      <div className={styles.devider}></div>
+      <SideMenuItem
+        name="Laporan"
+        icon={
+          <LaporanIcon
+            className={`${styles.iconLaporan} ${
+              STOCK_PATH === pathname && styles.selected
+            }`}
+          />
+        }
+        isSelected={false}
+        isExpanded={expandedMenus.includes("/laporan")}
+        onExpandCollapse={() => {
+          dispatch(expandMenu({ path: "/laporan" }));
+        }}
+        subMenus={[
+          {
+            name: "Stok Barang",
+            to: LAPORAN_STOK_BARANG_PATH,
+            isSelected: LAPORAN_STOK_BARANG_PATH === pathname,
+          },
+          {
+            name: "Mutasi Barang",
+            to: LAPORAN_MUTASI_BARANG_PATH,
+            isSelected: LAPORAN_MUTASI_BARANG_PATH === pathname,
+          },
+
+          {
+            name: "Retur Penjualan",
+            to: LAPORAN_RETUR_PENJUALAN_PATH,
+            isSelected: LAPORAN_RETUR_PENJUALAN_PATH === pathname,
+          },
+          {
+            name: "Retur Pembelian",
+            to: LAPORAN_RETUR_PEMBELIAN_PATH,
+            isSelected: LAPORAN_RETUR_PEMBELIAN_PATH === pathname,
+          },
+          {
+            name: "Penerimaan Barang",
+            to: LAPORAN_PENERIMAAN_BARANG_PATH,
+            isSelected: LAPORAN_PENERIMAAN_BARANG_PATH === pathname,
+          },
+          {
+            name: "Pengeluaran Barang",
+            to: LAPORAN_PENGELUARAN_BARANG_PATH,
+            isSelected: LAPORAN_PENGELUARAN_BARANG_PATH === pathname,
+          },
+        ]}
       />
       <div className={styles.devider}></div>
 

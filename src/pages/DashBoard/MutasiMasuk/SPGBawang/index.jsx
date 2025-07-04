@@ -11,11 +11,17 @@ import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
-import { dataTransaksi } from "../../../../dummy_data/transactions";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
 import { UBAH_SPGBAWANG_PATH } from "./UbahSPGBawang";
 import { TAMBAH_SPGBAWANG_PATH } from "./TambahSPGBawang";
+
+// Import SPG Redux Actions
+import {
+  fetchSPGRequest,
+  deleteSPGRequest,
+  resetSPGMessages,
+} from "../../../../redux/actions/spgActions";
 
 export const SPG_BAWANG_PATH = "/mutasi-masuk/spg-bawang";
 
@@ -25,71 +31,108 @@ const SPGBawang = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [data, setData] = useState([]);
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Redux state untuk SPG Bawang
+  const {
+    data: spgBawangData,
+    loading,
+    message,
+    errorMessage,
+    pagination,
+  } = useSelector((state) => state.spg.bawang);
   const { warehouses } = useSelector((state) => state.master);
 
+  // Fetch SPG Bawang data saat component mount
   useEffect(() => {
-    // Fetch data or perform any necessary actions on component mount
-  }, []);
+    dispatch(fetchSPGRequest("bawang"));
+  }, [dispatch]);
 
+  // Reset messages setelah 3 detik
   useEffect(() => {
-    const filteredTransaksi = filteredData.filter((item) =>
-      item.no_faktur.toLowerCase().includes(query.toLowerCase())
-    );
-    setData(filteredTransaksi);
-  }, [query, filteredData]);
+    if (message || errorMessage) {
+      const timer = setTimeout(() => {
+        dispatch(resetSPGMessages("bawang"));
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, errorMessage, dispatch]);
 
+  // Filter data berdasarkan search query
   useEffect(() => {
-    if (startDate && endDate) {
-      const filtered = filteredData.filter((item) => {
-        const itemDate = new Date(item.tanggal_transaksi);
+    if (spgBawangData.length > 0) {
+      const filtered = spgBawangData.filter(
+        (item) =>
+          item.document_number?.toLowerCase().includes(query.toLowerCase()) ||
+          item.sj_number?.toLowerCase().includes(query.toLowerCase()) ||
+          item.warehouse_name?.toLowerCase().includes(query.toLowerCase()) ||
+          item.user_email?.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData([]);
+    }
+  }, [query, spgBawangData]);
+
+  // Filter data berdasarkan tanggal
+  useEffect(() => {
+    if (startDate && endDate && spgBawangData.length > 0) {
+      const filtered = spgBawangData.filter((item) => {
+        const itemDate = new Date(item.transaction_date);
         return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
       });
-      setData(filtered);
+      setFilteredData(filtered);
     }
-  }, [startDate, endDate, filteredData]);
+  }, [startDate, endDate, spgBawangData]);
 
+  // Setup warehouse filter options
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
         { label: "Semua Gudang", value: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name, // Assuming warehouse.name is unique
+          value: warehouse.name,
         })),
       ];
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
 
+  // Filter data berdasarkan warehouse
   useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
     if (selectedWarehouseFilter === 0) {
-      setFilteredData(dataTransaksi);
+      setFilteredData(spgBawangData);
     } else {
-      const filtered = dataTransaksi.filter(
-        (item) => item.gudang === selectedWarehouseFilter
+      const filtered = spgBawangData.filter(
+        (item) => item.warehouse_name === selectedWarehouseFilter
       );
       setFilteredData(filtered);
     }
-  }, [selectedWarehouseFilter]);
+  }, [selectedWarehouseFilter, spgBawangData]);
   //#endregion
 
   //#region Handlers
-
   const handleAddClick = () => {
     navigate(TAMBAH_SPGBAWANG_PATH);
   };
 
-  const handleDelete = (value) => {
-    setModalOpen((old) => !old);
+  const handleDelete = () => {
+    if (selectedItemToDelete) {
+      dispatch(deleteSPGRequest("bawang", selectedItemToDelete.id));
+      setModalOpen(false);
+      setSelectedItemToDelete(null);
+    }
+  };
+
+  const handleDeleteClick = (item) => {
+    setSelectedItemToDelete(item);
+    setModalOpen(true);
   };
 
   const handleItemClick = (value) => {
@@ -99,12 +142,27 @@ const SPGBawang = () => {
 
   return (
     <div className={styles.spgBawangSection}>
+      {/* Loading indicator */}
+      {loading && (
+        <div className={styles.loadingIndicator}>
+          <p>Loading SPG Bawang data...</p>
+        </div>
+      )}
+
+      {/* Success/Error Messages */}
+      {message && (
+        <div className={styles.successMessage}>
+          <p>{message}</p>
+        </div>
+      )}
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          <p>{errorMessage}</p>
+        </div>
+      )}
+
       <div className={styles.actionsSection}>
-        <CustomButton
-          // variant="outline"
-          label="+ Tambah"
-          onClick={handleAddClick}
-        />
+        <CustomButton label="+ Tambah" onClick={handleAddClick} />
       </div>
       <div className={styles.searchFilterSection}>
         <SearchBar
@@ -134,35 +192,67 @@ const SPGBawang = () => {
           <div className={styles.tableHeaderItem}>No SJ</div>
         </div>
         <div className={styles.tableBody}>
-          {data.map((item) => (
-            <div
-              role="presentation"
-              className={styles.tableRow}
-              onClick={() => handleItemClick(item)}
-            >
-              <CustomDeleteButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setModalOpen(item);
-                }}
-              />
-              <div className={styles.tableRowItem}>{item.no}</div>
-              <div className={styles.tableRowItem}>
-                {item.tanggal_transaksi}
+          {filteredData.length > 0 ? (
+            filteredData.map((item, index) => (
+              <div
+                key={item.id || index}
+                role="presentation"
+                className={styles.tableRow}
+                onClick={() => handleItemClick(item)}
+              >
+                <CustomDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(item);
+                  }}
+                />
+                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {new Date(item.transaction_date).toLocaleDateString("id-ID")}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.document_number}
+                </div>
+                <div className={styles.tableRowItem}>{item.warehouse_name}</div>
+                <div className={styles.tableRowItem}>{item.user_email}</div>
+                <div className={styles.tableRowItem}>{item.sj_number}</div>
               </div>
-              <div className={styles.tableRowItem}>{item.no_faktur}</div>
-              <div className={styles.tableRowItem}>{item.gudang}</div>
-              <div className={styles.tableRowItem}>{item.diinput_oleh}</div>
-              <div className={styles.tableRowItem}>{item.no_surat_jalan}</div>
+            ))
+          ) : (
+            <div className={styles.noDataMessage}>
+              <p>Tidak ada data SPG Bawang yang ditemukan.</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
+
+      {/* Pagination Info */}
+      {pagination && pagination.count > 0 && (
+        <div className={styles.paginationInfo}>
+          <p>
+            Menampilkan {filteredData.length} dari {pagination.count} data SPG
+            Bawang
+            {pagination.total_pages > 1 && (
+              <span>
+                {" "}
+                - Halaman {pagination.current_page} dari{" "}
+                {pagination.total_pages}
+              </span>
+            )}
+          </p>
+        </div>
+      )}
+
       <ConfirmDeleteModal
-        label="Apakah anda yakin untuk menghapus item ini?"
+        label={`Apakah anda yakin untuk menghapus SPG Bawang "${
+          selectedItemToDelete?.document_number || "ini"
+        }"?`}
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={() => handleDelete("test")}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedItemToDelete(null);
+        }}
+        onConfirm={handleDelete}
       />
     </div>
   );

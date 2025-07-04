@@ -94,10 +94,10 @@ import UbahSPGKawat, {
   UBAH_SPG_KAWAT_PATH,
 } from "./MutasiMasuk/SPGKawat/UbahSPGKawat";
 import TambahSPGLain, {
-  TAMBAH_SPGLAIN_PATH,
+  TAMBAH_SPG_LAIN_PATH,
 } from "./MutasiMasuk/SPGLain/TambahSPGLain";
 import UbahSPGLain, {
-  UBAH_SPGLAIN_PATH,
+  UBAH_SPG_LAIN_PATH,
 } from "./MutasiMasuk/SPGLain/UbahSPGLain";
 import TambahSuratTerimaBarang, {
   TAMBAH_SURAT_TERIMA_BARANG_PATH,
@@ -143,6 +143,24 @@ import UbahStok, { UBAH_STOK_PATH } from "./Stock/UbahStok";
 import UbahStokProduk, {
   UBAH_STOK_PRODUK_PATH,
 } from "./MasterData/Produk/UbahStokProduk";
+import LaporanReturPenjualan, {
+  LAPORAN_RETUR_PENJUALAN_PATH,
+} from "./Laporan/ReturPenjualan";
+import LaporanReturPembelian, {
+  LAPORAN_RETUR_PEMBELIAN_PATH,
+} from "./Laporan/ReturPembelian";
+import LaporanStokBarang, {
+  LAPORAN_STOK_BARANG_PATH,
+} from "./Laporan/StokBarang";
+import LaporanMutasiBarang, {
+  LAPORAN_MUTASI_BARANG_PATH,
+} from "./Laporan/MutasiBarang";
+import LaporanPenerimaanBarang, {
+  LAPORAN_PENERIMAAN_BARANG_PATH,
+} from "./Laporan/PenerimaanBarang";
+import LaporanPengeluaranBarang, {
+  LAPORAN_PENGELUARAN_BARANG_PATH,
+} from "./Laporan/PengeluaranBarang";
 
 export const dashboardPath = "/*";
 
@@ -216,8 +234,8 @@ const Dashboard = () => {
             <Route path={TAMBAH_SPG_KAWAT_PATH} element={<TambahSPGKawat />} />
             <Route path={UBAH_SPG_KAWAT_PATH} element={<UbahSPGKawat />} />
             <Route path={SPG_LAIN_PATH} element={<SPGLain />} />
-            <Route path={TAMBAH_SPGLAIN_PATH} element={<TambahSPGLain />} />
-            <Route path={UBAH_SPGLAIN_PATH} element={<UbahSPGLain />} />
+            <Route path={TAMBAH_SPG_LAIN_PATH} element={<TambahSPGLain />} />
+            <Route path={UBAH_SPG_LAIN_PATH} element={<UbahSPGLain />} />
             <Route
               path={SURAT_TERIMA_BARANG_PATH}
               element={<SuratTerimaBarang />}
@@ -268,6 +286,30 @@ const Dashboard = () => {
             <Route path={UBAH_SPB_PATH} element={<UbahSPB />} />
             <Route path={STOCK_PATH} element={<Stock />} />
             <Route path={UBAH_STOK_PATH} element={<UbahStok />} />
+            <Route
+              path={LAPORAN_RETUR_PENJUALAN_PATH}
+              element={<LaporanReturPenjualan />}
+            />
+            <Route
+              path={LAPORAN_RETUR_PEMBELIAN_PATH}
+              element={<LaporanReturPembelian />}
+            />
+            <Route
+              path={LAPORAN_STOK_BARANG_PATH}
+              element={<LaporanStokBarang />}
+            />
+            <Route
+              path={LAPORAN_MUTASI_BARANG_PATH}
+              element={<LaporanMutasiBarang />}
+            />
+            <Route
+              path={LAPORAN_PENERIMAAN_BARANG_PATH}
+              element={<LaporanPenerimaanBarang />}
+            />
+            <Route
+              path={LAPORAN_PENGELUARAN_BARANG_PATH}
+              element={<LaporanPengeluaranBarang />}
+            />
             <Route path={CHANGE_PASSWORD_PATH} element={<ChangePassword />} />
           </Routes>
         </div>

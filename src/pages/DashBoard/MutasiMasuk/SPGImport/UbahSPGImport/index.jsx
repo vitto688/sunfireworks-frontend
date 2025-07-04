@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,10 +12,17 @@ import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
+import SearchField from "../../../../../components/SearchField";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
-import EditButton from "../../../../../components/EditButton";
 import EditStockModal from "../../../../../components/EditStockModal";
+import EditButton from "../../../../../components/EditButton";
+
+// Import Redux actions
+import {
+  updateSPGImportRequest,
+  resetSPGImportMessages,
+} from "../../../../../redux/actions/spgActions";
 
 export const UBAH_SPGIMPORT_PATH = "/mutasi-masuk/spg-import/ubah-spg-import";
 
@@ -25,223 +33,84 @@ const UbahSPGImport = () => {
   const location = useLocation();
   const argument = location.state || {};
 
-  const [kodeRetur, setKodeRetur] = useState(argument?.no ?? "");
-  const [tanggalRetur, setTanggalRetur] = useState(
-    argument?.tanggal_transaksi ?? ""
+  const [gudang, setGudang] = useState(null);
+  const [noSJ, setNoSJ] = useState(argument?.sj_number || "");
+  const [noKontainer, setNoKontainer] = useState(
+    argument?.container_number || ""
   );
-  const [mulaiBongkar, setMulaiBongkar] = useState("");
-  const [selesaiBongkar, setSelesaiBongkar] = useState("");
-
-  const [keterangan, setKeterangan] = useState(argument?.description ?? "");
-  const [gudang, setGudang] = useState(argument?.gudang ?? "");
-  const [noKontainer, setNoKontainer] = useState("");
-  const [noPolisi, setNoPolisi] = useState("");
-
-  const [stok, setStok] = useState(
-    argument?.products ?? [
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-      {
-        id: 19,
-        product: 7,
-        product_name: "Kembang Api Tes",
-        product_code: "PROD101",
-        warehouse: 6,
-        warehouse_name: "G7",
-        carton_quantity: 20,
-        pack_quantity: 75,
-        is_product_deleted: false,
-        created_at: "2025-06-04T17:05:58.804334Z",
-        updated_at: "2025-06-07T08:01:42.007215Z",
-      },
-    ]
+  const [noKendaraan, setNoKendaraan] = useState(
+    argument?.vehicle_number || ""
   );
+  const [mulaiBongkar, setMulaiBongkar] = useState(
+    argument?.start_unload || ""
+  ); // type date time
+  const [selesaiBongkar, setSelesaiBongkar] = useState(
+    argument?.finish_load || ""
+  ); // type date time
+  const [stok, setStok] = useState(argument?.items || []);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(null);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
 
   const { stocks } = useSelector((state) => state.stock);
+  const { warehouses } = useSelector((state) => state.master);
+  const { import: importData } = useSelector((state) => state.spg);
+  const { loading, message, errorMessage, errorCode } = importData;
+  //#endregion
+  console.log("stok", stok);
+
+  //#region Effects
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetSPGImportMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetSPGImportMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
 
   //#endregion
 
   //#region Handlers
   const handleSimpanClick = () => {
-    // Logic to save the updated retur penjualan
-    console.log("Retur Penjualan updated!", {
-      kodeRetur,
-      tanggalRetur,
-      keterangan,
-      gudang,
-      stok,
-    });
+    // Validate required fields
+    if (
+      !noSJ ||
+      !gudang ||
+      !noKontainer ||
+      !noKendaraan ||
+      !mulaiBongkar ||
+      !selesaiBongkar
+    ) {
+      console.error("Harap lengkapi semua field yang diperlukan");
+      return;
+    }
+
+    // Prepare data for API
+    const spgData = {
+      id: argument.id,
+      warehouse: gudang.id || gudang,
+      sj_number: noSJ,
+      container_number: noKontainer,
+      vehicle_number: noKendaraan,
+      start_unload: mulaiBongkar,
+      finish_load: selesaiBongkar,
+      items: stok.map((item) => ({
+        product: item.stock?.product || item.id,
+        packaging_size: item.packSize || "",
+        carton_quantity: item.carton || 0,
+        pack_quantity: item.pack || 0,
+      })),
+    };
+
+    console.log("Mengubah SPG Import:", spgData);
+    dispatch(updateSPGImportRequest(spgData));
   };
 
   const handleBatalClick = () => {
@@ -256,6 +125,7 @@ const UbahSPGImport = () => {
 
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
   };
+
   const handleEdit = (e, value) => {
     e.stopPropagation();
 
@@ -264,14 +134,23 @@ const UbahSPGImport = () => {
 
   const handleSaveAddStok = (data) => {
     console.log("Data stok ditambahkan:", data);
+    // Update stok state with new data
+    setStok([...stok, data]);
+    setModalOpen(false);
     // Kirim ke backend di sini...
   };
 
   const handleSaveEditStok = (data) => {
     console.log("Data stok diedit:", data);
+    // Update stok state with new data
+    setStok((prevStok) =>
+      prevStok.map((item) =>
+        item.stock.product_code === data.stock.product_code ? data : item
+      )
+    );
+    setEditModalOpen(null);
     // Kirim ke backend di sini...
   };
-
   //#endregion
 
   return (
@@ -281,61 +160,28 @@ const UbahSPGImport = () => {
           label="Batal"
           variant="outline"
           onClick={handleBatalClick}
+          disabled={loading}
         />
-        <CustomButton label="Simpan" onClick={handleSimpanClick} />
+        <CustomButton
+          label={loading ? "Menyimpan..." : "Simpan"}
+          onClick={handleSimpanClick}
+          disabled={loading}
+        />
       </div>
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          <p>Error: {errorMessage}</p>
+        </div>
+      )}
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SPG Import"
+            label="No SJ"
             type="text"
-            id="noSPGImport"
-            name="noSPGImport"
-            value={kodeRetur}
-            onChange={(e) => setKodeRetur(e.target.value)}
-          />
-          <InputField
-            label="Tanggal"
-            type="date"
-            id="tanggal"
-            name="tanggal"
-            value={tanggalRetur}
-            onChange={(e) => setTanggalRetur(e.target.value)}
-          />
-          <InputField
-            label="Mulai Bongkar"
-            type="date"
-            id="mulaiBongkar"
-            name="mulaiBongkar"
-            value={mulaiBongkar}
-            onChange={(e) => setMulaiBongkar(e.target.value)}
-          />
-          <InputField
-            label="Selesai Bongkar"
-            type="date"
-            id="selesaiBongkar"
-            name="selesaiBongkar"
-            value={selesaiBongkar}
-            onChange={(e) => setSelesaiBongkar(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.row}>
-          <InputField
-            label="Gudang Tujuan"
-            type="text"
-            id="gudang"
-            name="gudang"
-            value={gudang}
-            onChange={(e) => setGudang(e.target.value)}
-          />
-          <InputField
-            label="Keterangan"
-            type="text"
-            id="keterangan"
-            name="keterangan"
-            value={keterangan}
-            onChange={(e) => setKeterangan(e.target.value)}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
           />
           <InputField
             label="No Kontainer"
@@ -346,12 +192,47 @@ const UbahSPGImport = () => {
             onChange={(e) => setNoKontainer(e.target.value)}
           />
           <InputField
-            label="No Polisi"
+            label="No Kendaraan"
             type="text"
-            id="noPolisi"
-            name="noPolisi"
-            value={noPolisi}
-            onChange={(e) => setNoPolisi(e.target.value)}
+            id="noKendaraan"
+            name="noKendaraan"
+            value={noKendaraan}
+            onChange={(e) => setNoKendaraan(e.target.value)}
+          />
+        </div>
+        <div className={styles.row}>
+          <InputField
+            label="Mulai Bongkar"
+            type="text"
+            id="mulaiBongkar"
+            name="mulaiBongkar"
+            value={mulaiBongkar}
+            onChange={(e) => setMulaiBongkar(e.target.value)}
+          />
+          <InputField
+            label="Selesai Bongkar"
+            type="text"
+            id="selesaiBongkar"
+            name="selesaiBongkar"
+            value={selesaiBongkar}
+            onChange={(e) => setSelesaiBongkar(e.target.value)}
+          />
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang Tujuan"
+            type="text"
+            id="gudangTujuan"
+            name="gudangTujuan"
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={
+              warehouses.find(
+                (warehouse) => warehouse.id === argument?.warehouse
+              ) || null
+            }
+            onChange={(warehouse) => setGudang(warehouse)}
           />
         </div>
       </div>
@@ -368,13 +249,10 @@ const UbahSPGImport = () => {
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
-          {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
-          <div className={styles.tableHeaderItem}>Gudang</div> */}
+          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -382,7 +260,7 @@ const UbahSPGImport = () => {
               <CustomDeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
-                  setDeleteModalOpen(stokItem);
+                  setModalDeleteOpen(stokItem);
                 }}
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
@@ -390,13 +268,13 @@ const UbahSPGImport = () => {
               {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
-              </div>
-              <div className={styles.tableRowItem}>
                 {stokItem.carton_quantity}
               </div>
               <div className={styles.tableRowItem}>
                 {stokItem.pack_quantity}
+              </div>
+              <div className={styles.tableRowItem}>
+                {stokItem.packaging_size}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -416,6 +294,7 @@ const UbahSPGImport = () => {
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
+
       <EditStockModal
         stocks={stocks}
         stock={editModalOpen}
@@ -426,12 +305,12 @@ const UbahSPGImport = () => {
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"
-        open={deleteModalOpen !== null}
+        open={modalDeleteOpen !== null}
         onClose={(e) => {
           e.stopPropagation();
-          setDeleteModalOpen(null);
+          setModalDeleteOpen(null);
         }}
-        onConfirm={() => setDeleteModalOpen(null)}
+        onConfirm={() => setModalDeleteOpen(null)}
       />
     </div>
   );

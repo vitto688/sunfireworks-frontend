@@ -18,7 +18,12 @@ import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
 
-// Define the path for the Add SPG Import page
+// Import Redux actions
+import {
+  addSPGImportRequest,
+  resetSPGImportMessages,
+} from "../../../../../redux/actions/spgActions";
+
 export const TAMBAH_SPGIMPORT_PATH =
   "/mutasi-masuk/spg-import/tambah-spg-import";
 
@@ -29,14 +34,12 @@ const TambahSPGImport = () => {
   const location = useLocation();
   const argument = location.state || {};
 
-  const [kodeRetur, setKodeRetur] = useState("");
-  const [tanggalRetur, setTanggalRetur] = useState("");
-  const [mulaiBongkar, setMulaiBongkar] = useState("");
-  const [selesaiBongkar, setSelesaiBongkar] = useState("");
-  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
+  const [noSJ, setNoSJ] = useState("");
   const [noKontainer, setNoKontainer] = useState("");
-  const [noPolisi, setNoPolisi] = useState("");
+  const [noKendaraan, setNoKendaraan] = useState("");
+  const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
+  const [selesaiBongkar, setSelesaiBongkar] = useState(""); // type date time
   const [stok, setStok] = useState([]);
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -45,18 +48,64 @@ const TambahSPGImport = () => {
 
   const { stocks } = useSelector((state) => state.stock);
   const { warehouses } = useSelector((state) => state.master);
+  const { import: importData } = useSelector((state) => state.spg);
+  const { loading, message, errorMessage, errorCode } = importData;
+  //#endregion
+
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetSPGImportMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetSPGImportMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetSPGImportMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+
   //#endregion
 
   //#region Handlers
   const handleSimpanClick = () => {
-    // Logic to save the updated retur penjualan
-    console.log("Retur Penjualan updated!", {
-      kodeRetur,
-      tanggalRetur,
-      keterangan,
-      gudang,
-      stok,
-    });
+    // Validate required fields
+    if (
+      !noSJ ||
+      !gudang ||
+      !noKontainer ||
+      !noKendaraan ||
+      !mulaiBongkar ||
+      !selesaiBongkar
+    ) {
+      console.error("Harap lengkapi semua field yang diperlukan");
+      return;
+    }
+
+    // Prepare data for API
+    const spgData = {
+      warehouse: gudang.id,
+      sj_number: noSJ,
+      container_number: noKontainer,
+      vehicle_number: noKendaraan,
+      start_unload: mulaiBongkar,
+      finish_load: selesaiBongkar,
+      items: stok.map((item) => ({
+        product: item.stock.product || item.id,
+        packaging_size: item.packSize || "",
+        carton_quantity: item.carton || 0,
+        pack_quantity: item.pack || 0,
+      })),
+    };
+
+    console.log("Menambahkan SPG Import:", spgData);
+    dispatch(addSPGImportRequest(spgData));
   };
 
   const handleBatalClick = () => {
@@ -80,11 +129,21 @@ const TambahSPGImport = () => {
 
   const handleSaveAddStok = (data) => {
     console.log("Data stok ditambahkan:", data);
+    // Update stok state with new data
+    setStok([...stok, data]);
+    setModalOpen(false);
     // Kirim ke backend di sini...
   };
 
   const handleSaveEditStok = (data) => {
     console.log("Data stok diedit:", data);
+    // Update stok state with new data
+    setStok((prevStok) =>
+      prevStok.map((item) =>
+        item.stock.product_code === data.stock.product_code ? data : item
+      )
+    );
+    setEditModalOpen(null);
     // Kirim ke backend di sini...
   };
   //#endregion
@@ -96,65 +155,28 @@ const TambahSPGImport = () => {
           label="Batal"
           variant="outline"
           onClick={handleBatalClick}
+          disabled={loading}
         />
-        <CustomButton label="Simpan" onClick={handleSimpanClick} />
+        <CustomButton
+          label={loading ? "Menyimpan..." : "Simpan"}
+          onClick={handleSimpanClick}
+          disabled={loading}
+        />
       </div>
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          <p>Error: {errorMessage}</p>
+        </div>
+      )}
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SPG Import"
+            label="No SJ"
             type="text"
-            id="noSPGImport"
-            name="noSPGImport"
-            value={kodeRetur}
-            onChange={(e) => setKodeRetur(e.target.value)}
-          />
-          <InputField
-            label="Tanggal"
-            type="date"
-            id="tanggal"
-            name="tanggal"
-            value={tanggalRetur}
-            onChange={(e) => setTanggalRetur(e.target.value)}
-          />
-          <InputField
-            label="Mulai Bongkar"
-            type="date"
-            id="mulaiBongkar"
-            name="mulaiBongkar"
-            value={mulaiBongkar}
-            onChange={(e) => setMulaiBongkar(e.target.value)}
-          />
-          <InputField
-            label="Selesai Bongkar"
-            type="date"
-            id="selesaiBongkar"
-            name="selesaiBongkar"
-            value={selesaiBongkar}
-            onChange={(e) => setSelesaiBongkar(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.row}>
-          <SearchField
-            title="Cari Gudang"
-            label="Gudang"
-            type="text"
-            id="gudang"
-            name="gudang"
-            data={warehouses.map((warehouse) => ({
-              id: warehouse.id,
-              name: warehouse.name,
-            }))}
-            onChange={(warehouse) => setGudang(warehouse)}
-          />
-          <InputField
-            label="Keterangan"
-            type="text"
-            id="keterangan"
-            name="keterangan"
-            value={keterangan}
-            onChange={(e) => setKeterangan(e.target.value)}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
           />
           <InputField
             label="No Kontainer"
@@ -165,12 +187,42 @@ const TambahSPGImport = () => {
             onChange={(e) => setNoKontainer(e.target.value)}
           />
           <InputField
-            label="No Polisi"
+            label="No Kendaraan"
             type="text"
-            id="noPolisi"
-            name="noPolisi"
-            value={noPolisi}
-            onChange={(e) => setNoPolisi(e.target.value)}
+            id="noKendaraan"
+            name="noKendaraan"
+            value={noKendaraan}
+            onChange={(e) => setNoKendaraan(e.target.value)}
+          />
+        </div>
+        <div className={styles.row}>
+          <InputField
+            label="Mulai Bongkar"
+            type="text"
+            id="mulaiBongkar"
+            name="mulaiBongkar"
+            value={mulaiBongkar}
+            onChange={(e) => setMulaiBongkar(e.target.value)}
+          />
+          <InputField
+            label="Selesai Bongkar"
+            type="text"
+            id="selesaiBongkar"
+            name="selesaiBongkar"
+            value={selesaiBongkar}
+            onChange={(e) => setSelesaiBongkar(e.target.value)}
+          />
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang Tujuan"
+            type="text"
+            id="gudangTujuan"
+            name="gudangTujuan"
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
         </div>
       </div>
@@ -187,17 +239,15 @@ const TambahSPGImport = () => {
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
-          {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
-          <div className={styles.tableHeaderItem}>Gudang</div> */}
+          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
-            <div key={stokItem.product_code} className={styles.tableRow}>
+            <div key={stokItem.stock.product_code} className={styles.tableRow}>
               <CustomDeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
@@ -205,18 +255,19 @@ const TambahSPGImport = () => {
                 }}
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
+              <div className={styles.tableRowItem}>
+                {stokItem.stock.product_code}
+              </div>
               {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
-              <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
+                {stokItem.stock.product_name}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {stokItem.stock.warehouse_name}
               </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
-              </div>
+              <div className={styles.tableRowItem}>{stokItem.carton}</div>
+              <div className={styles.tableRowItem}>{stokItem.pack}</div>
+              <div className={styles.tableRowItem}>{stokItem.packSize}</div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
               </div>

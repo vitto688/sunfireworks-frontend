@@ -6,25 +6,30 @@ import styles from "./style.module.scss";
 
 // Import components
 
-const EditStockModal = ({ stocks, stock, isOpen, onClose, onSave }) => {
-  const [carton, setCarton] = useState(stock?.carton_quantity ?? 0);
-  const [pack, setPack] = useState(stock?.pack_quantity ?? 0);
+const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
+  const [carton, setCarton] = useState(stock?.carton ?? 0);
+  const [pack, setPack] = useState(stock?.pack ?? 0);
+  const [packSize, setPackSize] = useState(stock?.packSize ?? "");
+  console.log("stock, stocks:", stock, stocks);
 
-  const warehouseStock = stocks.find((s) => s.id === stock?.id);
+  const warehouseStock = stocks.find((s) => s.id === stock?.stock.id);
 
   useEffect(() => {
     if (isOpen) {
-      setCarton(warehouseStock?.carton_quantity ?? 0);
-      setPack(warehouseStock?.pack_quantity ?? 0);
+      setCarton(stock?.carton ?? 0);
+      setPack(stock?.pack ?? 0);
+      setPackSize(stock?.packSize ?? "");
     }
-  }, [isOpen, warehouseStock]);
+  }, [isOpen, stock]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (carton < 1 || pack < 1 || !stock) return alert("Lengkapi semua data");
-    onSave({ carton, pack, stock });
+    if (carton < 1 && pack < 1 && packSize < 1 && !stock)
+      return alert("Lengkapi semua data");
+    onSave({ carton, pack, stock: stock.stock, packSize });
     setCarton(0);
     setPack(0);
+    setPackSize("");
     onClose();
   };
 
@@ -60,7 +65,7 @@ const EditStockModal = ({ stocks, stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="kodeProduk"
-              value={stock?.product_code ?? ""}
+              value={stock?.stock?.product_code ?? ""}
               disabled={true}
             />
           </div>
@@ -69,7 +74,7 @@ const EditStockModal = ({ stocks, stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="namaProduk"
-              value={stock?.product_name ?? ""}
+              value={stock?.stock?.product_name ?? ""}
               disabled={true}
             />
           </div>
@@ -78,8 +83,18 @@ const EditStockModal = ({ stocks, stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="gudang"
-              value={stock?.warehouse_name ?? ""}
+              value={stock?.stock?.warehouse_name ?? ""}
               disabled={true}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="ukuranPack">Ukuran Pack</label>
+            <input
+              type="text"
+              id="ukuranPack"
+              value={packSize}
+              onChange={(e) => setPackSize(e.target.value)}
             />
           </div>
 

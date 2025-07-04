@@ -46,6 +46,25 @@
         }
     }
 
+    .iconLaporan{
+        width: 24px;
+        height: 24px;
+
+        rect{
+            fill: #718096;
+            stroke: none;
+        }
+
+        &.selected{
+
+            rect{
+                fill:#0CAF60;
+                stroke: none;
+            }
+            
+        }
+    }
+
     .devider{
         background: #F2F4F7;
         height: 1px;

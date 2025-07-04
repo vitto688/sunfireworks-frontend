@@ -18,6 +18,12 @@ import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
 
+// Import Redux actions
+import {
+  addSPGKawatRequest,
+  resetSPGKawatMessages,
+} from "../../../../../redux/actions/spgActions";
+
 export const TAMBAH_SPG_KAWAT_PATH = "/mutasi-masuk/spg-kawat/tambah-spg-kawat";
 
 const TambahSPGKawat = () => {
@@ -27,9 +33,6 @@ const TambahSPGKawat = () => {
   const location = useLocation();
   const argument = location.state || {};
 
-  const [kodeRetur, setKodeRetur] = useState("");
-  const [tanggalRetur, setTanggalRetur] = useState("");
-  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
   const [stok, setStok] = useState([]);
@@ -40,18 +43,53 @@ const TambahSPGKawat = () => {
 
   const { stocks } = useSelector((state) => state.stock);
   const { warehouses } = useSelector((state) => state.master);
+  const { kawat } = useSelector((state) => state.spg);
+  const { loading, message, errorMessage, errorCode } = kawat;
+  //#endregion
+
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetSPGKawatMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetSPGKawatMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetSPGKawatMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
+
   //#endregion
 
   //#region Handlers
   const handleSimpanClick = () => {
-    // Logic to save the updated retur penjualan
-    console.log("Retur Penjualan updated!", {
-      kodeRetur,
-      tanggalRetur,
-      keterangan,
-      gudang,
-      stok,
-    });
+    // Validate required fields
+    if (!gudang) {
+      console.error("Harap lengkapi semua field yang diperlukan");
+      return;
+    }
+
+    // Prepare data for API
+    const spgData = {
+      warehouse: gudang.id,
+      sj_number: noSJ,
+      items: stok.map((item) => ({
+        product: item.stock.product || item.id,
+        packaging_size: item.packSize || "",
+        carton_quantity: item.carton || 0,
+        pack_quantity: item.pack || 0,
+      })),
+    };
+
+    console.log("Menambahkan SPG Kawat:", spgData);
+    dispatch(addSPGKawatRequest(spgData));
   };
 
   const handleBatalClick = () => {
@@ -75,11 +113,21 @@ const TambahSPGKawat = () => {
 
   const handleSaveAddStok = (data) => {
     console.log("Data stok ditambahkan:", data);
+    // Update stok state with new data
+    setStok([...stok, data]);
+    setModalOpen(false);
     // Kirim ke backend di sini...
   };
 
   const handleSaveEditStok = (data) => {
     console.log("Data stok diedit:", data);
+    // Update stok state with new data
+    setStok((prevStok) =>
+      prevStok.map((item) =>
+        item.stock.product_code === data.stock.product_code ? data : item
+      )
+    );
+    setEditModalOpen(null);
     // Kirim ke backend di sini...
   };
   //#endregion
@@ -91,50 +139,21 @@ const TambahSPGKawat = () => {
           label="Batal"
           variant="outline"
           onClick={handleBatalClick}
+          disabled={loading}
         />
-        <CustomButton label="Simpan" onClick={handleSimpanClick} />
+        <CustomButton
+          label={loading ? "Menyimpan..." : "Simpan"}
+          onClick={handleSimpanClick}
+          disabled={loading}
+        />
       </div>
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          <p>Error: {errorMessage}</p>
+        </div>
+      )}
       <div className={styles.formSection}>
         <div className={styles.row}>
-          <InputField
-            label="No SPG Kawat"
-            type="text"
-            id="noSPGKawat"
-            name="noSPGKawat"
-            value={kodeRetur}
-            onChange={(e) => setKodeRetur(e.target.value)}
-          />
-          <InputField
-            label="Tanggal"
-            type="date"
-            id="tanggal"
-            name="tanggal"
-            value={tanggalRetur}
-            onChange={(e) => setTanggalRetur(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.row}>
-          <SearchField
-            title="Cari Gudang"
-            label="Gudang"
-            type="text"
-            id="gudang"
-            name="gudang"
-            data={warehouses.map((warehouse) => ({
-              id: warehouse.id,
-              name: warehouse.name,
-            }))}
-            onChange={(warehouse) => setGudang(warehouse)}
-          />
-          <InputField
-            label="Keterangan"
-            type="text"
-            id="keterangan"
-            name="keterangan"
-            value={keterangan}
-            onChange={(e) => setKeterangan(e.target.value)}
-          />
           <InputField
             label="No SJ"
             type="text"
@@ -142,6 +161,18 @@ const TambahSPGKawat = () => {
             name="noSuratJalan"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
+          />
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang Tujuan"
+            type="text"
+            id="gudangTujuan"
+            name="gudangTujuan"
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
         </div>
       </div>
@@ -158,17 +189,15 @@ const TambahSPGKawat = () => {
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
-          {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
-          <div className={styles.tableHeaderItem}>Gudang</div> */}
+          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
-            <div key={stokItem.product_code} className={styles.tableRow}>
+            <div key={stokItem.stock.product_code} className={styles.tableRow}>
               <CustomDeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
@@ -176,18 +205,19 @@ const TambahSPGKawat = () => {
                 }}
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
+              <div className={styles.tableRowItem}>
+                {stokItem.stock.product_code}
+              </div>
               {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
-              <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
+                {stokItem.stock.product_name}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {stokItem.stock.warehouse_name}
               </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
-              </div>
+              <div className={styles.tableRowItem}>{stokItem.carton}</div>
+              <div className={styles.tableRowItem}>{stokItem.pack}</div>
+              <div className={styles.tableRowItem}>{stokItem.packSize}</div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
               </div>

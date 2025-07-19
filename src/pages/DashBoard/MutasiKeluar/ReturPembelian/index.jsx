@@ -41,12 +41,12 @@ const ReturPembelian = () => {
   const [endDate, setEndDate] = useState("");
 
   const { warehouses } = useSelector((state) => state.master);
-  const { data, loading, message, errorMessage, pagination } = useSelector(
+  const { data, loading, message, errorMessage } = useSelector(
     (state) => state.returPembelian
   );
 
   useEffect(() => {
-    // Fetch Retur Penjualan data on component mount
+    // Fetch Retur Pembelian data on component mount
     dispatch(fetchReturPembelianRequest());
   }, [dispatch]);
 
@@ -67,27 +67,38 @@ const ReturPembelian = () => {
     setFilteredData(data || []);
   }, [data]);
 
+  // Combined filter effect
   useEffect(() => {
-    const filteredByQuery = data.filter((item) =>
-      (item.document_number || item.no_faktur || "")
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    // Update local filtered data for search
-    setFilteredData(filteredByQuery);
-  }, [query, data]);
+    let filtered = data || [];
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      const filtered = data.filter((item) => {
-        const itemDate = new Date(item.transaction_date || item.created_at);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-      });
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data || []);
+    // Apply search filter
+    if (query) {
+      filtered = filtered.filter((item) =>
+        (item.document_number || item.no_faktur || "")
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      );
     }
-  }, [startDate, endDate, data]);
+
+    // Apply date filter
+    if (startDate && endDate) {
+      filtered = filtered.filter((item) => {
+        const itemDate = new Date(item.transaction_date || item.created_at);
+        const startDateOnly = new Date(startDate);
+        const endDateOnly = new Date(endDate);
+        return itemDate >= startDateOnly && itemDate <= endDateOnly;
+      });
+    }
+
+    // Apply warehouse filter
+    if (selectedWarehouseFilter !== 0) {
+      filtered = filtered.filter(
+        (item) => item.warehouse_name === selectedWarehouseFilter
+      );
+    }
+
+    setFilteredData(filtered);
+  }, [query, data, startDate, endDate, selectedWarehouseFilter]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -101,18 +112,6 @@ const ReturPembelian = () => {
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
-
-  useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
-    if (selectedWarehouseFilter === 0) {
-      setFilteredData(data || []);
-    } else {
-      const filtered = (data || []).filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, data]);
   //#endregion
 
   //#region Handlers
@@ -160,7 +159,7 @@ const ReturPembelian = () => {
           />
         </div>
       </div>
-      <div className={styles.returPenjualanTable}>
+      <div className={styles.mainTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
@@ -174,20 +173,20 @@ const ReturPembelian = () => {
         <div className={styles.tableBody}>
           {loading ? (
             <div className={styles.loadingMessage}>
-              Loading Retur Penjualan data...
+              Loading Retur Pembelian data...
             </div>
           ) : filteredData.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>
-                  Tidak ada data Retur Penjualan yang tersedia.
+                  Tidak ada data Retur Pembelian yang tersedia.
                 </h3>
                 <p className={styles.emptyStateSubtitle}>
-                  Klik tombol "Tambah" untuk menambahkan Retur Penjualan baru.
+                  Klik tombol "Tambah" untuk menambahkan Retur Pembelian baru.
                 </p>
               </div>
             </div>
-          ) : (
+          ) : Array.isArray(filteredData) && filteredData.length > 0 ? (
             filteredData.map((item, index) => (
               <div
                 key={item.id}
@@ -220,11 +219,22 @@ const ReturPembelian = () => {
                 <div className={styles.tableRowItem}>{item.notes || "-"}</div>
               </div>
             ))
+          ) : (
+            <div className={styles.emptyStateContainer}>
+              <div className={styles.emptyStateContent}>
+                <h3 className={styles.emptyStateTitle}>
+                  Tidak ada data Retur Pembelian yang tersedia.
+                </h3>
+                <p className={styles.emptyStateSubtitle}>
+                  Klik tombol "Tambah" untuk menambahkan Retur Pembelian baru.
+                </p>
+              </div>
+            </div>
           )}
         </div>
       </div>
       <ConfirmDeleteModal
-        label="Apakah anda yakin untuk menghapus Retur Penjualan ini?"
+        label="Apakah anda yakin untuk menghapus Retur Pembelian ini?"
         open={!!modalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={() => handleDelete(modalOpen)}

@@ -29,6 +29,7 @@ const UbahPelanggan = () => {
   const [nama, setNama] = useState(pelanggan?.name ?? "");
   const [alamat, setAlamat] = useState(pelanggan?.address ?? "");
   const [noTel, setNoTel] = useState(pelanggan?.contact_number ?? "");
+  const [upline, setUpline] = useState(pelanggan?.upline ?? "");
 
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.master
@@ -58,6 +59,7 @@ const UbahPelanggan = () => {
             name: nama,
             address: alamat,
             contact_number: noTel,
+            upline: upline,
           },
         })
       );
@@ -97,7 +99,14 @@ const UbahPelanggan = () => {
           value={alamat}
           onChange={(e) => setAlamat(e.target.value)}
         />
-
+        <InputField
+          label="Upline"
+          type="text"
+          id="upline"
+          name="upline"
+          value={upline}
+          onChange={(e) => setUpline(e.target.value)}
+        />
         <InputField
           label="Nomor Telepon"
           type="text"

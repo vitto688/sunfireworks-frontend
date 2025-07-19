@@ -105,6 +105,7 @@ const Pelanggan = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
           <div className={styles.tableHeaderItem}>Alamat</div>
+          <div className={styles.tableHeaderItem}>Up.</div>
           <div className={styles.tableHeaderItem}>Nomor Telepon</div>
         </div>
         <div className={styles.tableBody}>
@@ -124,6 +125,7 @@ const Pelanggan = () => {
               <div className={styles.tableRowItem}>{index + 1}</div>
               <div className={styles.tableRowItem}>{customer.name}</div>
               <div className={styles.tableRowItem}>{customer.address}</div>
+              <div className={styles.tableRowItem}>{customer.upline}</div>
               <div className={styles.tableRowItem}>
                 {customer.contact_number}
               </div>

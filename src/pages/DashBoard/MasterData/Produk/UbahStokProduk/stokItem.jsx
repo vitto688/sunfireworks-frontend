@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Import styles
 import styles from "./style.module.scss";
@@ -6,17 +6,18 @@ import InputField from "../../../../../components/InputField";
 
 // Import components
 
-const StokItem = ({
-  index,
-  code,
-  stok,
-  handleCartonChange,
-  handlePackChange,
-}) => {
+const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
   //#region Hooks
   const [carton, setCarton] = useState(stok.carton_quantity ?? 0);
   const [pack, setPack] = useState(stok.pack_quantity ?? 0);
+  //#endregion
 
+  //#region Effects
+  // Update carton and pack state when stok changes
+  useEffect(() => {
+    setCarton(stok.carton_quantity ?? 0);
+    setPack(stok.pack_quantity ?? 0);
+  }, [stok.carton_quantity, stok.pack_quantity, stok.id]);
   //#endregion
 
   return (
@@ -27,7 +28,7 @@ const StokItem = ({
         id={`gudang-${stok.id}-${code}`}
         name={`gudang-${stok.id}-${code}`}
         disabled={true}
-        value={stok.warehouse_name ?? ""}
+        defaultValue={stok.warehouse_name ?? ""}
       />
       <InputField
         label="Stok Karton"
@@ -35,7 +36,7 @@ const StokItem = ({
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
         disabled={true}
-        value={stok.carton_quantity ?? ""}
+        defaultValue={stok.carton_quantity ?? "0"}
       />
       <InputField
         label="Stok Pack"
@@ -43,7 +44,7 @@ const StokItem = ({
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
         disabled={true}
-        value={stok.pack_quantity ?? ""}
+        defaultValue={stok.pack_quantity ?? "0"}
       />
       <label className={styles.label} htmlFor="ubahStokDiGudang">
         {"Ubah Stok ===>"}
@@ -52,20 +53,26 @@ const StokItem = ({
         type="text"
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
-        value={carton}
+        value={carton.toString()}
         onChange={(e) => {
-          setCarton(e.target.value);
-          handleCartonChange(e, stok);
+          const { value } = e.target;
+          if (/^\d*$/.test(value)) {
+            setCarton(Number(value));
+            handleCartonChange(e, stok);
+          }
         }}
       />
       <InputField
         type="text"
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
-        value={pack}
+        value={pack.toString()}
         onChange={(e) => {
-          setPack(e.target.value);
-          handlePackChange(e, stok);
+          const { value } = e.target;
+          if (/^\d*$/.test(value)) {
+            setPack(Number(value));
+            handlePackChange(e, stok);
+          }
         }}
       />
     </div>

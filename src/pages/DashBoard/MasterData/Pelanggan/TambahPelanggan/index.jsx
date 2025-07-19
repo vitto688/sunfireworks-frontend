@@ -27,6 +27,7 @@ const TambahPelanggan = () => {
   const [nama, setNama] = useState("");
   const [alamat, setAlamat] = useState("");
   const [noTel, setNoTel] = useState("");
+  const [upline, setUpline] = useState("");
   const [isFilled, setIsFilled] = useState(false);
 
   const { loading, message, errorMessage, errorCode } = useSelector(
@@ -38,12 +39,12 @@ const TambahPelanggan = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (nama !== "" && alamat !== "" && noTel !== "") {
+    if (nama !== "" && alamat !== "" && noTel !== "" && upline !== "") {
       setIsFilled(true);
     } else {
       setIsFilled(false);
     }
-  }, [nama, alamat, noTel]);
+  }, [nama, alamat, noTel, upline]);
 
   useEffect(() => {
     if (message !== null) {
@@ -69,6 +70,7 @@ const TambahPelanggan = () => {
             name: nama,
             address: alamat,
             contact_number: noTel,
+            upline: upline,
           },
         })
       );
@@ -112,7 +114,14 @@ const TambahPelanggan = () => {
           value={alamat}
           onChange={(e) => setAlamat(e.target.value)}
         />
-
+        <InputField
+          label="UP."
+          type="text"
+          id="upline"
+          name="upline"
+          value={upline}
+          onChange={(e) => setUpline(e.target.value)}
+        />
         <InputField
           label="Nomor Telepon"
           type="text"

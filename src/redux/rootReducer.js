@@ -8,6 +8,7 @@ import spgReducer from "./reducers/spgReducer";
 import stokTransferReducer from "./reducers/stokTransferReducer";
 import spkReducer from "./reducers/spkReducer";
 import returPembelianReducer from "./reducers/returPembelianReducer";
+import returPenjualanReducer from "./reducers/returPenjualanReducer";
 import suratJalanReducer from "./reducers/suratJalanReducer";
 import suratPengeluaranBarangReducer from "./reducers/suratPengeluaranBarangReducer";
 
@@ -25,6 +26,8 @@ const rootReducer = combineReducers({
   spk: spkReducer,
   // Mutasi Keluar Reducers
   returPembelian: returPembelianReducer,
+  // Mutasi Masuk Reducers
+  returPenjualan: returPenjualanReducer,
   suratJalan: suratJalanReducer,
   suratPengeluaranBarang: suratPengeluaranBarangReducer,
 });

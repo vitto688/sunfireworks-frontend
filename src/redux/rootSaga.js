@@ -8,6 +8,7 @@ import spgSaga from "./sagas/spgSaga";
 import stokTransferSaga from "./sagas/stokTransferSaga";
 import spkSaga from "./sagas/spkSaga";
 import returPembelianSaga from "./sagas/returPembelianSaga";
+import returPenjualanSaga from "./sagas/returPenjualanSaga";
 import suratJalanSaga from "./sagas/suratJalanSaga";
 import suratPengeluaranBarangSaga from "./sagas/suratPengeluaranBarangSaga";
 
@@ -22,6 +23,7 @@ export default function* rootSaga() {
     stokTransferSaga(),
     spkSaga(),
     returPembelianSaga(),
+    returPenjualanSaga(),
     suratJalanSaga(),
     suratPengeluaranBarangSaga(),
   ]);

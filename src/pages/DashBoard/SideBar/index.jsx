@@ -262,13 +262,7 @@ const SideBar = () => {
       <div className={styles.devider}></div>
       <SideMenuItem
         name="Laporan"
-        icon={
-          <LaporanIcon
-            className={`${styles.iconLaporan} ${
-              STOCK_PATH === pathname && styles.selected
-            }`}
-          />
-        }
+        icon={<LaporanIcon className={styles.iconLaporan} />}
         isSelected={false}
         isExpanded={expandedMenus.includes("/laporan")}
         onExpandCollapse={() => {

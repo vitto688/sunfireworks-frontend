@@ -103,6 +103,30 @@
             }
         }
        
-    }
-    
+    }            .emptyState {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 60px 20px;
+                text-align: center;
+                color: $greyColor600;
+                min-height: 200px;
+
+                p {
+                    margin: 5px 0;
+                    font-size: 16px;
+                    
+                    &:first-child {
+                        font-weight: 600;
+                        color: #4a5568;
+                    }
+                    
+                    &:last-child {
+                        font-size: 14px;
+                        color: #a0aec0;
+                    }
+                }
+            }
+
 }

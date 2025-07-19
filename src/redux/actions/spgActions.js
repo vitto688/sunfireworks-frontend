@@ -45,9 +45,9 @@ export const addSPGFailure = (spgType, error) => ({
   payload: { spgType, error },
 });
 
-export const updateSPGRequest = (spgType, data) => ({
+export const updateSPGRequest = (spgType, id, data) => ({
   type: "UPDATE_SPG_REQUEST",
-  payload: { spgType, data },
+  payload: { spgType, id, data },
 });
 
 export const updateSPGSuccess = (spgType, data) => ({
@@ -99,12 +99,14 @@ export const addSPGBawangRequest = (data) => addSPGRequest("bawang", data);
 export const addSPGKawatRequest = (data) => addSPGRequest("kawat", data);
 export const addSPGLainRequest = (data) => addSPGRequest("lain", data);
 
-export const updateSPGImportRequest = (data) =>
-  updateSPGRequest("import", data);
-export const updateSPGBawangRequest = (data) =>
-  updateSPGRequest("bawang", data);
-export const updateSPGKawatRequest = (data) => updateSPGRequest("kawat", data);
-export const updateSPGLainRequest = (data) => updateSPGRequest("lain", data);
+export const updateSPGImportRequest = (id, data) =>
+  updateSPGRequest("import", id, data);
+export const updateSPGBawangRequest = (id, data) =>
+  updateSPGRequest("bawang", id, data);
+export const updateSPGKawatRequest = (id, data) =>
+  updateSPGRequest("kawat", id, data);
+export const updateSPGLainRequest = (id, data) =>
+  updateSPGRequest("lain", id, data);
 
 export const deleteSPGImportRequest = (id) => deleteSPGRequest("import", id);
 export const deleteSPGBawangRequest = (id) => deleteSPGRequest("bawang", id);

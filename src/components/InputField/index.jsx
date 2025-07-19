@@ -10,8 +10,12 @@ const InputField = ({
   name,
   type = "text",
   autoComplete = "off",
+  defaultValue = "",
   disabled = false,
 }) => {
+  // Determine if this should be a controlled or uncontrolled input
+  const isControlled = value !== undefined;
+
   return (
     <div className={styles.inputFieldSection}>
       {label && (
@@ -24,7 +28,10 @@ const InputField = ({
         id={name}
         name={name}
         type={type}
-        value={value}
+        // Use either value OR defaultValue, not both
+        {...(isControlled
+          ? { value: value || "" }
+          : { defaultValue: defaultValue })}
         onChange={onChange}
         autoComplete={autoComplete}
         disabled={disabled}

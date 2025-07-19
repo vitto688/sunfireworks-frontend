@@ -11,12 +11,12 @@ import styles from "./style.module.scss";
 import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
-import AddStockModal from "../../../../../components/AddStockModal";
 import SearchField from "../../../../../components/SearchField";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
-import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
+import AddStockModalImport from "../../../../../components/AddStockModalImport";
+import EditStockModalImport from "../../../../../components/EditStockModalImport";
 
 // Import Redux actions
 import {
@@ -60,7 +60,18 @@ const UbahSPGImport = () => {
   //#endregion
   console.log("stok", stok);
 
+  useEffect(() => {
+    setGudang(
+      warehouses.find((warehouse) => warehouse.id === argument?.warehouse) ||
+        null
+    );
+  }, [warehouses, argument?.warehouse]);
+
   //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetSPGImportMessages());
+  }, [dispatch]);
 
   useEffect(() => {
     if (message !== null) {
@@ -86,7 +97,8 @@ const UbahSPGImport = () => {
       !noKontainer ||
       !noKendaraan ||
       !mulaiBongkar ||
-      !selesaiBongkar
+      !selesaiBongkar ||
+      stok.length === 0
     ) {
       console.error("Harap lengkapi semua field yang diperlukan");
       return;
@@ -94,7 +106,6 @@ const UbahSPGImport = () => {
 
     // Prepare data for API
     const spgData = {
-      id: argument.id,
       warehouse: gudang.id || gudang,
       sj_number: noSJ,
       container_number: noKontainer,
@@ -102,15 +113,23 @@ const UbahSPGImport = () => {
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
       items: stok.map((item) => ({
-        product: item.stock?.product || item.id,
-        packaging_size: item.packSize || "",
-        carton_quantity: item.carton || 0,
-        pack_quantity: item.pack || 0,
+        product: item.product || item.id,
+        production_code: item.production_code || "",
+        packaging_size: item.packaging_size || "",
+        carton_quantity: item.carton_quantity || 0,
+        pack_quantity: item.pack_quantity || 0,
+        inn: item.inn || "",
+        out: item.out || "",
+        pjg: item.pjg || "",
+        packaging_weight: item.packaging_weight || "",
+        warehouse_size: item.warehouse_size || "",
+        warehouse_weight: item.warehouse_weight || "",
       })),
     };
 
     console.log("Mengubah SPG Import:", spgData);
-    dispatch(updateSPGImportRequest(spgData));
+
+    dispatch(updateSPGImportRequest(argument.id, spgData));
   };
 
   const handleBatalClick = () => {
@@ -141,14 +160,20 @@ const UbahSPGImport = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data);
+    console.log("Data stok diedit:", data, stok);
     // Update stok state with new data
     setStok((prevStok) =>
-      prevStok.map((item) =>
-        item.stock.product_code === data.stock.product_code ? data : item
-      )
+      prevStok.map((item) => (item.id === data.id ? data : item))
     );
     setEditModalOpen(null);
+    // Kirim ke backend di sini...
+  };
+
+  const handleDeleteStok = (stokItem) => {
+    console.log("Menghapus stok:", stokItem);
+    // Update stok state to remove the deleted item
+    setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
+    setModalDeleteOpen(null);
     // Kirim ke backend di sini...
   };
   //#endregion
@@ -217,7 +242,14 @@ const UbahSPGImport = () => {
             value={selesaiBongkar}
             onChange={(e) => setSelesaiBongkar(e.target.value)}
           />
-          <SearchField
+          <InputField
+            label="Gudang Tujuan"
+            type="text"
+            id="gudangTujuan"
+            name="gudangTujuan"
+            value={gudang?.name}
+          />
+          {/* <SearchField
             title="Cari Gudang"
             label="Gudang Tujuan"
             type="text"
@@ -227,13 +259,9 @@ const UbahSPGImport = () => {
               id: warehouse.id,
               name: warehouse.name,
             }))}
-            defaultValue={
-              warehouses.find(
-                (warehouse) => warehouse.id === argument?.warehouse
-              ) || null
-            }
+            defaultValue={gudang}
             onChange={(warehouse) => setGudang(warehouse)}
-          />
+          /> */}
         </div>
       </div>
       <div className={styles.rowBetween}>
@@ -252,7 +280,14 @@ const UbahSPGImport = () => {
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
+          <div className={styles.tableHeaderItem}>Ukuran Dus</div>
+          <div className={styles.tableHeaderItem}>Inn</div>
+          <div className={styles.tableHeaderItem}>Out</div>
+          <div className={styles.tableHeaderItem}>Pjg</div>
+          <div className={styles.tableHeaderItem}>Kg Dus</div>
+          <div className={styles.tableHeaderItem}>Ukuran Gudang</div>
+          <div className={styles.tableHeaderItem}>Kg Gudang</div>
+          <div className={styles.tableHeaderItem}>Kode Produksi</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -265,7 +300,6 @@ const UbahSPGImport = () => {
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
-              {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
                 {stokItem.carton_quantity}
@@ -273,29 +307,40 @@ const UbahSPGImport = () => {
               <div className={styles.tableRowItem}>
                 {stokItem.pack_quantity}
               </div>
+              <div className={styles.tableRowItem}>{stokItem.inn}</div>
+              <div className={styles.tableRowItem}>{stokItem.out}</div>
               <div className={styles.tableRowItem}>
                 {stokItem.packaging_size}
+              </div>
+              <div className={styles.tableRowItem}>{stokItem.pjg}</div>
+              <div className={styles.tableRowItem}>
+                {stokItem.packaging_weight}
+              </div>
+              <div className={styles.tableRowItem}>
+                {stokItem.warehouse_size}
+              </div>
+              <div className={styles.tableRowItem}>
+                {stokItem.warehouse_weight}
+              </div>
+              <div className={styles.tableRowItem}>
+                {stokItem.production_code}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
               </div>
-              {/* <div className={styles.tableRowItem}>{product.quantity}</div>
-              <div className={styles.tableRowItem}>
-                {product.warehouse_name}
-              </div> */}
             </div>
           ))}
         </div>
       </div>
 
-      <AddStockModal
+      <AddStockModalImport
         stocks={stocks}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <EditStockModalImport
         stocks={stocks}
         stock={editModalOpen}
         isOpen={editModalOpen !== null}
@@ -310,7 +355,7 @@ const UbahSPGImport = () => {
           e.stopPropagation();
           setModalDeleteOpen(null);
         }}
-        onConfirm={() => setModalDeleteOpen(null)}
+        onConfirm={() => handleDeleteStok(modalDeleteOpen)}
       />
     </div>
   );

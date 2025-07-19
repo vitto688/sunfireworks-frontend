@@ -199,9 +199,9 @@ const Produk = () => {
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
+          <div className={styles.tableHeaderItem}>KP</div>
           <div className={styles.tableHeaderItem}>Kategori</div>
-          <div className={styles.tableHeaderItem}>Eksportir</div>
-          <div className={styles.tableHeaderItem}>Kemasan</div>
           <div className={styles.tableHeaderItem}>Stok Global</div>
           {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
           <div className={styles.tableHeaderItem}>Gudang</div> */}
@@ -224,9 +224,9 @@ const Produk = () => {
               <div className={styles.tableRowItem}>{product.code}</div>
               {/* <div className={styles.tableRowItem}>{product.barcode}</div> */}
               <div className={styles.tableRowItem}>{product.name}</div>
-              <div className={styles.tableRowItem}>{product.category_name}</div>
-              <div className={styles.tableRowItem}>{product.supplier_name}</div>
               <div className={styles.tableRowItem}>{product.packing}</div>
+              <div className={styles.tableRowItem}>{product.supplier_name}</div>
+              <div className={styles.tableRowItem}>{product.category_name}</div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, product)} />
               </div>

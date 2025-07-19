@@ -177,7 +177,7 @@ const UbahStokProduk = () => {
             value={produk?.supplier_name ?? ""}
           />
           <InputField
-            label="Kemasan"
+            label="Packing"
             type="text"
             id="kemasan"
             name="kemasan"

@@ -6,30 +6,34 @@ import styles from "./style.module.scss";
 
 // Import components
 
-const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
-  const [carton, setCarton] = useState(stock?.carton ?? 0);
-  const [pack, setPack] = useState(stock?.pack ?? 0);
-  const [packSize, setPackSize] = useState(stock?.packSize ?? "");
-  console.log("stock, stocks:", stock, stocks);
-
-  const warehouseStock = stocks.find((s) => s.id === stock?.stock.id);
+const EditStockModal = ({
+  stock,
+  cartonQuantity = 0,
+  packQuantity = 0,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
+  const [carton, setCarton] = useState(stock?.carton_quantity ?? 0);
+  const [pack, setPack] = useState(stock?.pack_quantity ?? 0);
 
   useEffect(() => {
     if (isOpen) {
-      setCarton(stock?.carton ?? 0);
-      setPack(stock?.pack ?? 0);
-      setPackSize(stock?.packSize ?? "");
+      setCarton(stock?.carton_quantity ?? 0);
+      setPack(stock?.pack_quantity ?? 0);
     }
   }, [isOpen, stock]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (carton < 1 && pack < 1 && packSize < 1 && !stock)
-      return alert("Lengkapi semua data");
-    onSave({ carton, pack, stock: stock.stock, packSize });
+    if (carton < 1 && pack < 1 && !stock) return alert("Lengkapi semua data");
+    onSave({
+      ...stock,
+      carton_quantity: carton,
+      pack_quantity: pack,
+    });
     setCarton(0);
     setPack(0);
-    setPackSize("");
     onClose();
   };
 
@@ -49,8 +53,6 @@ const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
 
   if (!isOpen) return null;
 
-  console.log("stocks:", stocks, stock);
-
   return (
     <div className={styles.overlay}>
       <div className={styles.modalContent}>
@@ -65,7 +67,7 @@ const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="kodeProduk"
-              value={stock?.stock?.product_code ?? ""}
+              value={stock?.product_code ?? ""}
               disabled={true}
             />
           </div>
@@ -74,16 +76,16 @@ const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="namaProduk"
-              value={stock?.stock?.product_name ?? ""}
+              value={stock?.product_name ?? ""}
               disabled={true}
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="gudang">Gudang</label>
+            <label htmlFor="kp">KP</label>
             <input
               type="text"
-              id="gudang"
-              value={stock?.stock?.warehouse_name ?? ""}
+              id="kp"
+              value={stock?.supplier_name ?? ""}
               disabled={true}
             />
           </div>
@@ -93,8 +95,8 @@ const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
             <input
               type="text"
               id="ukuranPack"
-              value={packSize}
-              onChange={(e) => setPackSize(e.target.value)}
+              value={stock?.packing ?? ""}
+              disabled={true}
             />
           </div>
 
@@ -102,28 +104,24 @@ const EditStockModal = ({ stocks = [], stock, isOpen, onClose, onSave }) => {
             <label htmlFor="karton">Kuantitas Karton </label>
             <div className={styles.quantityInput}>
               <input
-                type="number"
+                type="text"
                 id="karton"
                 value={carton}
                 onChange={handleCartonChange}
               />
-              <label htmlFor="sisaKarton">{`stok tersedia ${
-                warehouseStock?.carton_quantity ?? 0
-              }`}</label>
+              <label htmlFor="sisaKarton">{`stok tersedia ${cartonQuantity}`}</label>
             </div>
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="pack">Kuantitas Pack </label>
             <div className={styles.quantityInput}>
               <input
-                type="number"
+                type="text"
                 id="pack"
                 value={pack}
                 onChange={handlePackChange}
               />
-              <label htmlFor="sisaKarton">{`stok tersedia ${
-                warehouseStock?.pack_quantity ?? 0
-              }`}</label>
+              <label htmlFor="sisaKarton">{`stok tersedia ${packQuantity}`}</label>
             </div>
           </div>
 

@@ -12,9 +12,9 @@ import {
 } from "../../../redux/actions/stockActions";
 
 // import components
-import CustomButton from "../../../components/CustomButton";
+// import CustomButton from "../../../components/CustomButton";
 import SearchBar from "../../../components/SearchBar";
-import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
+// import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
 import FilterDropdown from "../../../components/FilterDropdown";
 import { UBAH_STOK_PATH } from "./UbahStok";
 
@@ -117,9 +117,9 @@ const Stock = () => {
   //#endregion
 
   //#region Handlers
-  const handleAddClick = () => {
-    navigate(TAMBAH_PRODUK_PATH);
-  };
+  // const handleAddClick = () => {
+  //   navigate(TAMBAH_PRODUK_PATH);
+  // };
 
   const handleItemClick = (item) => {
     navigate(UBAH_STOK_PATH, { state: item });
@@ -129,11 +129,11 @@ const Stock = () => {
   return (
     <div className={styles.stocksSection}>
       <div className={styles.actionsSection}>
-        <CustomButton
+        {/* <CustomButton
           // variant="outline"
           label="+ Tambah"
           onClick={handleAddClick}
-        />
+        /> */}
       </div>
       <div className={styles.searchFilterSection}>
         <SearchBar

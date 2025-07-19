@@ -5,6 +5,11 @@ import masterSaga from "./sagas/masterSaga";
 import mutasiMasukSaga from "./sagas/mutasiMasukSaga";
 import stockSaga from "./sagas/stockSaga";
 import spgSaga from "./sagas/spgSaga";
+import stokTransferSaga from "./sagas/stokTransferSaga";
+import spkSaga from "./sagas/spkSaga";
+import returPembelianSaga from "./sagas/returPembelianSaga";
+import suratJalanSaga from "./sagas/suratJalanSaga";
+import suratPengeluaranBarangSaga from "./sagas/suratPengeluaranBarangSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -14,5 +19,10 @@ export default function* rootSaga() {
     mutasiMasukSaga(),
     stockSaga(),
     spgSaga(),
+    stokTransferSaga(),
+    spkSaga(),
+    returPembelianSaga(),
+    suratJalanSaga(),
+    suratPengeluaranBarangSaga(),
   ]);
 }

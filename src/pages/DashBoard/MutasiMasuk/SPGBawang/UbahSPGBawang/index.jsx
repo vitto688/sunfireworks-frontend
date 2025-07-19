@@ -49,6 +49,13 @@ const UbahSPGBawang = () => {
 
   console.log("stok", stok);
 
+  useEffect(() => {
+    setGudang(
+      warehouses.find((warehouse) => warehouse.id === argument?.warehouse) ||
+        null
+    );
+  }, [warehouses, argument?.warehouse]);
+
   //#region Effects
   useEffect(() => {
     // Reset messages when component mounts
@@ -73,26 +80,26 @@ const UbahSPGBawang = () => {
   //#region Handlers
   const handleSimpanClick = () => {
     // Validate required fields
-    if (!gudang) {
+    if (!gudang || stok.length === 0) {
       console.error("Harap lengkapi semua field yang diperlukan");
+
       return;
     }
 
     // Prepare data for API
     const spgData = {
-      id: argument.id,
       warehouse: gudang.id || gudang,
       sj_number: noSJ,
       items: stok.map((item) => ({
-        product: item.stock?.product || item.id,
-        packaging_size: item.packSize || "",
-        carton_quantity: item.carton || 0,
-        pack_quantity: item.pack || 0,
+        product: item.product || item.id,
+        packaging_size: item.packaging_size || "",
+        carton_quantity: item.carton_quantity || 0,
+        pack_quantity: item.pack_quantity || 0,
       })),
     };
 
     console.log("Mengubah SPG Bawang:", spgData);
-    dispatch(updateSPGBawangRequest(spgData));
+    dispatch(updateSPGBawangRequest(argument.id, spgData));
   };
 
   const handleBatalClick = () => {
@@ -123,14 +130,20 @@ const UbahSPGBawang = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data);
+    console.log("Data stok diedit:", data, stok);
     // Update stok state with new data
     setStok((prevStok) =>
-      prevStok.map((item) =>
-        item.stock.product_code === data.stock.product_code ? data : item
-      )
+      prevStok.map((item) => (item.id === data.id ? data : item))
     );
     setEditModalOpen(null);
+    // Kirim ke backend di sini...
+  };
+
+  const handleDeleteStok = (stokItem) => {
+    console.log("Menghapus stok:", stokItem);
+    // Update stok state to remove the deleted item
+    setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
+    setModalDeleteOpen(null);
     // Kirim ke backend di sini...
   };
   //#endregion
@@ -165,7 +178,14 @@ const UbahSPGBawang = () => {
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
           />
-          <SearchField
+          <InputField
+            label="Gudang Tujuan"
+            type="text"
+            id="gudangTujuan"
+            name="gudangTujuan"
+            value={gudang?.name}
+          />
+          {/* <SearchField
             title="Cari Gudang"
             label="Gudang Tujuan"
             type="text"
@@ -175,13 +195,9 @@ const UbahSPGBawang = () => {
               id: warehouse.id,
               name: warehouse.name,
             }))}
-            defaultValue={
-              warehouses.find(
-                (warehouse) => warehouse.id === argument?.warehouse
-              ) || null
-            }
+            defaultValue={gudang}
             onChange={(warehouse) => setGudang(warehouse)}
-          />
+          /> */}
         </div>
       </div>
       <div className={styles.rowBetween}>
@@ -198,13 +214,13 @@ const UbahSPGBawang = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
-            <div key={stokItem.product_code} className={styles.tableRow}>
+            <div key={stokItem.product} className={styles.tableRow}>
               <CustomDeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
@@ -212,16 +228,16 @@ const UbahSPGBawang = () => {
                 }}
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
+              <div className={styles.tableRowItem}>{stokItem.product}</div>
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
+              <div className={styles.tableRowItem}>
+                {stokItem.packaging_size}
+              </div>
               <div className={styles.tableRowItem}>
                 {stokItem.carton_quantity}
               </div>
               <div className={styles.tableRowItem}>
                 {stokItem.pack_quantity}
-              </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.packaging_size}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -253,7 +269,7 @@ const UbahSPGBawang = () => {
           e.stopPropagation();
           setModalDeleteOpen(null);
         }}
-        onConfirm={() => setModalDeleteOpen(null)}
+        onConfirm={() => handleDeleteStok(modalDeleteOpen)}
       />
     </div>
   );

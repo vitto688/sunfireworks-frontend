@@ -4,6 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+// Import Redux actions
+import {
+  addStokTransferRequest,
+  resetStokTransferMessages,
+} from "../../../../../redux/actions/stokTransferActions";
+
 // Import styles
 import styles from "./style.module.scss";
 
@@ -17,6 +23,7 @@ import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
+
 export const TAMBAH_TRANSFER_STOK_PATH =
   "/mutasi-gudang/transfer-stok/tambah-transfer-stok";
 
@@ -27,10 +34,8 @@ const TambahTransferStok = () => {
   const location = useLocation();
   const argument = location.state || {};
 
-  const [kodeRetur, setKodeRetur] = useState("");
-  const [tanggalRetur, setTanggalRetur] = useState("");
-  const [gudangAsal, setGudangAsal] = useState("");
-  const [gudangTujuan, setGudangTujuan] = useState("");
+  const [gudangAsal, setGudangAsal] = useState(null);
+  const [gudangTujuan, setGudangTujuan] = useState(null);
 
   const [stok, setStok] = useState([]);
 
@@ -40,16 +45,52 @@ const TambahTransferStok = () => {
 
   const { stocks } = useSelector((state) => state.stock);
   const { warehouses } = useSelector((state) => state.master);
+  const { loading, message, errorMessage, errorCode } = useSelector(
+    (state) => state.stokTransfer
+  );
+  //#endregion
+
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetStokTransferMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (message !== null) {
+      alert(message);
+      dispatch(resetStokTransferMessages());
+      navigate(-1);
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetStokTransferMessages());
+    }
+  }, [message, errorMessage, errorCode, navigate, dispatch]);
   //#endregion
 
   //#region Handlers
   const handleSimpanClick = () => {
-    // Logic to save the updated retur penjualan
-    console.log("Retur Penjualan updated!", {
-      kodeRetur,
-      tanggalRetur,
-      stok,
-    });
+    // Validate required fields
+    if (!gudangAsal || !gudangTujuan || stok.length === 0) {
+      console.error("Harap lengkapi semua field yang diperlukan");
+      return;
+    }
+
+    // Prepare data for API
+    const transferData = {
+      source_warehouse: gudangAsal.id,
+      destination_warehouse: gudangTujuan.id,
+      items: stok.map((item) => ({
+        product: item.product || item.id,
+        carton_quantity: item.carton_quantity || 0,
+        pack_quantity: item.pack_quantity || 0,
+      })),
+    };
+
+    console.log("Menambahkan Transfer Stok:", transferData);
+    dispatch(addStokTransferRequest(transferData));
   };
 
   const handleBatalClick = () => {
@@ -61,24 +102,36 @@ const TambahTransferStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
     console.log("Tambah Stok clicked!");
     setModalOpen(true);
-
-    // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
   };
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
-
     setEditModalOpen(value);
   };
 
   const handleSaveAddStok = (data) => {
     console.log("Data stok ditambahkan:", data);
-    // Kirim ke backend di sini...
+    // Update stok state with new data
+    setStok([...stok, data]);
+    setModalOpen(false);
   };
 
   const handleSaveEditStok = (data) => {
     console.log("Data stok diedit:", data);
-    // Kirim ke backend di sini...
+    // Update stok state with new data
+    setStok((prevStok) =>
+      prevStok.map((item) =>
+        item.product_code === data.product_code ? data : item
+      )
+    );
+    setEditModalOpen(null);
+  };
+
+  const handleDeleteStok = (stokItem) => {
+    console.log("Menghapus stok:", stokItem);
+    // Update stok state to remove the deleted item
+    setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
+    setModalDeleteOpen(null);
   };
   //#endregion
 
@@ -89,29 +142,20 @@ const TambahTransferStok = () => {
           label="Batal"
           variant="outline"
           onClick={handleBatalClick}
+          disabled={loading}
         />
-        <CustomButton label="Simpan" onClick={handleSimpanClick} />
+        <CustomButton
+          label={loading ? "Menyimpan..." : "Simpan"}
+          onClick={handleSimpanClick}
+          disabled={loading}
+        />
       </div>
-      <div className={styles.formSection}>
-        <div className={styles.row}>
-          <InputField
-            label="No SPG Bawang"
-            type="text"
-            id="noSPGBawang"
-            name="noSPGBawang"
-            value={kodeRetur}
-            onChange={(e) => setKodeRetur(e.target.value)}
-          />
-          <InputField
-            label="Tanggal"
-            type="date"
-            id="tanggal"
-            name="tanggal"
-            value={tanggalRetur}
-            onChange={(e) => setTanggalRetur(e.target.value)}
-          />
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          <p>Error: {errorMessage}</p>
         </div>
-
+      )}
+      <div className={styles.formSection}>
         <div className={styles.row}>
           <SearchField
             title="Cari Gudang"
@@ -123,8 +167,11 @@ const TambahTransferStok = () => {
               id: warehouse.id,
               name: warehouse.name,
             }))}
+            defaultValue={gudangAsal}
             onChange={(warehouse) => setGudangAsal(warehouse)}
           />
+        </div>
+        <div className={styles.row}>
           <SearchField
             title="Cari Gudang"
             label="Gudang Tujuan"
@@ -135,6 +182,7 @@ const TambahTransferStok = () => {
               id: warehouse.id,
               name: warehouse.name,
             }))}
+            defaultValue={gudangTujuan}
             onChange={(warehouse) => setGudangTujuan(warehouse)}
           />
         </div>
@@ -152,57 +200,59 @@ const TambahTransferStok = () => {
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
-          {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
-          <div className={styles.tableHeaderItem}>Gudang</div> */}
         </div>
         <div className={styles.tableBody}>
-          {stok.map((stokItem, index) => (
-            <div key={stokItem.product_code} className={styles.tableRow}>
-              <CustomDeleteButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setModalDeleteOpen(stokItem);
-                }}
-              />
-              <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
-              {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
-              <div className={styles.tableRowItem}>{stokItem.product_name}</div>
-              <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
-              </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
-              </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
-              </div>
-              <div>
-                <EditButton onClick={(e) => handleEdit(e, stokItem)} />
-              </div>
-              {/* <div className={styles.tableRowItem}>{product.quantity}</div>
-              <div className={styles.tableRowItem}>
-                {product.warehouse_name}
-              </div> */}
+          {stok.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>Belum ada produk yang ditambahkan</p>
+              <p>Klik tombol "Tambah Stok" untuk menambahkan produk</p>
             </div>
-          ))}
+          ) : (
+            stok.map((stokItem, index) => (
+              <div
+                key={stokItem.product_code || index}
+                className={styles.tableRow}
+              >
+                <CustomDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setModalDeleteOpen(stokItem);
+                  }}
+                />
+                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.product_code}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.product_name}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.carton_quantity}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.pack_quantity}
+                </div>
+                <div>
+                  <EditButton onClick={(e) => handleEdit(e, stokItem)} />
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       <AddStockModal
-        stocks={stocks}
+        stocks={stocks.filter((stock) => stock.warehouse === gudangAsal?.id)}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
 
       <EditStockModal
-        stocks={stocks}
+        stocks={stocks.filter((stock) => stock.warehouse === gudangAsal?.id)}
         stock={editModalOpen}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
@@ -216,7 +266,7 @@ const TambahTransferStok = () => {
           e.stopPropagation();
           setModalDeleteOpen(null);
         }}
-        onConfirm={() => setModalDeleteOpen(null)}
+        onConfirm={() => handleDeleteStok(modalDeleteOpen)}
       />
     </div>
   );

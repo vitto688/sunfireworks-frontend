@@ -36,9 +36,15 @@ import {
 } from "../actions/authActions";
 import { loadInitialMasterData } from "./masterSaga";
 import { fetchStocks } from "./stockSaga";
+import { fetchSPKSaga } from "./spkSaga";
 
 function* loadInitialData() {
-  yield all([fetchRoles(), loadInitialMasterData(), fetchStocks()]);
+  yield all([
+    fetchRoles(),
+    loadInitialMasterData(),
+    fetchStocks(),
+    fetchSPKSaga({ payload: { params: {} } }),
+  ]);
 }
 
 function* validateToken() {

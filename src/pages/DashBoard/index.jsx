@@ -114,15 +114,13 @@ import UbahTransferStok, {
 import TambahReturPembelian, {
   TAMBAH_RETUR_PEMBELIAN_PATH,
 } from "./MutasiKeluar/ReturPembelian/TambahReturPembelian";
-import UbahReturPembelian, {
-  UBAH_RETUR_PEMBELIAN_PATH,
-} from "./MutasiKeluar/ReturPembelian/UbahReturPembelian";
+
 import TambahSPKBarang, {
   TAMBAH_SPK_BARANG_PATH,
 } from "./MutasiKeluar/SPKBarang/TambahSPKBarang";
 import UbahSPKBarang, {
   UBAH_SPK_BARANG_PATH,
-} from "./MutasiKeluar/SPKBarang/UbahSPKBarang ";
+} from "./MutasiKeluar/SPKBarang/UbahSPKBarang";
 import TambahSuratJalan, {
   TAMBAH_SURAT_JALAN_PATH,
 } from "./MutasiKeluar/SuratJalan/TambahSuratJalan";
@@ -161,6 +159,9 @@ import LaporanPenerimaanBarang, {
 import LaporanPengeluaranBarang, {
   LAPORAN_PENGELUARAN_BARANG_PATH,
 } from "./Laporan/PengeluaranBarang";
+import UbahReturPembelian, {
+  UBAH_RETUR_PEMBELIAN_PATH,
+} from "./MutasiKeluar/ReturPembelian/EditReturPembelian";
 
 export const dashboardPath = "/*";
 
@@ -319,3 +320,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+/// index index.html index.htm index.nginx-debian.html;

@@ -150,7 +150,7 @@ const UbahProduk = () => {
           onChange={(supplier) => setSupplier(supplier)}
         />
         <InputField
-          label="Kemasan"
+          label="Packing"
           type="text"
           id="kemasan"
           name="kemasan"

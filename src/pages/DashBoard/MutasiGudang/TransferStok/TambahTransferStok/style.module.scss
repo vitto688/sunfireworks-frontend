@@ -79,10 +79,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:60px 60px 110px 300px 200px 100px 100px 150px;
+            grid-template-columns:60px 60px 110px 300px 100px 100px 150px;
             align-items: center;
             padding: 5px 10px 15px 10px;
-            width:1240px;
+            width:1030px;
             border-bottom: 2px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -101,7 +101,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            width:1260px;
+            width:1050px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -111,7 +111,7 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns:60px  60px 110px 300px 200px 100px 100px 150px;
+                grid-template-columns:60px  60px 110px 300px 100px 100px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
@@ -124,5 +124,32 @@
             }
         }
        
+    }            
+    
+    .emptyState {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+        color: $greyColor600;
+        width: 100%;
+        min-height: 150px;
+
+        p {
+            margin: 5px 0;
+            font-size: 15px;
+            
+            &:first-child {
+                font-weight: 600;
+                color: #4a5568;
+            }
+            
+            &:last-child {
+                font-size: 13px;
+                color: #a0aec0;
+            }
+        }
     }
 }

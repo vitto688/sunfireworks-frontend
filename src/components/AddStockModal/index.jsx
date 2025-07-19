@@ -10,18 +10,21 @@ import SearchField from "../SearchField";
 const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
   const [carton, setCarton] = useState(0);
   const [pack, setPack] = useState(0);
-  const [packSize, setPackSize] = useState("");
+  // const [packSize, setPackSize] = useState("");
   const [stock, setStock] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (carton < 1 && pack < 1 && packSize === "" && !stock)
-      return alert("Lengkapi semua data");
-    onSave({ carton, pack, stock, packSize });
+    if (carton < 1 && pack < 1 && !stock) return alert("Lengkapi semua data");
+    onSave({
+      ...stock,
+      carton_quantity: carton,
+      pack_quantity: pack,
+      // packaging_size: packSize,
+    });
     setCarton(0);
     setPack(0);
     setStock(null);
-    setPackSize("");
     onClose();
   };
 
@@ -52,7 +55,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
           </button>
           <h2>Tambah Stok Produk</h2>
         </div>
-        
+
         <div className={styles.modalBody}>
           <SearchField
             title="Cari Stok"
@@ -62,9 +65,17 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
             name="stok"
             data={stocks.map((stock) => ({
               id: stock.id,
+              code: stock.product_code,
               name: stock.product_name,
+              gudang: stock.warehouse_name,
+              packQuantity: stock.pack_quantity,
+              cartonQuantity: stock.carton_quantity,
+              packing: stock.packing,
+              supplierName: stock.supplier_name,
             }))}
-            onChange={(stock) => setStock(stocks.find((s) => s.id === stock.id))}
+            onChange={(stock) =>
+              setStock(stocks.find((s) => s.id === stock.id))
+            }
           />
           <form onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
@@ -85,12 +96,13 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
                 disabled={true}
               />
             </div>
+
             <div className={styles.formGroup}>
-              <label htmlFor="gudang">Gudang</label>
+              <label htmlFor="kp">KP</label>
               <input
                 type="text"
-                id="gudang"
-                value={stock?.warehouse_name ?? ""}
+                id="kp"
+                value={stock?.supplier_name ?? ""}
                 disabled={true}
               />
             </div>
@@ -100,8 +112,8 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="packSize"
-                value={packSize}
-                onChange={(e) => setPackSize(e.target.value)}
+                value={stock?.packing ?? ""}
+                disabled={true}
               />
             </div>
 
@@ -109,7 +121,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <label htmlFor="karton">Kuantitas Karton </label>
               <div className={styles.quantityInput}>
                 <input
-                  type="number"
+                  type="text"
                   id="karton"
                   value={carton}
                   onChange={handleCartonChange}
@@ -123,7 +135,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <label htmlFor="pack">Kuantitas Pack </label>
               <div className={styles.quantityInput}>
                 <input
-                  type="number"
+                  type="text"
                   id="pack"
                   value={pack}
                   onChange={handlePackChange}

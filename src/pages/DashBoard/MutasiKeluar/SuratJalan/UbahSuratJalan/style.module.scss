@@ -18,6 +18,20 @@
 
     }
 
+    .errorMessage {
+        background-color: #fee2e2;
+        border: 1px solid #f87171;
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #dc2626;
+        font-size: 14px;
+        margin-bottom: 10px;
+        
+        p {
+            margin: 0;
+        }
+    }
+
     .formSection{
         display: flex;
         flex-direction: column;
@@ -35,7 +49,7 @@
         .row{
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 25px;
         }
     }
 
@@ -79,10 +93,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:60px 110px 300px 200px 100px 100px 100px 100px 100px 100px 150px;
+            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
             align-items: center;
             padding: 5px 10px 15px 10px;
-            width:1610px;
+            width:1140px;
             border-bottom: 2px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -101,7 +115,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            width:1630px;
+            width:1160px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -111,7 +125,7 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns:60px 110px 300px 200px 100px 100px 100px 100px 100px 100px 150px;
+                grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
@@ -122,6 +136,36 @@
 
                 }
             }
+        }
+
+        .tableFooter{
+            display: grid;
+            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
+            width:1140px;
+            padding: 20px 10px;
+            border-top: 1px solid #eaeaea;
+            background-color: #f9f9f9;
+            font-size: 16px;
+            font-weight: bold;
+            color: $greyColor600;
+            gap: 10px;
+
+            .total{
+                grid-area: 1/6;
+            }
+
+            .cartoon{
+                grid-area: 1/7;
+            }   
+
+            .pack{
+                grid-area: 1/8;
+            } 
+            
+            .all{
+                grid-area: 1/9;
+            }
+
         }
        
     }

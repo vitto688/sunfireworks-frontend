@@ -107,10 +107,10 @@ function* addSPG(action) {
 
 function* updateSPG(action) {
   try {
-    const { spgType, data } = action.payload;
+    const { spgType, id, data } = action.payload;
     const api = getSPGAPI(spgType);
     const methods = getSPGMethods(spgType);
-    const response = yield call(api[methods.update], data.id, data);
+    const response = yield call(api[methods.update], id, data);
     yield put(updateSPGSuccess(spgType, response));
   } catch (error) {
     const { spgType } = action.payload;

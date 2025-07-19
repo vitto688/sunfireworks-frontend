@@ -1,6 +1,6 @@
 @import 'src/mixins.scss';
 
-.spbSection {
+.suratPengeluaranBarangSection {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -53,10 +53,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:  60px 60px 200px 200px 150px 150px  150px;
+            grid-template-columns: 60px 60px 200px 150px 200px 150px 120px 150px;
             align-items: center;
             padding: 15px 10px;
-            min-width: 1030px; 
+            min-width: 1240px; 
             border-bottom: 1px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -65,7 +65,6 @@
                 font-size: 16px;
                 font-weight: bold;
             }
-
         }
 
         .tableBody{
@@ -73,7 +72,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            min-width: 1050px;
+            min-width: 1260px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -83,19 +82,69 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns: 60px 60px 200px 200px 150px 150px 150px;
+                grid-template-columns: 60px 60px 200px 150px 200px 150px 120px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
                 cursor: pointer;
                
                 .tableRowItem{
+                    display: flex;
+                    align-items: center;
                     font-size: 14px;
-
                 }
             }
+
+            // Empty state styling
+            .emptyStateContainer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 300px;
+                padding: 40px 20px;
+                
+                .emptyStateContent {
+                    text-align: center;
+                    max-width: 400px;
+                    
+                    .emptyStateTitle {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: $greyColor600;
+                        margin-bottom: 8px;
+                        line-height: 1.4;
+                    }
+                    
+                    .emptyStateSubtitle {
+                        font-size: 14px;
+                        color: #9CA3AF;
+                        margin: 0;
+                        line-height: 1.5;
+                    }
+                }
+            }
+
+            // Loading message styling
+            .loadingMessage {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 200px;
+                font-size: 16px;
+                color: #6B7280;
+            }
         }
-       
     }
     
+    // Loading state styling
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        font-size: 16px;
+        color: #6B7280;
+        background-color: white;
+        border-radius: 15px;
+    }
 }

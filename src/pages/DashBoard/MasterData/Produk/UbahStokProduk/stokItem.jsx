@@ -31,7 +31,7 @@ const StokItem = ({
       />
       <InputField
         label="Stok Karton"
-        type="number"
+        type="text"
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
         disabled={true}
@@ -39,7 +39,7 @@ const StokItem = ({
       />
       <InputField
         label="Stok Pack"
-        type="number"
+        type="text"
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
         disabled={true}
@@ -49,7 +49,7 @@ const StokItem = ({
         {"Ubah Stok ===>"}
       </label>
       <InputField
-        type="number"
+        type="text"
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
         value={carton}
@@ -59,7 +59,7 @@ const StokItem = ({
         }}
       />
       <InputField
-        type="number"
+        type="text"
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
         value={pack}

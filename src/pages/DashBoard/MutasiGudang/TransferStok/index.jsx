@@ -11,11 +11,20 @@ import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
-import { dataTransaksi } from "../../../../dummy_data/transactions";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
 import { UBAH_TRANSFER_STOK_PATH } from "./UbahTransferStok";
 import { TAMBAH_TRANSFER_STOK_PATH } from "./TambahTransferStok";
+
+// Import Redux actions
+import {
+  fetchStokTransferRequest,
+  deleteStokTransferRequest,
+  resetStokTransferMessages,
+} from "../../../../redux/actions/stokTransferActions";
+
+// Import utility functions
+import { formatDate } from "../../../../utils/dateUtils";
 
 // Define the path for the Transfer Stok page
 export const TRANSFER_STOK_PATH = "/mutasi-gudang/transfer-stok";
@@ -26,7 +35,6 @@ const TransferStok = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
@@ -35,27 +43,53 @@ const TransferStok = () => {
   const [endDate, setEndDate] = useState("");
 
   const { warehouses } = useSelector((state) => state.master);
+  const { data, loading, message, errorMessage, pagination } = useSelector(
+    (state) => state.stokTransfer
+  );
 
   useEffect(() => {
-    // Fetch data or perform any necessary actions on component mount
-  }, []);
+    // Fetch StokTransfer data on component mount
+    dispatch(fetchStokTransferRequest());
+  }, [dispatch]);
+
+  // Initialize filteredData when data changes
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
+  // Handle success/error messages
+  useEffect(() => {
+    if (message) {
+      alert(message);
+      dispatch(resetStokTransferMessages());
+    }
+    if (errorMessage) {
+      alert(errorMessage);
+      dispatch(resetStokTransferMessages());
+    }
+  }, [message, errorMessage, dispatch]);
 
   useEffect(() => {
-    const filteredTransaksi = filteredData.filter((item) =>
-      item.no_faktur.toLowerCase().includes(query.toLowerCase())
+    const filteredByQuery = data.filter((item) =>
+      (item.transfer_number || item.no_faktur || "")
+        .toLowerCase()
+        .includes(query.toLowerCase())
     );
-    setData(filteredTransaksi);
-  }, [query, filteredData]);
+    // Update local filtered data for search
+    setFilteredData(filteredByQuery);
+  }, [query, data]);
 
   useEffect(() => {
     if (startDate && endDate) {
-      const filtered = filteredData.filter((item) => {
+      const filtered = data.filter((item) => {
         const itemDate = new Date(item.tanggal_transaksi);
         return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
       });
-      setData(filtered);
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data || []);
     }
-  }, [startDate, endDate, filteredData]);
+  }, [startDate, endDate, data]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -71,16 +105,18 @@ const TransferStok = () => {
   }, [warehouses]);
 
   useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
+    console.log("Selected Warehouse Filter:", selectedWarehouseFilter, data);
     if (selectedWarehouseFilter === 0) {
-      setFilteredData(dataTransaksi);
+      setFilteredData(data || []);
     } else {
-      const filtered = dataTransaksi.filter(
-        (item) => item.gudang === selectedWarehouseFilter
+      const filtered = data.filter(
+        (item) =>
+          item.source_warehouse_name === selectedWarehouseFilter ||
+          item.destination_warehouse_name === selectedWarehouseFilter
       );
       setFilteredData(filtered);
     }
-  }, [selectedWarehouseFilter]);
+  }, [selectedWarehouseFilter, data]);
   //#endregion
 
   //#region Handlers
@@ -135,28 +171,48 @@ const TransferStok = () => {
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
         </div>
         <div className={styles.tableBody}>
-          {data.map((item) => (
-            <div
-              role="presentation"
-              className={styles.tableRow}
-              onClick={() => handleItemClick(item)}
-            >
-              <CustomDeleteButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setModalOpen(item);
-                }}
-              />
-              <div className={styles.tableRowItem}>{item.no}</div>
-              <div className={styles.tableRowItem}>
-                {item.tanggal_transaksi}
-              </div>
-              <div className={styles.tableRowItem}>{item.no_faktur}</div>
-              <div className={styles.tableRowItem}>{item.gudang_asal}</div>
-              <div className={styles.tableRowItem}>{item.gudang_tujuan}</div>
-              <div className={styles.tableRowItem}>{item.diinput_oleh}</div>
+          {loading ? (
+            <div className={styles.emptyState}>
+              <p>Memuat data...</p>
             </div>
-          ))}
+          ) : filteredData.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>Tidak ada data transfer stok yang tersedia.</p>
+              <p>Klik tombol "Tambah" untuk menambahkan transfer stok baru.</p>
+            </div>
+          ) : (
+            filteredData.map((item, index) => (
+              <div
+                key={item.id || index}
+                role="presentation"
+                className={styles.tableRow}
+                onClick={() => handleItemClick(item)}
+              >
+                <CustomDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setModalOpen(item);
+                  }}
+                />
+                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {formatDate(item.created_at || item.tanggal_transaksi)}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.document_number || item.no_faktur}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.source_warehouse_name || item.gudang_asal}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.destination_warehouse_name || item.gudang_tujuan}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.user_email || item.diinput_oleh}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
       <ConfirmDeleteModal

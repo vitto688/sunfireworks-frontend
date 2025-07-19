@@ -3,6 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+// Import Redux actions
+import {
+  fetchSPKRequest,
+  deleteSPKRequest,
+  resetSPKMessages,
+} from "../../../../redux/actions/spkActions";
+
 // import styles
 import styles from "./style.module.scss";
 
@@ -11,10 +18,9 @@ import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
-import { dataTransaksi } from "../../../../dummy_data/transactions";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
-import { UBAH_SPK_BARANG_PATH } from "./UbahSPKBarang ";
+import { UBAH_SPK_BARANG_PATH } from "./UbahSPKBarang";
 import { TAMBAH_SPK_BARANG_PATH } from "./TambahSPKBarang";
 
 // Define the path for the SPK Barang page
@@ -26,7 +32,6 @@ const SPKBarang = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
@@ -35,27 +40,53 @@ const SPKBarang = () => {
   const [endDate, setEndDate] = useState("");
 
   const { warehouses } = useSelector((state) => state.master);
+  const { data, loading, message, errorMessage, pagination } = useSelector(
+    (state) => state.spk
+  );
 
   useEffect(() => {
-    // Fetch data or perform any necessary actions on component mount
-  }, []);
+    // Fetch SPK data on component mount
+    dispatch(fetchSPKRequest());
+  }, [dispatch]);
+
+  // Handle success/error messages
+  useEffect(() => {
+    if (message) {
+      alert(message);
+      dispatch(resetSPKMessages());
+    }
+    if (errorMessage) {
+      alert(errorMessage);
+      dispatch(resetSPKMessages());
+    }
+  }, [message, errorMessage, dispatch]);
 
   useEffect(() => {
-    const filteredTransaksi = filteredData.filter((item) =>
-      item.no_faktur.toLowerCase().includes(query.toLowerCase())
+    // Set initial filtered data from Redux
+    setFilteredData(data || []);
+  }, [data]);
+
+  useEffect(() => {
+    const filteredByQuery = data.filter((item) =>
+      (item.document_number || item.no_faktur || "")
+        .toLowerCase()
+        .includes(query.toLowerCase())
     );
-    setData(filteredTransaksi);
-  }, [query, filteredData]);
+    // Update local filtered data for search
+    setFilteredData(filteredByQuery);
+  }, [query, data]);
 
   useEffect(() => {
     if (startDate && endDate) {
-      const filtered = filteredData.filter((item) => {
-        const itemDate = new Date(item.tanggal_transaksi);
+      const filtered = data.filter((item) => {
+        const itemDate = new Date(item.request_date || item.created_at);
         return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
       });
-      setData(filtered);
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data || []);
     }
-  }, [startDate, endDate, filteredData]);
+  }, [startDate, endDate, data]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -73,14 +104,14 @@ const SPKBarang = () => {
   useEffect(() => {
     console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
     if (selectedWarehouseFilter === 0) {
-      setFilteredData(dataTransaksi);
+      setFilteredData(data || []);
     } else {
-      const filtered = dataTransaksi.filter(
-        (item) => item.gudang === selectedWarehouseFilter
+      const filtered = (data || []).filter(
+        (item) => item.warehouse_name === selectedWarehouseFilter
       );
       setFilteredData(filtered);
     }
-  }, [selectedWarehouseFilter]);
+  }, [selectedWarehouseFilter, data]);
   //#endregion
 
   //#region Handlers
@@ -89,8 +120,11 @@ const SPKBarang = () => {
     navigate(TAMBAH_SPK_BARANG_PATH);
   };
 
-  const handleDelete = (value) => {
-    setModalOpen((old) => !old);
+  const handleDelete = (item) => {
+    if (item && item.id) {
+      dispatch(deleteSPKRequest(item.id));
+    }
+    setModalOpen(false);
   };
 
   const handleItemClick = (value) => {
@@ -99,12 +133,13 @@ const SPKBarang = () => {
   //#endregion
 
   return (
-    <div className={styles.suratJalanSection}>
+    <div className={styles.mainSection}>
       <div className={styles.actionsSection}>
         <CustomButton
           // variant="outline"
-          label="+ Tambah"
+          label={loading ? "Loading..." : "+ Tambah"}
           onClick={handleAddClick}
+          disabled={loading}
         />
       </div>
       <div className={styles.searchFilterSection}>
@@ -129,41 +164,68 @@ const SPKBarang = () => {
           <div className={styles.tableHeaderItem} />
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
-          <div className={styles.tableHeaderItem}>No Bukti</div>
+          <div className={styles.tableHeaderItem}>No SPK</div>
           <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
           <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
+          <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {data.map((item) => (
-            <div
-              role="presentation"
-              className={styles.tableRow}
-              onClick={() => handleItemClick(item)}
-            >
-              <CustomDeleteButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setModalOpen(item);
-                }}
-              />
-              <div className={styles.tableRowItem}>{item.no}</div>
-              <div className={styles.tableRowItem}>
-                {item.tanggal_transaksi}
+          {loading ? (
+            <div className={styles.loadingMessage}>Loading SPK data...</div>
+          ) : filteredData.length === 0 ? (
+            <div className={styles.emptyStateContainer}>
+              <div className={styles.emptyStateContent}>
+                <h3 className={styles.emptyStateTitle}>
+                  Tidak ada data SPK yang tersedia.
+                </h3>
+                <p className={styles.emptyStateSubtitle}>
+                  Klik tombol "Tambah" untuk menambahkan SPK baru.
+                </p>
               </div>
-              <div className={styles.tableRowItem}>{item.no_faktur}</div>
-              <div className={styles.tableRowItem}>{item.nama_pelanggan}</div>
-              <div className={styles.tableRowItem}>{item.gudang}</div>
-              <div className={styles.tableRowItem}>{item.diinput_oleh}</div>
             </div>
-          ))}
+          ) : (
+            filteredData.map((item, index) => (
+              <div
+                key={item.id}
+                role="presentation"
+                className={styles.tableRow}
+                onClick={() => handleItemClick(item)}
+              >
+                <CustomDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setModalOpen(item);
+                  }}
+                />
+                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {item.request_date ||
+                    new Date(item.created_at).toLocaleDateString()}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.document_number || item.id}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.customer_name || "-"}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.warehouse_name || "-"}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.user_email || "-"}
+                </div>
+                <div className={styles.tableRowItem}>{item.notes || "-"}</div>
+              </div>
+            ))
+          )}
         </div>
       </div>
       <ConfirmDeleteModal
-        label="Apakah anda yakin untuk menghapus item ini?"
-        open={modalOpen}
+        label="Apakah anda yakin untuk menghapus SPK ini?"
+        open={!!modalOpen}
         onClose={() => setModalOpen(false)}
-        onConfirm={() => handleDelete("test")}
+        onConfirm={() => handleDelete(modalOpen)}
       />
     </div>
   );

@@ -3,7 +3,10 @@ import { X } from "lucide-react";
 
 // Import styles
 import styles from "./style.module.scss";
-import { formatNumberWithDot } from "../../utils/numberUtils";
+import {
+  formatNumberWithDot,
+  parseFormattedNumber,
+} from "../../utils/numberUtils";
 
 // Import components
 
@@ -80,14 +83,14 @@ const EditStockModalImport = ({
   };
 
   const handleCartonChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setCarton(Number(value));
     }
   };
 
   const handlePackChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setPack(Number(value));
     }
@@ -111,7 +114,7 @@ const EditStockModalImport = ({
             <input
               type="text"
               id="kodeProduk"
-              value={stock?.product_code ?? ""}
+              defaultValue={stock?.product_code ?? ""}
               disabled={true}
             />
           </div>
@@ -120,7 +123,7 @@ const EditStockModalImport = ({
             <input
               type="text"
               id="namaProduk"
-              value={stock?.product_name ?? ""}
+              defaultValue={stock?.product_name ?? ""}
               disabled={true}
             />
           </div>

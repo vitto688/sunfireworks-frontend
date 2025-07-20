@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 // Import styles
 import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
-import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import {
+  formatNumberWithDot,
+  parseFormattedNumber,
+} from "../../../../../utils/numberUtils";
 
 // Import components
 
@@ -56,9 +59,9 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         name={`stok-karton-${stok.id}-${code}`}
         value={formatNumberWithDot(carton)}
         onChange={(e) => {
-          const { value } = e.target;
-          if (/^\d*$/.test(value)) {
-            setCarton(Number(value));
+          const parsedValue = parseFormattedNumber(e.target.value);
+          if (/^\d*$/.test(parsedValue)) {
+            setCarton(Number(parsedValue));
             handleCartonChange(e, stok);
           }
         }}
@@ -69,9 +72,9 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         name={`stok-pack-${stok.id}-${code}`}
         value={formatNumberWithDot(pack)}
         onChange={(e) => {
-          const { value } = e.target;
-          if (/^\d*$/.test(value)) {
-            setPack(Number(value));
+          const parsedValue = parseFormattedNumber(e.target.value);
+          if (/^\d*$/.test(parsedValue)) {
+            setPack(Number(parsedValue));
             handlePackChange(e, stok);
           }
         }}

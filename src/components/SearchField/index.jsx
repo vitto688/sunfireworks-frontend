@@ -25,7 +25,7 @@ const SearchField = ({ title, label, name, data, onChange, defaultValue }) => {
           id={name}
           name={name}
           type="text"
-          value={selected?.name ?? ""}
+          defaultValue={selected?.name ?? ""}
           disabled={true}
         />
         <button onClick={() => setOpen(true)}>{title}</button>

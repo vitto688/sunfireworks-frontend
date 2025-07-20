@@ -113,7 +113,7 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="kodeProduk"
-                value={stock?.product_code ?? ""}
+                defaultValue={stock?.product_code ?? ""}
                 disabled={true}
               />
             </div>
@@ -122,7 +122,7 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="namaProduk"
-                value={stock?.product_name ?? ""}
+                defaultValue={stock?.product_name ?? ""}
                 disabled={true}
               />
             </div>

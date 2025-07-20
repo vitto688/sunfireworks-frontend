@@ -226,8 +226,7 @@ const TambahSuratJalan = () => {
             type="text"
             id="pelanggan"
             name="pelanggan"
-            value={spk?.customer_name ?? ""}
-            onChange={(e) => {}}
+            defaultValue={spk?.customer_name ?? ""}
             disabled={true}
           />
 
@@ -236,8 +235,7 @@ const TambahSuratJalan = () => {
             type="text"
             id="gudangTujuan"
             name="gudangTujuan"
-            value={spk?.warehouse_name ?? ""}
-            onChange={(e) => {}}
+            defaultValue={spk?.warehouse_name ?? ""}
             disabled={true}
           />
         </div>

@@ -3,7 +3,10 @@ import { X } from "lucide-react";
 
 // Import styles
 import styles from "./style.module.scss";
-import { formatNumberWithDot } from "../../utils/numberUtils";
+import {
+  formatNumberWithDot,
+  parseFormattedNumber,
+} from "../../utils/numberUtils";
 
 // Import components
 
@@ -39,14 +42,14 @@ const EditStockModal = ({
   };
 
   const handleCartonChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setCarton(Number(value));
     }
   };
 
   const handlePackChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setPack(Number(value));
     }
@@ -68,7 +71,7 @@ const EditStockModal = ({
             <input
               type="text"
               id="kodeProduk"
-              value={stock?.product_code ?? ""}
+              defaultValue={stock?.product_code ?? ""}
               disabled={true}
             />
           </div>
@@ -77,7 +80,7 @@ const EditStockModal = ({
             <input
               type="text"
               id="namaProduk"
-              value={stock?.product_name ?? ""}
+              defaultValue={stock?.product_name ?? ""}
               disabled={true}
             />
           </div>
@@ -86,7 +89,7 @@ const EditStockModal = ({
             <input
               type="text"
               id="kp"
-              value={stock?.supplier_name ?? ""}
+              defaultValue={stock?.supplier_name ?? ""}
               disabled={true}
             />
           </div>
@@ -96,7 +99,7 @@ const EditStockModal = ({
             <input
               type="text"
               id="ukuranPack"
-              value={stock?.packing ?? ""}
+              defaultValue={stock?.packing ?? ""}
               disabled={true}
             />
           </div>

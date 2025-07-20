@@ -16,7 +16,10 @@ import {
 import CustomButton from "../../../../components/CustomButton";
 import InputField from "../../../../components/InputField";
 import Loading from "../../../../components/Loading";
-import { formatNumberWithDot } from "../../../../utils/numberUtils";
+import {
+  formatNumberWithDot,
+  parseFormattedNumber,
+} from "../../../../utils/numberUtils";
 
 // Define the path for the Ubah Stok page
 export const UBAH_STOK_PATH = "/stok/ubah-stok";
@@ -95,14 +98,14 @@ const UbahStok = () => {
   };
 
   const handleCartonChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setCarton(Number(value));
     }
   };
 
   const handlePackChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setPack(Number(value));
     }
@@ -129,7 +132,7 @@ const UbahStok = () => {
           type="text"
           id="kodeProduk"
           name="kodeProduk"
-          value={stok.product_code ?? ""}
+          defaultValue={stok.product_code ?? ""}
           disabled={true}
         />
 
@@ -138,7 +141,7 @@ const UbahStok = () => {
           type="text"
           id="namaProduk"
           name="namaProduk"
-          value={stok.product_name ?? ""}
+          defaultValue={stok.product_name ?? ""}
           disabled={true}
         />
 
@@ -147,7 +150,7 @@ const UbahStok = () => {
           type="text"
           id="gudang"
           name="gudang"
-          value={stok.warehouse_name ?? ""}
+          defaultValue={stok.warehouse_name ?? ""}
           disabled={true}
         />
 
@@ -157,7 +160,9 @@ const UbahStok = () => {
             type="text"
             id="kartonLama"
             name="kartonLama"
-            value={formatNumberWithDot(currentStock?.carton_quantity ?? 0)}
+            defaultValue={formatNumberWithDot(
+              currentStock?.carton_quantity ?? 0
+            )}
             disabled={true}
           />
 
@@ -177,7 +182,7 @@ const UbahStok = () => {
             type="text"
             id="packLama"
             name="packLama"
-            value={formatNumberWithDot(currentStock?.pack_quantity ?? 0)}
+            defaultValue={formatNumberWithDot(currentStock?.pack_quantity ?? 0)}
             disabled={true}
           />
 

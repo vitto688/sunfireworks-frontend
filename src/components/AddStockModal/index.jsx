@@ -86,7 +86,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="kodeProduk"
-                value={stock?.product_code ?? ""}
+                defaultValue={stock?.product_code ?? ""}
                 disabled={true}
               />
             </div>
@@ -95,7 +95,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="namaProduk"
-                value={stock?.product_name ?? ""}
+                defaultValue={stock?.product_name ?? ""}
                 disabled={true}
               />
             </div>
@@ -105,7 +105,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="kp"
-                value={stock?.supplier_name ?? ""}
+                defaultValue={stock?.supplier_name ?? ""}
                 disabled={true}
               />
             </div>
@@ -115,7 +115,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               <input
                 type="text"
                 id="packSize"
-                value={stock?.packing ?? ""}
+                defaultValue={stock?.packing ?? ""}
                 disabled={true}
               />
             </div>

@@ -125,6 +125,11 @@ const TambahSPGImport = () => {
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
     console.log("Tambah Stok clicked!");
+
+    if (!gudang) {
+      alert("Harap pilih gudang terlebih dahulu");
+      return;
+    }
     setModalOpen(true);
 
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
@@ -186,7 +191,7 @@ const TambahSPGImport = () => {
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SJ"
+            label="No SPG"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"
@@ -255,6 +260,7 @@ const TambahSPGImport = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
           <div className={styles.tableHeaderItem}>Ukuran Dus</div>
@@ -278,6 +284,7 @@ const TambahSPGImport = () => {
               <div className={styles.tableRowItem}>{index + 1}</div>
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
+              <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
@@ -285,14 +292,15 @@ const TambahSPGImport = () => {
                 {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div className={styles.tableRowItem}>
+                {stokItem.packaging_size}
+              </div>
+              <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.inn)}
               </div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.out)}
               </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.packaging_size}
-              </div>
+
               <div className={styles.tableRowItem}>{stokItem.pjg}</div>
               <div className={styles.tableRowItem}>
                 {stokItem.packaging_weight}

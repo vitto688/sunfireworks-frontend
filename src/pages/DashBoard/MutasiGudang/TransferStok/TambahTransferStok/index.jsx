@@ -102,6 +102,11 @@ const TambahTransferStok = () => {
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
     console.log("Tambah Stok clicked!");
+
+    if (!gudangAsal) {
+      alert("Harap pilih gudang terlebih dahulu");
+      return;
+    }
     setModalOpen(true);
   };
 

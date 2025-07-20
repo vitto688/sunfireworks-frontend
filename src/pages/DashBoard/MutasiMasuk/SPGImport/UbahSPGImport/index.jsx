@@ -202,7 +202,7 @@ const UbahSPGImport = () => {
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SJ"
+            label="No SPG"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"
@@ -250,19 +250,6 @@ const UbahSPGImport = () => {
             name="gudangTujuan"
             value={gudang?.name}
           />
-          {/* <SearchField
-            title="Cari Gudang"
-            label="Gudang Tujuan"
-            type="text"
-            id="gudangTujuan"
-            name="gudangTujuan"
-            data={warehouses.map((warehouse) => ({
-              id: warehouse.id,
-              name: warehouse.name,
-            }))}
-            defaultValue={gudang}
-            onChange={(warehouse) => setGudang(warehouse)}
-          /> */}
         </div>
       </div>
       <div className={styles.rowBetween}>
@@ -279,6 +266,7 @@ const UbahSPGImport = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
           <div className={styles.tableHeaderItem}>Ukuran Dus</div>
@@ -302,6 +290,7 @@ const UbahSPGImport = () => {
               <div className={styles.tableRowItem}>{index + 1}</div>
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
+              <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
@@ -309,14 +298,15 @@ const UbahSPGImport = () => {
                 {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div className={styles.tableRowItem}>
+                {stokItem.packaging_size}
+              </div>
+              <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.inn)}
               </div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.out)}
               </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.packaging_size}
-              </div>
+
               <div className={styles.tableRowItem}>{stokItem.pjg}</div>
               <div className={styles.tableRowItem}>
                 {stokItem.packaging_weight}

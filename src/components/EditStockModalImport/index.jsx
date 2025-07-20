@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 
 // Import styles
 import styles from "./style.module.scss";
+import { formatNumberWithDot } from "../../utils/numberUtils";
 
 // Import components
 
@@ -205,12 +206,12 @@ const EditStockModalImport = ({
               <input
                 type="text"
                 id="karton"
-                value={carton}
+                value={formatNumberWithDot(carton)}
                 onChange={handleCartonChange}
               />
-              <label htmlFor="sisaKarton">{`stok tersedia ${
+              <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
                 warehouseStock?.carton_quantity ?? 0
-              }`}</label>
+              )}`}</label>
             </div>
           </div>
           <div className={styles.formGroup}>
@@ -219,12 +220,12 @@ const EditStockModalImport = ({
               <input
                 type="text"
                 id="pack"
-                value={pack}
+                value={formatNumberWithDot(pack)}
                 onChange={handlePackChange}
               />
-              <label htmlFor="sisaKarton">{`stok tersedia ${
+              <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
                 warehouseStock?.pack_quantity ?? 0
-              }`}</label>
+              )}`}</label>
             </div>
           </div>
 

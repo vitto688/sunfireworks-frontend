@@ -25,6 +25,7 @@ import EditStockModal from "../../../../../components/EditStockModal";
 // Import utility functions
 import { formatDate } from "../../../../../utils/dateUtils";
 import { printReturPenjualan } from "../../../../../utils/printReturPenjualan";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const UBAH_RETUR_PENJUALAN_PATH =
   "/mutasi-masuk/retur-penjualan/ubah-retur-penjualan";
@@ -292,10 +293,10 @@ const UbahReturPenjualan = () => {
               </div>
               <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -305,9 +306,11 @@ const UbahReturPenjualan = () => {
         </div>
         <div className={styles.tableFooter}>
           <div className={styles.total}>Total</div>
-          <div className={styles.cartoon}>{totalCarton}</div>
-          <div className={styles.pack}>{totalPack}</div>
-          <div className={styles.all}>{totalAll}</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

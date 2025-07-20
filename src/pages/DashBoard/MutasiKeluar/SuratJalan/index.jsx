@@ -273,7 +273,7 @@ const SuratJalan = () => {
                   {item.vehicle_number || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {item.user_email || "-"}
+                  {item.user_username || "-"}
                 </div>
 
                 <div className={styles.tableRowItem}>{item.notes || "-"}</div>

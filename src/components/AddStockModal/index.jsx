@@ -7,6 +7,9 @@ import styles from "./style.module.scss";
 // Import components
 import SearchField from "../SearchField";
 
+// Import utility functions
+import { formatNumberWithDot } from "../../utils/numberUtils";
+
 const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
   const [carton, setCarton] = useState(0);
   const [pack, setPack] = useState(0);
@@ -126,9 +129,9 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
                   value={carton}
                   onChange={handleCartonChange}
                 />
-                <label htmlFor="sisaKarton">{`stok tersedia ${
+                <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
                   stock?.carton_quantity ?? 0
-                }`}</label>
+                )}`}</label>
               </div>
             </div>
             <div className={styles.formGroup}>

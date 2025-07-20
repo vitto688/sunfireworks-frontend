@@ -23,6 +23,7 @@ import {
   addSPGKawatRequest,
   resetSPGKawatMessages,
 } from "../../../../../redux/actions/spgActions";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const TAMBAH_SPG_KAWAT_PATH = "/mutasi-masuk/spg-kawat/tambah-spg-kawat";
 
@@ -223,10 +224,10 @@ const TambahSPGKawat = () => {
                 {stokItem.warehouse_name}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />

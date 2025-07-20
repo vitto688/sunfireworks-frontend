@@ -1,3 +1,5 @@
+import { formatNumberWithDot } from "./numberUtils";
+
 export const printReturPenjualan = (data) => {
   // Calculate totals
   const totalCarton =
@@ -247,10 +249,14 @@ export const printReturPenjualan = (data) => {
                 <td class="col-kode">${item.product_code || "-"}</td>
                 <td class="col-barcode">-</td>
                 <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">E</td>
-                <td class="col-packing">${item.packing || "30/1"}</td>
-                <td class="col-carton">${item.carton_quantity || 0}</td>
-                <td class="col-pack">${item.pack_quantity || 0}</td>
+                <td class="col-kp">${item.supplier_name || "-"}</td>
+                <td class="col-packing">${item.packing || "-"}</td>
+                <td class="col-carton">${formatNumberWithDot(
+                  item.carton_quantity || 0
+                )}</td>
+                <td class="col-pack">${formatNumberWithDot(
+                  item.pack_quantity || 0
+                )}</td>
               </tr>
             `
                 )
@@ -258,8 +264,8 @@ export const printReturPenjualan = (data) => {
             }
             <tr class="total-row">
               <td colspan="6" class="total-label">TOTAL</td>
-              <td class="col-carton">${totalCarton}</td>
-              <td class="col-pack">${totalPack}</td>
+              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
+              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
             </tr>
           </tbody>
         </table>
@@ -270,7 +276,7 @@ export const printReturPenjualan = (data) => {
               <strong>CATATAN :</strong>
             </div>
             <div class="notesContent">
-              ${data.notes || ""}
+              ${data.notes || "-"}
             </div>
           </div>
           
@@ -279,7 +285,7 @@ export const printReturPenjualan = (data) => {
               <p>Yang membuat,</p>
             </div>
             <div class="signatureRight">
-              <p>${data.user_email || ""}</p>
+              <p>${data.user_username || "-"}</p>
             </div>
           </div>
         </div>

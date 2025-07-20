@@ -222,7 +222,7 @@ const SuratPengeluaranBarang = () => {
                   {item.warehouse_name || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {item.user_email || "-"}
+                  {item.user_username || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.sj_number || "-"}

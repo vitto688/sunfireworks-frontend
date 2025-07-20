@@ -17,6 +17,7 @@ import SearchBar from "../../../components/SearchBar";
 // import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
 import FilterDropdown from "../../../components/FilterDropdown";
 import { UBAH_STOK_PATH } from "./UbahStok";
+import { formatNumberWithDot } from "../../../utils/numberUtils";
 
 // Define the path for the Penyesuaian Stok page
 export const STOCK_PATH = "/stok";
@@ -186,10 +187,10 @@ const Stock = () => {
                 {stokItem.warehouse_name}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               {/* <div className={styles.tableRowItem}>{stokItem.quantity}</div>
               <div className={styles.tableRowItem}>

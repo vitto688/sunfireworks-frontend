@@ -16,6 +16,7 @@ import {
 import CustomButton from "../../../../components/CustomButton";
 import InputField from "../../../../components/InputField";
 import Loading from "../../../../components/Loading";
+import { formatNumberWithDot } from "../../../../utils/numberUtils";
 
 // Define the path for the Ubah Stok page
 export const UBAH_STOK_PATH = "/stok/ubah-stok";
@@ -156,7 +157,7 @@ const UbahStok = () => {
             type="text"
             id="kartonLama"
             name="kartonLama"
-            value={currentStock?.carton_quantity ?? ""}
+            value={formatNumberWithDot(currentStock?.carton_quantity ?? 0)}
             disabled={true}
           />
 
@@ -165,7 +166,7 @@ const UbahStok = () => {
             type="text"
             id="kartonBaru"
             name="kartonBaru"
-            value={carton}
+            value={formatNumberWithDot(carton)}
             onChange={handleCartonChange}
           />
         </div>
@@ -176,7 +177,7 @@ const UbahStok = () => {
             type="text"
             id="packLama"
             name="packLama"
-            value={currentStock?.pack_quantity ?? ""}
+            value={formatNumberWithDot(currentStock?.pack_quantity ?? 0)}
             disabled={true}
           />
 
@@ -185,7 +186,7 @@ const UbahStok = () => {
             type="text"
             id="kartonBaru"
             name="kartonBaru"
-            value={pack}
+            value={formatNumberWithDot(pack)}
             onChange={handlePackChange}
           />
         </div>

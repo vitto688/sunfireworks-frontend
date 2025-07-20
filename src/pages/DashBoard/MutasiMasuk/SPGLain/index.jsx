@@ -17,10 +17,10 @@ import { TAMBAH_SPG_LAIN_PATH } from "./TambahSPGLain";
 import { UBAH_SPG_LAIN_PATH } from "./UbahSPGLain";
 
 // Import SPG Redux Actions
-import { 
+import {
   fetchSPGRequest,
   deleteSPGRequest,
-  resetSPGMessages
+  resetSPGMessages,
 } from "../../../../redux/actions/spgActions";
 
 export const SPG_LAIN_PATH = "/mutasi-masuk/spg-lain";
@@ -50,14 +50,14 @@ const SPGLain = () => {
 
   // Fetch SPG Lain data saat component mount
   useEffect(() => {
-    dispatch(fetchSPGRequest('lain'));
+    dispatch(fetchSPGRequest("lain"));
   }, [dispatch]);
 
   // Reset messages setelah 3 detik
   useEffect(() => {
     if (message || errorMessage) {
       const timer = setTimeout(() => {
-        dispatch(resetSPGMessages('lain'));
+        dispatch(resetSPGMessages("lain"));
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -71,7 +71,7 @@ const SPGLain = () => {
           item.document_number?.toLowerCase().includes(query.toLowerCase()) ||
           item.sj_number?.toLowerCase().includes(query.toLowerCase()) ||
           item.warehouse_name?.toLowerCase().includes(query.toLowerCase()) ||
-          item.user_email?.toLowerCase().includes(query.toLowerCase())
+          item.user_username?.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredData(filtered);
     } else {
@@ -124,7 +124,7 @@ const SPGLain = () => {
 
   const handleDelete = () => {
     if (selectedItemToDelete) {
-      dispatch(deleteSPGRequest('lain', selectedItemToDelete.id));
+      dispatch(deleteSPGRequest("lain", selectedItemToDelete.id));
       setModalOpen(false);
       setSelectedItemToDelete(null);
     }
@@ -162,10 +162,7 @@ const SPGLain = () => {
       )}
 
       <div className={styles.actionsSection}>
-        <CustomButton
-          label="+ Tambah"
-          onClick={handleAddClick}
-        />
+        <CustomButton label="+ Tambah" onClick={handleAddClick} />
       </div>
       <div className={styles.searchFilterSection}>
         <SearchBar
@@ -211,11 +208,13 @@ const SPGLain = () => {
                 />
                 <div className={styles.tableRowItem}>{index + 1}</div>
                 <div className={styles.tableRowItem}>
-                  {new Date(item.transaction_date).toLocaleDateString('id-ID')}
+                  {new Date(item.transaction_date).toLocaleDateString("id-ID")}
                 </div>
-                <div className={styles.tableRowItem}>{item.document_number}</div>
+                <div className={styles.tableRowItem}>
+                  {item.document_number}
+                </div>
                 <div className={styles.tableRowItem}>{item.warehouse_name}</div>
-                <div className={styles.tableRowItem}>{item.user_email}</div>
+                <div className={styles.tableRowItem}>{item.user_username}</div>
                 <div className={styles.tableRowItem}>{item.sj_number}</div>
               </div>
             ))
@@ -231,9 +230,14 @@ const SPGLain = () => {
       {pagination && pagination.count > 0 && (
         <div className={styles.paginationInfo}>
           <p>
-            Menampilkan {filteredData.length} dari {pagination.count} data SPG Lain
+            Menampilkan {filteredData.length} dari {pagination.count} data SPG
+            Lain
             {pagination.total_pages > 1 && (
-              <span> - Halaman {pagination.current_page} dari {pagination.total_pages}</span>
+              <span>
+                {" "}
+                - Halaman {pagination.current_page} dari{" "}
+                {pagination.total_pages}
+              </span>
             )}
           </p>
         </div>

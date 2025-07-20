@@ -71,7 +71,7 @@ const SPGKawat = () => {
           item.document_number?.toLowerCase().includes(query.toLowerCase()) ||
           item.sj_number?.toLowerCase().includes(query.toLowerCase()) ||
           item.warehouse_name?.toLowerCase().includes(query.toLowerCase()) ||
-          item.user_email?.toLowerCase().includes(query.toLowerCase())
+          item.user_username?.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredData(filtered);
     } else {
@@ -214,7 +214,7 @@ const SPGKawat = () => {
                   {item.document_number}
                 </div>
                 <div className={styles.tableRowItem}>{item.warehouse_name}</div>
-                <div className={styles.tableRowItem}>{item.user_email}</div>
+                <div className={styles.tableRowItem}>{item.user_username}</div>
                 <div className={styles.tableRowItem}>{item.sj_number}</div>
               </div>
             ))

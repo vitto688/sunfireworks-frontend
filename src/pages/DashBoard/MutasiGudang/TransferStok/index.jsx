@@ -208,7 +208,7 @@ const TransferStok = () => {
                   {item.destination_warehouse_name || item.gudang_tujuan}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {item.user_email || item.diinput_oleh}
+                  {item.user_username || item.diinput_oleh}
                 </div>
               </div>
             ))

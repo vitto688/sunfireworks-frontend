@@ -25,6 +25,7 @@ import SearchField from "../../../../../components/SearchField";
 
 // Import utility functions
 import { formatDate } from "../../../../../utils/dateUtils";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const UBAH_TRANSFER_STOK_PATH =
   "/mutasi-gudang/transfer-stok/ubah-transfer-stok";
@@ -221,7 +222,7 @@ const UbahTransferStok = () => {
             type="text"
             id="diInputOleh"
             name="diInputOleh"
-            defaultValue={argument?.user_email ?? ""}
+            defaultValue={argument?.user_username ?? ""}
           />
         </div>
       </div>
@@ -268,10 +269,10 @@ const UbahTransferStok = () => {
                   {stokItem.product_name}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {stokItem.carton_quantity}
+                  {formatNumberWithDot(stokItem.carton_quantity)}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {stokItem.pack_quantity}
+                  {formatNumberWithDot(stokItem.pack_quantity)}
                 </div>
                 <div>
                   <EditButton onClick={(e) => handleEdit(e, stokItem)} />

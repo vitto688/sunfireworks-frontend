@@ -23,6 +23,7 @@ import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const TAMBAH_TRANSFER_STOK_PATH =
   "/mutasi-gudang/transfer-stok/tambah-transfer-stok";
@@ -230,10 +231,10 @@ const TambahTransferStok = () => {
                   {stokItem.product_name}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {stokItem.carton_quantity}
+                  {formatNumberWithDot(stokItem.carton_quantity)}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {stokItem.pack_quantity}
+                  {formatNumberWithDot(stokItem.pack_quantity)}
                 </div>
                 <div>
                   <EditButton onClick={(e) => handleEdit(e, stokItem)} />

@@ -1,3 +1,5 @@
+import { formatNumberWithDot } from "./numberUtils";
+
 export const printSuratJalan = (data) => {
   // Calculate totals
   const totalCarton =
@@ -262,10 +264,14 @@ export const printSuratJalan = (data) => {
                 <td class="col-kode">${item.product_code || "-"}</td>
                 <td class="col-barcode">-</td>
                 <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">E</td>
-                <td class="col-packing">${item.packing || "30/1"}</td>
-                <td class="col-carton">${item.carton_quantity || 0}</td>
-                <td class="col-pack">${item.pack_quantity || 0}</td>
+                <td class="col-kp">${item.supplier_name || "-"}</td>
+                <td class="col-packing">${item.packing || "-"}</td>
+                <td class="col-carton">${formatNumberWithDot(
+                  item.carton_quantity || 0
+                )}</td>
+                <td class="col-pack">${formatNumberWithDot(
+                  item.pack_quantity || 0
+                )}</td>
               </tr>
             `
                 )
@@ -273,8 +279,8 @@ export const printSuratJalan = (data) => {
             }
             <tr class="total-row">
               <td colspan="6" class="total-label">TOTAL</td>
-              <td class="col-carton">${totalCarton}</td>
-              <td class="col-pack">${totalPack}</td>
+              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
+              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
             </tr>
           </tbody>
         </table>
@@ -285,7 +291,7 @@ export const printSuratJalan = (data) => {
               <strong>CATATAN :</strong>
             </div>
             <div class="notesContent">
-              ${data.notes || ""}
+              ${data.notes || "-"}
             </div>
           </div>
           

@@ -23,6 +23,7 @@ import {
   updateSPGImportRequest,
   resetSPGImportMessages,
 } from "../../../../../redux/actions/spgActions";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const UBAH_SPGIMPORT_PATH = "/mutasi-masuk/spg-import/ubah-spg-import";
 
@@ -302,13 +303,17 @@ const UbahSPGImport = () => {
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
-              <div className={styles.tableRowItem}>{stokItem.inn}</div>
-              <div className={styles.tableRowItem}>{stokItem.out}</div>
+              <div className={styles.tableRowItem}>
+                {formatNumberWithDot(stokItem.inn)}
+              </div>
+              <div className={styles.tableRowItem}>
+                {formatNumberWithDot(stokItem.out)}
+              </div>
               <div className={styles.tableRowItem}>
                 {stokItem.packaging_size}
               </div>

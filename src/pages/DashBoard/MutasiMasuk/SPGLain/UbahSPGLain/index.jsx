@@ -23,6 +23,7 @@ import {
   updateSPGLainRequest,
   resetSPGLainMessages,
 } from "../../../../../redux/actions/spgActions";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const UBAH_SPG_LAIN_PATH = "/mutasi-masuk/spg-lain/ubah-spg-lain";
 
@@ -234,10 +235,10 @@ const UbahSPGLain = () => {
                 {stokItem.packaging_size}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />

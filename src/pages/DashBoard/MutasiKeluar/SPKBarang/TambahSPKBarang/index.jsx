@@ -23,6 +23,7 @@ import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const TAMBAH_SPK_BARANG_PATH =
   "/mutasi-keluar/spk-barang/tambah-spk-barang";
@@ -268,10 +269,10 @@ const TambahSPKBarang = () => {
               </div>
               <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -281,9 +282,11 @@ const TambahSPKBarang = () => {
         </div>
         <div className={styles.tableFooter}>
           <div className={styles.total}>Total</div>
-          <div className={styles.cartoon}>{totalCarton}</div>
-          <div className={styles.pack}>{totalPack}</div>
-          <div className={styles.all}>{totalAll}</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

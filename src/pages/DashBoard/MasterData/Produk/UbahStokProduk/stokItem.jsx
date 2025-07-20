@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 // Import styles
 import styles from "./style.module.scss";
 import InputField from "../../../../../components/InputField";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 // Import components
 
@@ -36,7 +37,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
         disabled={true}
-        defaultValue={stok.carton_quantity ?? "0"}
+        defaultValue={formatNumberWithDot(stok.carton_quantity ?? 0)}
       />
       <InputField
         label="Stok Pack"
@@ -44,7 +45,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
         disabled={true}
-        defaultValue={stok.pack_quantity ?? "0"}
+        defaultValue={formatNumberWithDot(stok.pack_quantity ?? 0)}
       />
       <label className={styles.label} htmlFor="ubahStokDiGudang">
         {"Ubah Stok ===>"}
@@ -53,7 +54,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         type="text"
         id={`stok-karton-${stok.id}-${code}`}
         name={`stok-karton-${stok.id}-${code}`}
-        value={carton.toString()}
+        value={formatNumberWithDot(carton)}
         onChange={(e) => {
           const { value } = e.target;
           if (/^\d*$/.test(value)) {
@@ -66,7 +67,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         type="text"
         id={`stok-pack-${stok.id}-${code}`}
         name={`stok-pack-${stok.id}-${code}`}
-        value={pack.toString()}
+        value={formatNumberWithDot(pack)}
         onChange={(e) => {
           const { value } = e.target;
           if (/^\d*$/.test(value)) {

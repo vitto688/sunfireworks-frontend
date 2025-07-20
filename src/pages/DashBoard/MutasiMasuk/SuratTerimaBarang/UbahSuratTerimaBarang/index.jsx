@@ -15,6 +15,7 @@ import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditButton from "../../../../../components/EditButton";
 import EditStockModal from "../../../../../components/EditStockModal";
+import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
 export const UBAH_SURAT_TERIMA_BARANG_PATH = "/mutasi-masuk/stb/ubah-stb";
 
@@ -363,10 +364,10 @@ const UbahSuratTerimaBarang = () => {
                 {stokItem.warehouse_name}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.carton_quantity}
+                {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {stokItem.pack_quantity}
+                {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div className={styles.tableRowItem}>-</div>
               <div>

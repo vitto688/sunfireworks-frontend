@@ -37,6 +37,9 @@ const UbahSPGKawat = () => {
   const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState(argument?.sj_number || "");
   const [stok, setStok] = useState(argument?.items || []);
+  const [totalCarton, setTotalCarton] = useState(0);
+  const [totalPack, setTotalPack] = useState(0);
+  const [totalAll, setTotalAll] = useState(0);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
@@ -47,8 +50,6 @@ const UbahSPGKawat = () => {
   const { kawat } = useSelector((state) => state.spg);
   const { loading, message, errorMessage, errorCode } = kawat;
   //#endregion
-
-  console.log("stok", stok);
 
   useEffect(() => {
     setGudang(
@@ -76,6 +77,20 @@ const UbahSPGKawat = () => {
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 
+  useEffect(() => {
+    // Calculate totals whenever stok changes
+    const totalCarton = stok.reduce(
+      (acc, item) => acc + (item.carton_quantity || 0),
+      0
+    );
+    const totalPack = stok.reduce(
+      (acc, item) => acc + (item.pack_quantity || 0),
+      0
+    );
+    setTotalCarton(totalCarton);
+    setTotalPack(totalPack);
+    setTotalAll(totalCarton + totalPack);
+  }, [stok]);
   //#endregion
 
   //#region Handlers
@@ -99,7 +114,6 @@ const UbahSPGKawat = () => {
       })),
     };
 
-    console.log("Mengubah SPG Kawat:", spgData);
     dispatch(updateSPGKawatRequest(argument.id, spgData));
   };
 
@@ -110,7 +124,6 @@ const UbahSPGKawat = () => {
 
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
-    console.log("Tambah Stok clicked!");
     setModalOpen(true);
 
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
@@ -123,7 +136,6 @@ const UbahSPGKawat = () => {
   };
 
   const handleSaveAddStok = (data) => {
-    console.log("Data stok ditambahkan:", data);
     // Update stok state with new data
     setStok([...stok, data]);
     setModalOpen(false);
@@ -131,7 +143,6 @@ const UbahSPGKawat = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data, stok);
     // Update stok state with new data
     setStok((prevStok) =>
       prevStok.map((item) => (item.id === data.id ? data : item))
@@ -141,7 +152,6 @@ const UbahSPGKawat = () => {
   };
 
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);
@@ -184,21 +194,9 @@ const UbahSPGKawat = () => {
             type="text"
             id="gudangTujuan"
             name="gudangTujuan"
-            value={gudang?.name}
+            defaultValue={gudang?.name}
+            disabled={true}
           />
-          {/* <SearchField
-            title="Cari Gudang"
-            label="Gudang Tujuan"
-            type="text"
-            id="gudangTujuan"
-            name="gudangTujuan"
-            data={warehouses.map((warehouse) => ({
-              id: warehouse.id,
-              name: warehouse.name,
-            }))}
-            defaultValue={gudang}
-            onChange={(warehouse) => setGudang(warehouse)}
-          /> */}
         </div>
       </div>
       <div className={styles.rowBetween}>
@@ -215,13 +213,14 @@ const UbahSPGKawat = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
+          <div className={styles.tableHeaderItem}>KP</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
-            <div key={stokItem.product} className={styles.tableRow}>
+            <div key={stokItem.product_code} className={styles.tableRow}>
               <CustomDeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
@@ -229,11 +228,12 @@ const UbahSPGKawat = () => {
                 }}
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product}</div>
+              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.packaging_size}
+                {stokItem.supplier_name}
               </div>
+              <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
@@ -245,6 +245,14 @@ const UbahSPGKawat = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className={styles.tableFooter}>
+          <div className={styles.total}>Total</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

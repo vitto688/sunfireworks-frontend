@@ -109,7 +109,6 @@ const LaporanReturPembelian = () => {
   }, [suppliers]);
 
   useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
     if (
       selectedWarehouseFilter === 0 &&
       selectedCategoryFilter === 0 &&

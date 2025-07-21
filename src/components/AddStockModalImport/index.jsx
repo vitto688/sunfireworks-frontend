@@ -8,7 +8,10 @@ import styles from "./style.module.scss";
 import SearchField from "../SearchField";
 
 // Import utility functions
-import { formatNumberWithDot } from "../../utils/numberUtils";
+import {
+  formatNumberWithDot,
+  parseFormattedNumber,
+} from "../../utils/numberUtils";
 
 const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
   const [carton, setCarton] = useState(0);
@@ -61,22 +64,20 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
   };
 
   const handleCartonChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setCarton(Number(value));
     }
   };
 
   const handlePackChange = (e) => {
-    const value = e.target.value;
+    const value = parseFormattedNumber(e.target.value);
     if (/^\d*$/.test(value)) {
       setPack(Number(value));
     }
   };
 
   if (!isOpen) return null;
-
-  console.log("stocks:", stocks, stock);
 
   return (
     <div className={styles.overlay}>
@@ -208,7 +209,7 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
                 <input
                   type="text"
                   id="karton"
-                  value={carton}
+                  value={formatNumberWithDot(carton)}
                   onChange={handleCartonChange}
                 />
                 <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
@@ -222,12 +223,12 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
                 <input
                   type="text"
                   id="pack"
-                  value={pack}
+                  value={(pack) => formatNumberWithDot(pack)}
                   onChange={handlePackChange}
                 />
-                <label htmlFor="sisaKarton">{`stok tersedia ${
+                <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
                   stock?.pack_quantity ?? 0
-                }`}</label>
+                )}`}</label>
               </div>
             </div>
 

@@ -105,7 +105,6 @@ const TransferStok = () => {
   }, [warehouses]);
 
   useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter, data);
     if (selectedWarehouseFilter === 0) {
       setFilteredData(data || []);
     } else {

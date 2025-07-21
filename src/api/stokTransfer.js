@@ -29,7 +29,6 @@ export const fetchStokTransferById = async (id) => {
 
 export const addStokTransfer = async (data) => {
   try {
-    console.log("Adding stok transfer with data:", data);
     const response = await axios.post(`${ENDPOINT}/`, data);
     return response.data;
   } catch (error) {

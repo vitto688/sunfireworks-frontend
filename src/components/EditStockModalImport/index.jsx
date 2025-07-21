@@ -33,7 +33,6 @@ const EditStockModalImport = ({
   const [productionCode, setProductionCode] = useState(
     stock?.production_code ?? ""
   );
-  console.log("stock, stocks:", stock, stocks);
 
   const warehouseStock = stocks.find((s) => s.id === stock?.id);
 
@@ -97,8 +96,6 @@ const EditStockModalImport = ({
   };
 
   if (!isOpen) return null;
-
-  console.log("stocks:", stocks, stock);
 
   return (
     <div className={styles.overlay}>

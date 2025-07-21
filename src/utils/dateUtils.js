@@ -6,7 +6,6 @@ export const formatDate = (dateString) => {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
-    console.log("Parsed Date:", date, `${day}-${month}-${year}`); // Debugging line to check parsed date
     return `${day}-${month}-${year}`;
   } catch (error) {
     console.error("Error formatting date:", error);

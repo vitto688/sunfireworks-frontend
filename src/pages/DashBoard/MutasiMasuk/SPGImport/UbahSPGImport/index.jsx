@@ -24,6 +24,7 @@ import {
   resetSPGImportMessages,
 } from "../../../../../redux/actions/spgActions";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import { printSPGImport } from "../../../../../utils/printSPGImport";
 
 export const UBAH_SPGIMPORT_PATH = "/mutasi-masuk/spg-import/ubah-spg-import";
 
@@ -49,6 +50,9 @@ const UbahSPGImport = () => {
     argument?.finish_load || ""
   ); // type date time
   const [stok, setStok] = useState(argument?.items || []);
+  const [totalCarton, setTotalCarton] = useState(0);
+  const [totalPack, setTotalPack] = useState(0);
+  const [totalAll, setTotalAll] = useState(0);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
@@ -59,7 +63,6 @@ const UbahSPGImport = () => {
   const { import: importData } = useSelector((state) => state.spg);
   const { loading, message, errorMessage, errorCode } = importData;
   //#endregion
-  console.log("stok", stok);
 
   useEffect(() => {
     setGudang(
@@ -86,6 +89,21 @@ const UbahSPGImport = () => {
       dispatch(resetSPGImportMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
+
+  useEffect(() => {
+    // Calculate totals whenever stok changes
+    const totalCarton = stok.reduce(
+      (acc, item) => acc + (item.carton_quantity || 0),
+      0
+    );
+    const totalPack = stok.reduce(
+      (acc, item) => acc + (item.pack_quantity || 0),
+      0
+    );
+    setTotalCarton(totalCarton);
+    setTotalPack(totalPack);
+    setTotalAll(totalCarton + totalPack);
+  }, [stok]);
 
   //#endregion
 
@@ -128,8 +146,6 @@ const UbahSPGImport = () => {
       })),
     };
 
-    console.log("Mengubah SPG Import:", spgData);
-
     dispatch(updateSPGImportRequest(argument.id, spgData));
   };
 
@@ -138,9 +154,21 @@ const UbahSPGImport = () => {
     navigate(-1);
   };
 
+  const handlePrintClick = () => {
+    printSPGImport({
+      ...argument,
+      warehouse_name: gudang?.name,
+      sj_number: noSJ,
+      container_number: noKontainer,
+      vehicle_number: noKendaraan,
+      start_unload: mulaiBongkar,
+      finish_load: selesaiBongkar,
+      items: stok,
+    });
+  };
+
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
-    console.log("Tambah Stok clicked!");
     setModalOpen(true);
 
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
@@ -153,7 +181,6 @@ const UbahSPGImport = () => {
   };
 
   const handleSaveAddStok = (data) => {
-    console.log("Data stok ditambahkan:", data);
     // Update stok state with new data
     setStok([...stok, data]);
     setModalOpen(false);
@@ -161,7 +188,6 @@ const UbahSPGImport = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data, stok);
     // Update stok state with new data
     setStok((prevStok) =>
       prevStok.map((item) => (item.id === data.id ? data : item))
@@ -171,7 +197,6 @@ const UbahSPGImport = () => {
   };
 
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);
@@ -182,6 +207,12 @@ const UbahSPGImport = () => {
   return (
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Print SPG"
+          variant="outline"
+          onClick={handlePrintClick}
+          disabled={loading}
+        />
         <CustomButton
           label="Batal"
           variant="outline"
@@ -248,7 +279,8 @@ const UbahSPGImport = () => {
             type="text"
             id="gudangTujuan"
             name="gudangTujuan"
-            value={gudang?.name}
+            defaultValue={gudang?.name}
+            disabled={true}
           />
         </div>
       </div>
@@ -325,6 +357,14 @@ const UbahSPGImport = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className={styles.tableFooter}>
+          <div className={styles.total}>Total</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

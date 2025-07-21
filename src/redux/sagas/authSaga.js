@@ -106,7 +106,7 @@ function* logout() {
     setCookie("accessToken", "", -1);
     setCookie("refreshToken", "", -1);
   } catch (error) {
-    console.log("error", error);
+    console.error("error", error);
   }
 }
 

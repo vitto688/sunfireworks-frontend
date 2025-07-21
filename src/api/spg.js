@@ -163,7 +163,7 @@ const spgKawatAPI = {
 const spgLainAPI = {
   getAllSPGLain: async () => {
     try {
-      const response = await axiosInstance.get("/spg/lain/");
+      const response = await axiosInstance.get("/spg/lain-lain/");
       return response.data;
     } catch (error) {
       console.error("Error fetching SPG lain:", error);
@@ -173,7 +173,7 @@ const spgLainAPI = {
 
   getSPGLainById: async (id) => {
     try {
-      const response = await axiosInstance.get(`/spg/lain/${id}`);
+      const response = await axiosInstance.get(`/spg/lain-lain/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching SPG lain with id ${id}:`, error);
@@ -183,7 +183,7 @@ const spgLainAPI = {
 
   createSPGLain: async (data) => {
     try {
-      const response = await axiosInstance.post("/spg/lain/", data);
+      const response = await axiosInstance.post("/spg/lain-lain/", data);
       return response.data;
     } catch (error) {
       console.error("Error creating SPG lain:", error);
@@ -193,7 +193,7 @@ const spgLainAPI = {
 
   updateSPGLain: async (id, data) => {
     try {
-      const response = await axiosInstance.put(`/spg/lain/${id}/`, data);
+      const response = await axiosInstance.put(`/spg/lain-lain/${id}/`, data);
       return response.data;
     } catch (error) {
       console.error(`Error updating SPG lain with id ${id}:`, error);
@@ -203,7 +203,7 @@ const spgLainAPI = {
 
   deleteSPGLain: async (id) => {
     try {
-      const response = await axiosInstance.delete(`/spg/lain/${id}/`);
+      const response = await axiosInstance.delete(`/spg/lain-lain/${id}/`);
       return response.data;
     } catch (error) {
       console.error(`Error deleting SPG lain with id ${id}:`, error);

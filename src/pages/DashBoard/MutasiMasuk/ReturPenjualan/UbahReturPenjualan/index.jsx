@@ -120,7 +120,6 @@ const UbahReturPenjualan = () => {
       })),
     };
 
-    console.log("Mengubah Retur Penjualan:", returPenjualanData);
     dispatch(updateReturPenjualanRequest(argument.id, returPenjualanData));
   };
 
@@ -141,14 +140,12 @@ const UbahReturPenjualan = () => {
 
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
-    console.log("Tambah Stok clicked!");
     setModalOpen(true);
   };
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
 
-    console.log("Edit clicked:", value);
     setWarehouseStock(
       stocks.find(
         (s) =>
@@ -159,14 +156,12 @@ const UbahReturPenjualan = () => {
   };
 
   const handleSaveAddStok = (data) => {
-    console.log("Data stok ditambahkan:", data);
     // Update stok state with new data
     setStok([...stok, data]);
     setModalOpen(false);
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data);
     // Update stok state with new data
     setStok((prevStok) =>
       prevStok.map((item) =>
@@ -177,7 +172,6 @@ const UbahReturPenjualan = () => {
   };
 
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);

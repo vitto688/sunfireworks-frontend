@@ -42,6 +42,9 @@ const TambahSPGImport = () => {
   const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
   const [selesaiBongkar, setSelesaiBongkar] = useState(""); // type date time
   const [stok, setStok] = useState([]);
+  const [totalCarton, setTotalCarton] = useState(0);
+  const [totalPack, setTotalPack] = useState(0);
+  const [totalAll, setTotalAll] = useState(0);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
@@ -71,6 +74,21 @@ const TambahSPGImport = () => {
       dispatch(resetSPGImportMessages());
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
+
+  useEffect(() => {
+    // Calculate totals whenever stok changes
+    const totalCarton = stok.reduce(
+      (acc, item) => acc + (item.carton_quantity || 0),
+      0
+    );
+    const totalPack = stok.reduce(
+      (acc, item) => acc + (item.pack_quantity || 0),
+      0
+    );
+    setTotalCarton(totalCarton);
+    setTotalPack(totalPack);
+    setTotalAll(totalCarton + totalPack);
+  }, [stok]);
 
   //#endregion
 
@@ -113,7 +131,6 @@ const TambahSPGImport = () => {
       })),
     };
 
-    console.log("Menambahkan SPG Import:", spgData);
     dispatch(addSPGImportRequest(spgData));
   };
 
@@ -124,7 +141,6 @@ const TambahSPGImport = () => {
 
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
-    console.log("Tambah Stok clicked!");
 
     if (!gudang) {
       alert("Harap pilih gudang terlebih dahulu");
@@ -142,7 +158,6 @@ const TambahSPGImport = () => {
   };
 
   const handleSaveAddStok = (data) => {
-    console.log("Data stok ditambahkan:", data);
     // Update stok state with new data
     setStok([...stok, data]);
     setModalOpen(false);
@@ -150,7 +165,6 @@ const TambahSPGImport = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data);
     // Update stok state with new data
     setStok((prevStok) =>
       prevStok.map((item) => (item.id === data.id ? data : item))
@@ -160,7 +174,6 @@ const TambahSPGImport = () => {
   };
 
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);
@@ -319,6 +332,14 @@ const TambahSPGImport = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className={styles.tableFooter}>
+          <div className={styles.total}>Total</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

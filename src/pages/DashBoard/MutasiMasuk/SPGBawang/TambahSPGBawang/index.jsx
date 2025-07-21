@@ -38,6 +38,9 @@ const TambahSPGBawang = () => {
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
   const [stok, setStok] = useState([]);
+  const [totalCarton, setTotalCarton] = useState(0);
+  const [totalPack, setTotalPack] = useState(0);
+  const [totalAll, setTotalAll] = useState(0);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
@@ -48,7 +51,6 @@ const TambahSPGBawang = () => {
   const { bawang } = useSelector((state) => state.spg);
   const { loading, message, errorMessage, errorCode } = bawang;
 
-  console.log("stok", stocks, gudang);
   //#endregion
 
   //#region Effects
@@ -70,6 +72,20 @@ const TambahSPGBawang = () => {
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 
+  useEffect(() => {
+    // Calculate totals whenever stok changes
+    const totalCarton = stok.reduce(
+      (acc, item) => acc + (item.carton_quantity || 0),
+      0
+    );
+    const totalPack = stok.reduce(
+      (acc, item) => acc + (item.pack_quantity || 0),
+      0
+    );
+    setTotalCarton(totalCarton);
+    setTotalPack(totalPack);
+    setTotalAll(totalCarton + totalPack);
+  }, [stok]);
   //#endregion
 
   //#region Handlers
@@ -92,7 +108,6 @@ const TambahSPGBawang = () => {
       })),
     };
 
-    console.log("Menambahkan SPG Bawang:", spgData);
     dispatch(addSPGBawangRequest(spgData));
   };
 
@@ -103,7 +118,6 @@ const TambahSPGBawang = () => {
 
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
-    console.log("Tambah Stok clicked!");
 
     if (!gudang) {
       alert("Harap pilih gudang terlebih dahulu");
@@ -122,7 +136,6 @@ const TambahSPGBawang = () => {
   };
 
   const handleSaveAddStok = (data) => {
-    console.log("Data stok ditambahkan:", data);
     // Update stok state with new data
     setStok([...stok, data]);
     setModalOpen(false);
@@ -130,7 +143,6 @@ const TambahSPGBawang = () => {
   };
 
   const handleSaveEditStok = (data) => {
-    console.log("Data stok diedit:", data);
     // Update stok state with new data
     setStok((prevStok) =>
       prevStok.map((item) =>
@@ -142,7 +154,6 @@ const TambahSPGBawang = () => {
   };
 
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);
@@ -173,7 +184,7 @@ const TambahSPGBawang = () => {
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SJ"
+            label="No SPG"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"
@@ -208,8 +219,8 @@ const TambahSPGBawang = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Ukuran Pack</div>
-          {/* <div className={styles.tableHeaderItem}>Gudang</div> */}
+          <div className={styles.tableHeaderItem}>KP</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
         </div>
@@ -224,14 +235,11 @@ const TambahSPGBawang = () => {
               />
               <div className={styles.tableRowItem}>{index + 1}</div>
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
-              {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
               <div className={styles.tableRowItem}>
-                {stokItem.packaging_size}
+                {stokItem.supplier_name}
               </div>
-              {/* <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
-              </div> */}
+              <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.carton_quantity)}
               </div>
@@ -241,12 +249,16 @@ const TambahSPGBawang = () => {
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
               </div>
-              {/* <div className={styles.tableRowItem}>{product.quantity}</div>
-              <div className={styles.tableRowItem}>
-                {product.warehouse_name}
-              </div> */}
             </div>
           ))}
+        </div>
+        <div className={styles.tableFooter}>
+          <div className={styles.total}>Total</div>
+          <div className={styles.cartoon}>
+            {formatNumberWithDot(totalCarton)}
+          </div>
+          <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
+          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
 

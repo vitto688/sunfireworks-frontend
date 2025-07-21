@@ -8,8 +8,6 @@ export const printSPK = (data) => {
   const totalPack =
     data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
 
-  console.log("data", data);
-
   // Create complete HTML document
   const htmlContent = `
       <!DOCTYPE html>

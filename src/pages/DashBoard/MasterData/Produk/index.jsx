@@ -162,9 +162,7 @@ const Produk = () => {
           placeholder="Cari produk..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-        >
-          {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
-        </SearchBar>
+        ></SearchBar>
         <div className={styles.filterSection}>
           <FilterDropdown
             options={categoryFilterOptions}
@@ -176,19 +174,6 @@ const Produk = () => {
             placeholder="Filter Eksportir"
             onChange={(val) => setSelectedSupplierFilter(val.value)}
           />
-          {/* <FilterDropdown
-            options={filterOptions}
-            onChange={(val) => console.log(val)}
-          />
-
-          <FilterDropdown
-            options={filterOptions}
-            onChange={(val) => console.log(val)}
-          />
-          <FilterDropdown
-            options={filterOptions}
-            onChange={(val) => console.log(val)}
-          /> */}
         </div>
       </div>
 

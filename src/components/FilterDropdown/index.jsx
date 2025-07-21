@@ -7,7 +7,6 @@ const FilterDropdown = ({ options = [], placeholder = "Filter", onChange }) => {
   const [selected, setSelected] = useState(null);
 
   const handleSelect = (option) => {
-    console.log("Selected option:", option);
     setSelected(option);
     setIsOpen(false);
     onChange?.(option);

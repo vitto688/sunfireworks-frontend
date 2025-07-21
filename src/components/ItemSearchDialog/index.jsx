@@ -5,6 +5,7 @@ import styles from "./style.module.scss";
 
 // Import components
 import SearchBar from "../SearchBar";
+import { formatNumberWithDot } from "../../utils/numberUtils";
 
 const ItemSearchDialog = ({
   title = "Cari",
@@ -82,13 +83,13 @@ const ItemSearchDialog = ({
                     <div className={styles.quantityItem}>
                       <span className={styles.label}>Karton:</span>
                       <span className={styles.value}>
-                        {product.cartonQuantity || 0}
+                        {formatNumberWithDot(product.cartonQuantity || 0)}
                       </span>
                     </div>
                     <div className={styles.quantityItem}>
                       <span className={styles.label}>Pack:</span>
                       <span className={styles.value}>
-                        {product.packQuantity || 0}
+                        {formatNumberWithDot(product.packQuantity || 0)}
                       </span>
                     </div>
                   </div>

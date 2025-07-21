@@ -10,7 +10,6 @@ export const fetchReturPenjualan = async (params = {}) => {
     const url = queryString ? `/${ENDPOINT}?${queryString}` : ENDPOINT;
 
     const response = await axios.get(url);
-    console.log("API Retur Penjualan:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching Retur Penjualan:", error);

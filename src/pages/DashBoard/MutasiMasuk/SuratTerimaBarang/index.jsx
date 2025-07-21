@@ -70,7 +70,6 @@ const SuratTerimaBarang = () => {
   }, [warehouses]);
 
   useEffect(() => {
-    console.log("Selected Warehouse Filter:", selectedWarehouseFilter);
     if (selectedWarehouseFilter === 0) {
       setFilteredData(dataTransaksi);
     } else {
@@ -84,17 +83,14 @@ const SuratTerimaBarang = () => {
 
   //#region Handlers
   const handleAddClick = () => {
-    console.log("Product added!");
     navigate(TAMBAH_SURAT_TERIMA_BARANG_PATH);
   };
 
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
-    console.log("Product deleted!", value);
   };
 
   const handleItemClick = (value) => {
-    console.log("value", value);
     navigate(UBAH_SURAT_TERIMA_BARANG_PATH, { state: value });
   };
   //#endregion

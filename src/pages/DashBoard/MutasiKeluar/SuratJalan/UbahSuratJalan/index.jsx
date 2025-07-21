@@ -119,7 +119,6 @@ const UbahSuratJalan = () => {
       })),
     };
 
-    console.log("Mengubah Surat Jalan:", suratJalanData);
     dispatch(updateSuratJalanRequest(argument.id, suratJalanData));
   };
 
@@ -137,50 +136,7 @@ const UbahSuratJalan = () => {
     });
   };
 
-  // const handleTambahStok = () => {
-  //   // Logic to add stock, e.g., open a modal or navigate to another page
-  //   console.log("Tambah Stok clicked!", spk);
-
-  //   if (!spk) {
-  //     alert("Harap pilih SPK terlebih dahulu");
-  //     return;
-  //   }
-  //   setModalOpen(true);
-  // };
-
-  // const handleEdit = (e, value) => {
-  //   e.stopPropagation();
-
-  //   setWarehouseStock(
-  //     stocks.find(
-  //       (s) => s.warehouse === spk?.warehouse && s.product === value?.product
-  //     ) || null
-  //   );
-
-  //   setEditModalOpen(value);
-  // };
-
-  // const handleSaveAddStok = (data) => {
-  //   console.log("Data stok ditambahkan:", data);
-  //   // Update stok state with new data
-  //   setStok([...stok, data]);
-  //   setModalOpen(false);
-  // };
-
-  // const handleSaveEditStok = (data) => {
-  //   console.log("Data stok diedit:", data);
-  //   // Update stok state with new data
-  //   setStok((prevStok) =>
-  //     prevStok.map((item) =>
-  //       item.product_code === data.product_code ? data : item
-  //     )
-  //   );
-
-  //   setEditModalOpen(null);
-  // };
-
   const handleDeleteStok = (stokItem) => {
-    console.log("Menghapus stok:", stokItem);
     // Update stok state to remove the deleted item
     setStok((prevStok) => prevStok.filter((item) => item.id !== stokItem.id));
     setModalDeleteOpen(null);

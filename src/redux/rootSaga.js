@@ -1,9 +1,8 @@
 import { all } from "redux-saga/effects";
 import authSaga from "./sagas/authSaga";
-import menuSaga from "./sagas/menuSaga";
 import masterSaga from "./sagas/masterSaga";
-import mutasiMasukSaga from "./sagas/mutasiMasukSaga";
 import stockSaga from "./sagas/stockSaga";
+import mutasiMasukSaga from "./sagas/mutasiMasukSaga";
 import spgSaga from "./sagas/spgSaga";
 import stokTransferSaga from "./sagas/stokTransferSaga";
 import spkSaga from "./sagas/spkSaga";
@@ -12,21 +11,31 @@ import returPembelianSaga from "./sagas/returPembelianSaga";
 import returPenjualanSaga from "./sagas/returPenjualanSaga";
 import suratJalanSaga from "./sagas/suratJalanSaga";
 import suratPengeluaranBarangSaga from "./sagas/suratPengeluaranBarangSaga";
+import stockReportSaga from "./sagas/stockReportSaga";
+import returPembelianReportSaga from "./sagas/returPembelianReportSaga";
 
 export default function* rootSaga() {
   yield all([
     authSaga(),
-    menuSaga(),
     masterSaga(),
-    mutasiMasukSaga(),
     stockSaga(),
+    mutasiMasukSaga(),
+    // Unified SPG Saga
     spgSaga(),
+    // Unified StokTransfer Saga
     stokTransferSaga(),
+    // Unified SPK Saga
     spkSaga(),
+    // Unified STB Saga
     stbSaga(),
+    // Mutasi Keluar Sagas
     returPembelianSaga(),
+    // Mutasi Masuk Sagas
     returPenjualanSaga(),
     suratJalanSaga(),
     suratPengeluaranBarangSaga(),
+    // Report Sagas
+    stockReportSaga(),
+    returPembelianReportSaga(),
   ]);
 }

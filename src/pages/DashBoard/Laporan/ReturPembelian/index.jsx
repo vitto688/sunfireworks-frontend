@@ -1,7 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+// Import Redux actions
+import {
+  fetchReturPembelianReportRequest,
+  exportReturPembelianReportRequest,
+  resetReturPembelianReportMessages,
+  setReturPembelianReportFilters,
+  clearReturPembelianReportData,
+} from "../../../../redux/actions/returPembelianReportActions";
 
 // import styles
 import styles from "./style.module.scss";
@@ -13,9 +22,14 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
+import Loading from "../../../../components/Loading";
 
-// Import dummy data
-import { laporanMutasiMasuk } from "../../../../dummy_data/laporan";
+// Import number formatting utility
+import {
+  formatCurrency,
+  formatNumberWithDot,
+  formatDate,
+} from "../../../../utils/numberUtils";
 
 // Define the path for the Laporan Retur Pembelian page
 export const LAPORAN_RETUR_PEMBELIAN_PATH = "/laporan/retur-pembelian";
@@ -26,48 +40,111 @@ const LaporanReturPembelian = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [data, setData] = useState([]);
 
-  const [filteredData, setFilteredData] = useState([]);
-  // warehouse filters
+  // Local filter states
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
-  // category filters
-  const [categoryFilterOptions, setCategoryFilterOptions] = useState([]);
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(0);
-  // supplier filters
   const [supplierFilterOptions, setSupplierFilterOptions] = useState([]);
   const [selectedSupplierFilter, setSelectedSupplierFilter] = useState(0);
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const { warehouses, categories, suppliers } = useSelector(
-    (state) => state.master
-  );
+  // Redux selectors
+  const { warehouses, suppliers } = useSelector((state) => state.master);
 
-  useEffect(() => {
-    // Fetch data or perform any necessary actions on component mount
-  }, []);
+  const {
+    returPembelianReport,
+    totalCount,
+    totalPages,
+    currentPage,
+    loading,
+    exportLoading,
+    message,
+    errorMessage,
+    errorCode,
+    filters,
+  } = useSelector((state) => state.returPembelianReport);
 
-  useEffect(() => {
-    const filteredTransaksi = filteredData.filter(
-      (item) =>
-        item.nama_produk.toLowerCase().includes(query.toLowerCase()) ||
-        item.kode_supplier.toLowerCase().includes(query.toLowerCase())
-    );
-    setData(filteredTransaksi);
-  }, [query, filteredData]);
+  //#region Helper Functions
+  const fetchReturPembelianData = useCallback(() => {
+    const params = {
+      page: currentPage,
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      const filtered = filteredData.filter((item) => {
-        const itemDate = new Date(item.tanggal_transaksi);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-      });
-      setData(filtered);
+    dispatch(fetchReturPembelianReportRequest(params));
+  }, [
+    dispatch,
+    currentPage,
+    query,
+    selectedWarehouseFilter,
+    selectedSupplierFilter,
+    startDate,
+    endDate,
+  ]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      const params = {
+        page: newPage,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      dispatch(fetchReturPembelianReportRequest(params));
     }
-  }, [startDate, endDate, filteredData]);
+  };
+  //#endregion
+
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetReturPembelianReportMessages());
+
+    // Load initial data
+    fetchReturPembelianData();
+
+    // Cleanup when component unmounts
+    return () => {
+      dispatch(clearReturPembelianReportData());
+    };
+  }, [dispatch, fetchReturPembelianData]);
+
+  useEffect(() => {
+    // Handle success/error messages
+    if (message !== null) {
+      // You can show a toast notification here
+      console.log("Success:", message);
+      dispatch(resetReturPembelianReportMessages());
+    }
+
+    if (errorMessage !== null) {
+      alert(`${errorMessage}\nerror: ${errorCode}`);
+      dispatch(resetReturPembelianReportMessages());
+    }
+  }, [message, errorMessage, errorCode, dispatch]);
+
+  useEffect(() => {
+    // Fetch data when filters change
+    const delayedSearch = setTimeout(() => {
+      fetchReturPembelianData();
+    }, 500); // Debounce search
+
+    return () => clearTimeout(delayedSearch);
+  }, [fetchReturPembelianData]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -83,19 +160,6 @@ const LaporanReturPembelian = () => {
   }, [warehouses]);
 
   useEffect(() => {
-    if (categories.length > 0) {
-      const options = [
-        { label: "Semua Kategori", value: 0 },
-        ...categories.map((category) => ({
-          label: category.name,
-          value: category.name,
-        })),
-      ];
-      setCategoryFilterOptions(options);
-    }
-  }, [categories]);
-
-  useEffect(() => {
     if (suppliers.length > 0) {
       const options = [
         { label: "Semua Supplier", value: 0 },
@@ -107,32 +171,21 @@ const LaporanReturPembelian = () => {
       setSupplierFilterOptions(options);
     }
   }, [suppliers]);
-
-  useEffect(() => {
-    if (
-      selectedWarehouseFilter === 0 &&
-      selectedCategoryFilter === 0 &&
-      selectedSupplierFilter === 0
-    ) {
-      setFilteredData(laporanMutasiMasuk);
-    } else {
-      const filtered = laporanMutasiMasuk.filter(
-        (item) =>
-          (selectedWarehouseFilter === 0 ||
-            item.gudang === selectedWarehouseFilter) &&
-          (selectedCategoryFilter === 0 ||
-            item.kategori === selectedCategoryFilter) &&
-          (selectedSupplierFilter === 0 ||
-            item.supplier === selectedSupplierFilter)
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, selectedCategoryFilter, selectedSupplierFilter]);
   //#endregion
 
   //#region Handlers
-  const handleAddClick = () => {
-    // navigate to add page if needed
+  const handleDownloadClick = () => {
+    const params = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    dispatch(exportReturPembelianReportRequest(params));
   };
 
   const handleDelete = (value) => {
@@ -140,26 +193,34 @@ const LaporanReturPembelian = () => {
   };
 
   const handleItemClick = (value) => {
-    // navigate to edit page if needed
+    // navigate to details page if needed
+    console.log("Item clicked:", value);
   };
   //#endregion
 
   return (
     <div className={styles.mutasiMasukSection}>
+      {loading && <Loading />}
       <div className={styles.actionsSection}>
-        <CustomButton label="Download" onClick={handleAddClick} />
+        <CustomButton
+          label={exportLoading ? "Downloading..." : "Download"}
+          onClick={handleDownloadClick}
+          disabled={exportLoading || loading}
+        />
       </div>
       <div className={styles.searchFilterSection}>
+        <div className={styles.searchSection}>
+          <SearchBar
+            placeholder="Cari berdasarkan nomor dokumen, supplier..."
+            value={query}
+            onChange={setQuery}
+          />
+        </div>
         <div className={styles.filterSection}>
           <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
           <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
         </div>
         <div className={styles.filterSection}>
-          <FilterDropdown
-            options={categoryFilterOptions}
-            placeholder="Filter Kategori"
-            onChange={(val) => setSelectedCategoryFilter(val.value)}
-          />
           <FilterDropdown
             options={supplierFilterOptions}
             placeholder="Filter Supplier"
@@ -175,31 +236,79 @@ const LaporanReturPembelian = () => {
       <div className={styles.mutasiMasukTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem}>No</div>
-          <div className={styles.tableHeaderItem}>Tanggal Retur</div>
+          <div className={styles.tableHeaderItem}>No. Dokumen</div>
+          <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
+          <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Kode Supplier</div>
-          <div className={styles.tableHeaderItem}>Qty</div>
+          <div className={styles.tableHeaderItem}>Supplier</div>
+          <div className={styles.tableHeaderItem}>Gudang</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
+          <div className={styles.tableHeaderItem}>Carton</div>
+          <div className={styles.tableHeaderItem}>Pack</div>
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {data.map((item) => (
-            <div
-              role="presentation"
-              key={item.no}
-              className={styles.tableRow}
-              onClick={() => handleItemClick(item)}
-            >
-              <div className={styles.tableRowItem}>{item.no}</div>
-              <div className={styles.tableRowItem}>
-                {item.tanggal_transaksi}
-              </div>
-              <div className={styles.tableRowItem}>{item.nama_produk}</div>
-              <div className={styles.tableRowItem}>{item.kode_supplier}</div>
-              <div className={styles.tableRowItem}>{item.kuantitas}</div>
-              <div className={styles.tableRowItem}>{item.keterangan}</div>
+          {returPembelianReport.length === 0 && !loading ? (
+            <div className={styles.emptyState}>
+              <p>Tidak ada data retur pembelian yang ditemukan</p>
             </div>
-          ))}
+          ) : (
+            returPembelianReport.map((item, index) => (
+              <div
+                role="presentation"
+                key={`${item.document_number}-${item.product_id}-${index}`}
+                className={styles.tableRow}
+                onClick={() => handleItemClick(item)}
+              >
+                <div className={styles.tableRowItem}>
+                  {(currentPage - 1) * 10 + index + 1}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.document_number}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {formatDate(item.transaction_date)}
+                </div>
+                <div className={styles.tableRowItem}>{item.product_code}</div>
+                <div className={styles.tableRowItem}>{item.product_name}</div>
+                <div className={styles.tableRowItem}>{item.supplier_name}</div>
+                <div className={styles.tableRowItem}>{item.warehouse_name}</div>
+                <div className={styles.tableRowItem}>{item.packing}</div>
+                <div className={styles.tableRowItem}>
+                  {formatNumberWithDot(item.carton_quantity)}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {formatNumberWithDot(item.pack_quantity)}
+                </div>
+
+                <div className={styles.tableRowItem}>{item.notes || "-"}</div>
+              </div>
+            ))
+          )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              className={styles.paginationButton}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1 || loading}
+            >
+              Previous
+            </button>
+            <span className={styles.paginationInfo}>
+              Page {currentPage} of {totalPages} ({totalCount} items)
+            </span>
+            <button
+              className={styles.paginationButton}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || loading}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

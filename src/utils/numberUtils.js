@@ -86,3 +86,49 @@ export const parseFormattedNumber = (formattedNumber) => {
   const parsed = parseFloat(cleanedNumber);
   return isNaN(parsed) ? 0 : parsed;
 };
+
+/**
+ * Format date to Indonesian format (DD/MM/YYYY)
+ * @param {string|Date} date - The date to format
+ * @returns {string} Formatted date string
+ */
+export const formatDate = (date) => {
+  if (!date) return "-";
+
+  try {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    if (isNaN(dateObj.getTime())) return "-";
+
+    return dateObj.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch (error) {
+    return "-";
+  }
+};
+
+/**
+ * Format date and time to Indonesian format (DD/MM/YYYY HH:mm)
+ * @param {string|Date} date - The date to format
+ * @returns {string} Formatted date and time string
+ */
+export const formatDateTime = (date) => {
+  if (!date) return "-";
+
+  try {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    if (isNaN(dateObj.getTime())) return "-";
+
+    return dateObj.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch (error) {
+    return "-";
+  }
+};

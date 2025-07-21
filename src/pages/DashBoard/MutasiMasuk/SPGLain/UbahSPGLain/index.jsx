@@ -24,6 +24,7 @@ import {
   resetSPGLainMessages,
 } from "../../../../../redux/actions/spgActions";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import { printSPGLain } from "../../../../../utils/printSPGLain";
 
 export const UBAH_SPG_LAIN_PATH = "/mutasi-masuk/spg-lain/ubah-spg-lain";
 
@@ -167,11 +168,26 @@ const UbahSPGLain = () => {
     setModalDeleteOpen(null);
     // Kirim ke backend di sini...
   };
+
+  const handlePrintClick = () => {
+    printSPGLain({
+      ...argument,
+      warehouse_name: gudang?.name,
+      sj_number: noSJ,
+      items: stok,
+    });
+  };
   //#endregion
 
   return (
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Print SPG"
+          variant="outline"
+          onClick={handlePrintClick}
+          disabled={loading}
+        />
         <CustomButton
           label="Batal"
           variant="outline"

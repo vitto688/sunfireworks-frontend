@@ -24,6 +24,7 @@ import {
   resetSPGKawatMessages,
 } from "../../../../../redux/actions/spgActions";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import { printSPGKawat } from "../../../../../utils/printSPGKawat";
 
 export const UBAH_SPG_KAWAT_PATH = "/mutasi-masuk/spg-kawat/ubah-spg-kawat";
 
@@ -167,11 +168,26 @@ const UbahSPGKawat = () => {
     setModalDeleteOpen(null);
     // Kirim ke backend di sini...
   };
+
+  const handlePrintClick = () => {
+    printSPGKawat({
+      ...argument,
+      warehouse_name: gudang?.name,
+      sj_number: noSJ,
+      items: stok,
+    });
+  };
   //#endregion
 
   return (
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Print SPG"
+          variant="outline"
+          onClick={handlePrintClick}
+          disabled={loading}
+        />
         <CustomButton
           label="Batal"
           variant="outline"

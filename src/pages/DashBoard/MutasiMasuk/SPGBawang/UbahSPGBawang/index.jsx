@@ -24,6 +24,7 @@ import {
   resetSPGBawangMessages,
 } from "../../../../../redux/actions/spgActions";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import { printSPGBawang } from "../../../../../utils/printSPGBawang";
 
 export const UBAH_SPGBAWANG_PATH = "/mutasi-masuk/spg-bawang/ubah-spg-bawang";
 
@@ -134,6 +135,15 @@ const UbahSPGBawang = () => {
     navigate(-1);
   };
 
+  const handlePrintClick = () => {
+    printSPGBawang({
+      ...argument,
+      warehouse_name: gudang?.name,
+      sj_number: noSJ,
+      items: stok,
+    });
+  };
+
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
     setModalOpen(true);
@@ -174,6 +184,12 @@ const UbahSPGBawang = () => {
   return (
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Print SPG"
+          variant="outline"
+          onClick={handlePrintClick}
+          disabled={loading}
+        />
         <CustomButton
           label="Batal"
           variant="outline"

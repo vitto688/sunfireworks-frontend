@@ -35,8 +35,8 @@ const UbahSPGBawang = () => {
   const argument = location.state || {};
 
   const [gudang, setGudang] = useState(null);
-  const [noSJ, setNoSJ] = useState(argument?.sj_number || "");
-  const [stok, setStok] = useState(argument?.items || []);
+  const [noSJ, setNoSJ] = useState("");
+  const [stok, setStok] = useState([]);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -51,18 +51,30 @@ const UbahSPGBawang = () => {
   const { loading, message, errorMessage, errorCode } = bawang;
   //#endregion
 
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetSPGBawangMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Set initial values from argument
+
+    if (argument?.sj_number) {
+      setNoSJ(argument.sj_number);
+    }
+
+    if (argument?.items) {
+      setStok(argument.items);
+    }
+  }, [argument.sj_number, argument.items]);
+
   useEffect(() => {
     setGudang(
       warehouses.find((warehouse) => warehouse.id === argument?.warehouse) ||
         null
     );
   }, [warehouses, argument?.warehouse]);
-
-  //#region Effects
-  useEffect(() => {
-    // Reset messages when component mounts
-    dispatch(resetSPGBawangMessages());
-  }, [dispatch]);
 
   useEffect(() => {
     if (message !== null) {
@@ -183,6 +195,14 @@ const UbahSPGBawang = () => {
         <div className={styles.row}>
           <InputField
             label="No SPG"
+            type="text"
+            id="noSPG"
+            name="noSPG"
+            defaultValue={argument.document_number || ""}
+            disabled={true}
+          />
+          <InputField
+            label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"

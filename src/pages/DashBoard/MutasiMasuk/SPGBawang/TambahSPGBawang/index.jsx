@@ -184,7 +184,7 @@ const TambahSPGBawang = () => {
       <div className={styles.formSection}>
         <div className={styles.row}>
           <InputField
-            label="No SPG"
+            label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"

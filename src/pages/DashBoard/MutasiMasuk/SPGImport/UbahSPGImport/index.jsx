@@ -36,19 +36,11 @@ const UbahSPGImport = () => {
   const argument = location.state || {};
 
   const [gudang, setGudang] = useState(null);
-  const [noSJ, setNoSJ] = useState(argument?.sj_number || "");
-  const [noKontainer, setNoKontainer] = useState(
-    argument?.container_number || ""
-  );
-  const [noKendaraan, setNoKendaraan] = useState(
-    argument?.vehicle_number || ""
-  );
-  const [mulaiBongkar, setMulaiBongkar] = useState(
-    argument?.start_unload || ""
-  ); // type date time
-  const [selesaiBongkar, setSelesaiBongkar] = useState(
-    argument?.finish_load || ""
-  ); // type date time
+  const [noSJ, setNoSJ] = useState("");
+  const [noKontainer, setNoKontainer] = useState("");
+  const [noKendaraan, setNoKendaraan] = useState("");
+  const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
+  const [selesaiBongkar, setSelesaiBongkar] = useState(""); // type date time
   const [stok, setStok] = useState(argument?.items || []);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
@@ -64,18 +56,47 @@ const UbahSPGImport = () => {
   const { loading, message, errorMessage, errorCode } = importData;
   //#endregion
 
+  //#region Effects
+  useEffect(() => {
+    // Reset messages when component mounts
+    dispatch(resetSPGImportMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Set initial values from argument
+    if (argument?.sj_number) {
+      setNoSJ(argument.sj_number);
+    }
+    if (argument?.container_number) {
+      setNoKontainer(argument.container_number);
+    }
+    if (argument?.vehicle_number) {
+      setNoKendaraan(argument.vehicle_number);
+    }
+    if (argument?.start_unload) {
+      setMulaiBongkar(argument.start_unload);
+    }
+    if (argument?.finish_load) {
+      setSelesaiBongkar(argument.finish_load);
+    }
+    if (argument?.items) {
+      setStok(argument.items);
+    }
+  }, [
+    argument.sj_number,
+    argument.container_number,
+    argument.vehicle_number,
+    argument.start_unload,
+    argument.finish_load,
+    argument.items,
+  ]);
+
   useEffect(() => {
     setGudang(
       warehouses.find((warehouse) => warehouse.id === argument?.warehouse) ||
         null
     );
   }, [warehouses, argument?.warehouse]);
-
-  //#region Effects
-  useEffect(() => {
-    // Reset messages when component mounts
-    dispatch(resetSPGImportMessages());
-  }, [dispatch]);
 
   useEffect(() => {
     if (message !== null) {
@@ -208,7 +229,7 @@ const UbahSPGImport = () => {
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
         <CustomButton
-          label="Print SPG"
+          label="Print SJ"
           variant="outline"
           onClick={handlePrintClick}
           disabled={loading}
@@ -234,6 +255,14 @@ const UbahSPGImport = () => {
         <div className={styles.row}>
           <InputField
             label="No SPG"
+            type="text"
+            id="noSPG"
+            name="noSPG"
+            defaultValue={argument.document_number || ""}
+            disabled={true}
+          />
+          <InputField
+            label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"

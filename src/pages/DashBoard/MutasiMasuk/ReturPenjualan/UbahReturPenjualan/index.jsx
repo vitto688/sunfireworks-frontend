@@ -39,7 +39,7 @@ const UbahReturPenjualan = () => {
 
   const [keterangan, setKeterangan] = useState("");
   const [noSJ, setNoSJ] = useState("");
-  const [stok, setStok] = useState(argument?.items ?? []);
+  const [stok, setStok] = useState([]);
   const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
@@ -69,7 +69,11 @@ const UbahReturPenjualan = () => {
     if (argument?.sj_number) {
       setNoSJ(argument.sj_number);
     }
-  }, [argument.notes, argument.sj_number]);
+
+    if (argument?.items) {
+      setStok(argument.items);
+    }
+  }, [argument.notes, argument.sj_number, argument.items]);
 
   useEffect(() => {
     if (message !== null) {

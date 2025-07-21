@@ -7,6 +7,7 @@ import stockReducer from "./reducers/stockReducer";
 import spgReducer from "./reducers/spgReducer";
 import stokTransferReducer from "./reducers/stokTransferReducer";
 import spkReducer from "./reducers/spkReducer";
+import stbReducer from "./reducers/stbReducer";
 import returPembelianReducer from "./reducers/returPembelianReducer";
 import returPenjualanReducer from "./reducers/returPenjualanReducer";
 import suratJalanReducer from "./reducers/suratJalanReducer";
@@ -24,6 +25,8 @@ const rootReducer = combineReducers({
   stokTransfer: stokTransferReducer,
   // Unified SPK Reducer
   spk: spkReducer,
+  // Unified STB Reducer
+  stb: stbReducer,
   // Mutasi Keluar Reducers
   returPembelian: returPembelianReducer,
   // Mutasi Masuk Reducers

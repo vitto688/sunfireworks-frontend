@@ -39,13 +39,9 @@ const SPGBawang = () => {
   const [endDate, setEndDate] = useState("");
 
   // Redux state untuk SPG Bawang
-  const {
-    data: spgBawangData,
-    loading,
-    message,
-    errorMessage,
-    pagination,
-  } = useSelector((state) => state.spg.bawang);
+  const { data, loading, message, errorMessage, pagination } = useSelector(
+    (state) => state.spg.bawang
+  );
   const { warehouses } = useSelector((state) => state.master);
 
   // Fetch SPG Bawang data saat component mount
@@ -63,58 +59,75 @@ const SPGBawang = () => {
     }
   }, [message, errorMessage, dispatch]);
 
-  // Filter data berdasarkan search query
   useEffect(() => {
-    if (spgBawangData.length > 0) {
-      const filtered = spgBawangData.filter(
-        (item) =>
-          item.document_number?.toLowerCase().includes(query.toLowerCase()) ||
-          item.sj_number?.toLowerCase().includes(query.toLowerCase()) ||
-          item.warehouse_name?.toLowerCase().includes(query.toLowerCase()) ||
-          item.user_username?.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData([]);
-    }
-  }, [query, spgBawangData]);
+    // Set initial filtered data from Redux
+    setFilteredData(data || []);
+  }, [data]);
 
-  // Filter data berdasarkan tanggal
   useEffect(() => {
-    if (startDate && endDate && spgBawangData.length > 0) {
-      const filtered = spgBawangData.filter((item) => {
-        const itemDate = new Date(item.transaction_date);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      // Set initial filtered data from Redux
+      setFilteredData(data || []);
+    } else {
+      // Filter data based on query, date range, and selected filter
+      const filtered = data.filter((item) => {
+        const itemDate = new Date(item.transaction_date || item.created_at);
+
+        // Extract only date part for comparison (ignore time)
+        const itemDateOnly = new Date(
+          itemDate.getFullYear(),
+          itemDate.getMonth(),
+          itemDate.getDate()
+        );
+        const startDateOnly = startDate
+          ? new Date(
+              new Date(startDate).getFullYear(),
+              new Date(startDate).getMonth(),
+              new Date(startDate).getDate()
+            )
+          : null;
+        const endDateOnly = endDate
+          ? new Date(
+              new Date(endDate).getFullYear(),
+              new Date(endDate).getMonth(),
+              new Date(endDate).getDate()
+            )
+          : null;
+
+        const isInDateRange =
+          (!startDateOnly || itemDateOnly >= startDateOnly) &&
+          (!endDateOnly || itemDateOnly <= endDateOnly);
+        const matchesQuery =
+          (item.document_number || item.no_faktur || "")
+            .toLowerCase()
+            .includes(query.toLowerCase()) ||
+          (item.customer_name || "")
+            .toLowerCase()
+            .includes(query.toLowerCase());
+
+        return (
+          isInDateRange &&
+          matchesQuery &&
+          (selectedWarehouseFilter === 0 ||
+            item.warehouse_name === selectedWarehouseFilter)
+        );
       });
       setFilteredData(filtered);
     }
-  }, [startDate, endDate, spgBawangData]);
+  }, [data, query, startDate, endDate, selectedWarehouseFilter]);
 
-  // Setup warehouse filter options
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
         { label: "Semua Gudang", value: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name,
+          value: warehouse.name, // Assuming warehouse.name is unique
         })),
       ];
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
-
-  // Filter data berdasarkan warehouse
-  useEffect(() => {
-    if (selectedWarehouseFilter === 0) {
-      setFilteredData(spgBawangData);
-    } else {
-      const filtered = spgBawangData.filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, spgBawangData]);
   //#endregion
 
   //#region Handlers
@@ -188,8 +201,9 @@ const SPGBawang = () => {
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
           <div className={styles.tableHeaderItem}>No SPG</div>
           <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
-          <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>No SJ</div>
+          <div className={styles.tableHeaderItem}>Di Input Oleh</div>
+          <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
           {filteredData.length > 0 ? (
@@ -213,9 +227,16 @@ const SPGBawang = () => {
                 <div className={styles.tableRowItem}>
                   {item.document_number}
                 </div>
-                <div className={styles.tableRowItem}>{item.warehouse_name}</div>
-                <div className={styles.tableRowItem}>{item.user_username}</div>
-                <div className={styles.tableRowItem}>{item.sj_number}</div>
+                <div className={styles.tableRowItem}>
+                  {item.warehouse_name || "-"}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.sj_number || "-"}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {item.user_username || "-"}
+                </div>
+                <div className={styles.tableRowItem}>{item.notes || "-"}</div>
               </div>
             ))
           ) : (

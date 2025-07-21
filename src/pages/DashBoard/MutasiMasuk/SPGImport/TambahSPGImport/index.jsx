@@ -35,6 +35,7 @@ const TambahSPGImport = () => {
   const location = useLocation();
   const argument = location.state || {};
 
+  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
   const [noKontainer, setNoKontainer] = useState("");
@@ -116,6 +117,7 @@ const TambahSPGImport = () => {
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
+      notes: keterangan,
       items: stok.map((item) => ({
         product: item.product || item.id,
         production_code: item.production_code || "",
@@ -226,6 +228,14 @@ const TambahSPGImport = () => {
             name="noKendaraan"
             value={noKendaraan}
             onChange={(e) => setNoKendaraan(e.target.value)}
+          />
+          <InputField
+            label="Keterangan"
+            type="text"
+            id="keterangan"
+            name="keterangan"
+            value={keterangan}
+            onChange={(e) => setKeterangan(e.target.value)}
           />
         </div>
         <div className={styles.row}>

@@ -119,10 +119,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:  60px 60px 200px 200px 150px 150px  150px;
+            grid-template-columns: 60px 60px 200px 200px 150px 150px 150px 150px;
             align-items: center;
             padding: 15px 10px;
-            min-width: 1030px; 
+            min-width: 1180px; 
             border-bottom: 1px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -139,7 +139,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            min-width: 1050px;
+            min-width: 1200px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -147,16 +147,9 @@
               display: none; /* Chrome, Safari */
             }
 
-            .noDataMessage{
-                padding: 16px;
-                text-align: center;
-                margin: 16px;
-                border-radius: 4px;              
-            }
-
             .tableRow{
                 display: grid;
-                grid-template-columns: 60px 60px 200px 200px 150px 150px 150px;
+                grid-template-columns: 60px 60px 200px 200px 150px 150px 150px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
@@ -165,6 +158,39 @@
                 .tableRowItem{
                     font-size: 14px;
 
+                }
+            }
+
+            .loadingMessage {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 40px;
+                font-size: 16px;
+                color: $greyColor600;
+            }
+
+            .emptyStateContainer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 60px 20px;
+                
+                .emptyStateContent {
+                    text-align: center;
+                    
+                    .emptyStateTitle {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: $greyColor600;
+                        margin-bottom: 8px;
+                    }
+                    
+                    .emptyStateSubtitle {
+                        font-size: 14px;
+                        color: #9ca3af;
+                        margin: 0;
+                    }
                 }
             }
         }

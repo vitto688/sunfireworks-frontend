@@ -35,6 +35,7 @@ const TambahSPGBawang = () => {
   const location = useLocation();
   const argument = location.state || {};
 
+  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
   const [stok, setStok] = useState([]);
@@ -100,6 +101,7 @@ const TambahSPGBawang = () => {
     const spgData = {
       warehouse: gudang.id,
       sj_number: noSJ,
+      notes: keterangan,
       items: stok.map((item) => ({
         product: item.product || item.id,
         packaging_size: item.packaging_size || "",
@@ -191,6 +193,8 @@ const TambahSPGBawang = () => {
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
           />
+        </div>
+        <div className={styles.row}>
           <SearchField
             title="Cari Gudang"
             label="Gudang Tujuan"
@@ -202,6 +206,14 @@ const TambahSPGBawang = () => {
               name: warehouse.name,
             }))}
             onChange={(warehouse) => setGudang(warehouse)}
+          />
+          <InputField
+            label="Keterangan"
+            type="text"
+            id="keterangan"
+            name="keterangan"
+            value={keterangan}
+            onChange={(e) => setKeterangan(e.target.value)}
           />
         </div>
       </div>

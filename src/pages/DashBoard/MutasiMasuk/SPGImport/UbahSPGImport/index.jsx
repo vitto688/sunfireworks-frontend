@@ -35,6 +35,7 @@ const UbahSPGImport = () => {
   const location = useLocation();
   const argument = location.state || {};
 
+  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
   const [noKontainer, setNoKontainer] = useState("");
@@ -64,6 +65,11 @@ const UbahSPGImport = () => {
 
   useEffect(() => {
     // Set initial values from argument
+
+    if (argument?.notes) {
+      setKeterangan(argument.notes);
+    }
+
     if (argument?.sj_number) {
       setNoSJ(argument.sj_number);
     }
@@ -83,6 +89,7 @@ const UbahSPGImport = () => {
       setStok(argument.items);
     }
   }, [
+    argument.notes,
     argument.sj_number,
     argument.container_number,
     argument.vehicle_number,
@@ -152,6 +159,7 @@ const UbahSPGImport = () => {
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
+      notes: keterangan,
       items: stok.map((item) => ({
         product: item.product || item.id,
         production_code: item.production_code || "",
@@ -310,6 +318,14 @@ const UbahSPGImport = () => {
             name="gudangTujuan"
             defaultValue={gudang?.name}
             disabled={true}
+          />
+          <InputField
+            label="Keterangan"
+            type="text"
+            id="keterangan"
+            name="keterangan"
+            value={keterangan}
+            onChange={(e) => setKeterangan(e.target.value)}
           />
         </div>
       </div>

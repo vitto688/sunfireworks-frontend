@@ -7,6 +7,7 @@ import stockSaga from "./sagas/stockSaga";
 import spgSaga from "./sagas/spgSaga";
 import stokTransferSaga from "./sagas/stokTransferSaga";
 import spkSaga from "./sagas/spkSaga";
+import stbSaga from "./sagas/stbSaga";
 import returPembelianSaga from "./sagas/returPembelianSaga";
 import returPenjualanSaga from "./sagas/returPenjualanSaga";
 import suratJalanSaga from "./sagas/suratJalanSaga";
@@ -22,6 +23,7 @@ export default function* rootSaga() {
     spgSaga(),
     stokTransferSaga(),
     spkSaga(),
+    stbSaga(),
     returPembelianSaga(),
     returPenjualanSaga(),
     suratJalanSaga(),

@@ -1,6 +1,6 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printSPGKawat = (data) => {
+export const printSTB = (data) => {
   // Calculate totals
   const totalCarton =
     data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
@@ -8,14 +8,16 @@ export const printSPGKawat = (data) => {
   const totalPack =
     data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
 
+  console.log("data", data);
+
   // Create complete HTML document
   const htmlContent = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
-        <title>SPG KAWAT - ${
-          data.document_number || data.sj_number || data.id
+        <title>STB - ${
+          data.document_number || data.stb_number || data.id
         }</title>
         <style>
           @page {
@@ -60,7 +62,7 @@ export const printSPGKawat = (data) => {
           }
           .infoRow .label {
             font-weight: bold;
-            min-width: 90px;
+            min-width: 110px;
             font-size: 12px;
           }
           .infoRow .value {
@@ -68,7 +70,7 @@ export const printSPGKawat = (data) => {
             font-size: 12px;
           }
           .infoRow .sj {
-            margin-left: 32px;
+            margin-left: 3px;
           }
           table {
             width: 100%;
@@ -101,20 +103,17 @@ export const printSPGKawat = (data) => {
             min-width: 85px;
             font-size: 11px;
           }
-          .col-barcode { 
-            width: 85px; 
-            min-width: 85px;
-            font-size: 11px;
-          }
           .col-nama { 
             width: 200px; 
             min-width: 200px;
+            text-align: left !important;
             padding-left: 6px;
             font-size: 11px;
           }
           .col-kp { 
             width: 35px; 
             min-width: 35px;
+            font-size: 11px;
           }
           .col-packing { 
             width: 70px; 
@@ -128,6 +127,13 @@ export const printSPGKawat = (data) => {
           .col-pack { 
             width: 60px; 
             min-width: 60px;
+          }
+          .col-keterangan { 
+            width: 100px; 
+            min-width: 100px;
+            text-align: left !important;
+            padding-left: 6px;
+            font-size: 11px;
           }
           .subheader th {
             background: white !important;
@@ -174,7 +180,7 @@ export const printSPGKawat = (data) => {
           .signatureSection {
             display: flex;
             flex-direction: column;
-            align-items: centers;
+            align-items: center;
           }
           .signatureLeft, .signatureRight {
             text-align: center;
@@ -191,7 +197,7 @@ export const printSPGKawat = (data) => {
       </head>
       <body>
         <div class="header">
-          <h1>SURAT PENGIRIMAN GUDANG (SPG) KAWAT</h1>
+          <h1>SURAT TERIMA BARANG (STB)</h1>
         </div>
 
         <div class="documentInfo">
@@ -199,20 +205,34 @@ export const printSPGKawat = (data) => {
             <div class="infoRow">
               <span class="label">TANGGAL :</span>
               <span class="value">${new Date(
-                data.transaction_date || data.created_at || new Date()
+                data.tanggal ||
+                  data.transaction_date ||
+                  data.created_at ||
+                  new Date()
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG :</span>
+              <span class="label">NO SPG BAWANG :</span>
               <span class="value">${
-                data.document_number || data.sj_number || data.id
+                data.no_spg_bawang ||
+                data.document_number ||
+                data.stb_number ||
+                data.id
+              }</span>
+            </div>
+            <div class="infoRow">
+              <span class="label">NO STB :</span>
+              <span class="value">${
+                data.document_number || data.stb_number || data.id
               }</span>
             </div>
           </div>
           <div class="rightInfo">
             <div class="infoRow">
               <span class="label">No. SJ :</span>
-              <span class="value sj">${data.sj_number || "-"}</span>
+              <span class="value sj">${
+                data.no_sj || data.sj_number || "-"
+              }</span>
             </div>
             <div class="infoRow">
               <span class="label">GUDANG TUJUAN :</span>
@@ -226,11 +246,11 @@ export const printSPGKawat = (data) => {
             <tr>
               <th rowspan="2" class="col-no">NO</th>
               <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode">BARCODE</th>
               <th rowspan="2" class="col-nama">NAMA PRODUK</th>
               <th rowspan="2" class="col-kp">KP</th>
               <th rowspan="2" class="col-packing">PACKING</th>
               <th colspan="2">JUMLAH</th>
+              <th rowspan="2" class="col-keterangan">KETERANGAN</th>
             </tr>
             <tr class="subheader">
               <th class="col-carton">CARTON</th>
@@ -245,7 +265,6 @@ export const printSPGKawat = (data) => {
               <tr>
                 <td class="col-no">${index + 1}</td>
                 <td class="col-kode">${item.product_code || "-"}</td>
-                <td class="col-barcode">-</td>
                 <td class="col-nama">${item.product_name || "-"}</td>
                 <td class="col-kp">${item.supplier_name || "-"}</td>
                 <td class="col-packing">${item.packing || "-"}</td>
@@ -255,15 +274,19 @@ export const printSPGKawat = (data) => {
                 <td class="col-pack">${formatNumberWithDot(
                   item.pack_quantity || 0
                 )}</td>
+                <td class="col-keterangan">${
+                  item.notes || item.remarks || "-"
+                }</td>
               </tr>
             `
                 )
                 .join("") || ""
             }
             <tr class="total-row">
-              <td colspan="6" class="total-label">TOTAL</td>
+              <td colspan="5" class="total-label">TOTAL</td>
               <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
               <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
+              <td class="col-keterangan"></td>
             </tr>
           </tbody>
         </table>
@@ -274,16 +297,21 @@ export const printSPGKawat = (data) => {
               <strong>CATATAN :</strong>
             </div>
             <div class="notesContent">
-              ${data.notes || "-"}
+              ${data.notes || data.remarks || "-"}
             </div>
           </div>
           
           <div class="signatureSection">
             <div class="signatureLeft">
-              <p>Yang membuat,</p>
+              <p>Yang menerima,</p>
             </div>
             <div class="signatureRight">
-              <p>${data.user_username || data.user_email || "-"}</p>
+              <p>${
+                data.receiver_name ||
+                data.user_username ||
+                data.user_email ||
+                "-"
+              }</p>
             </div>
           </div>
         </div>

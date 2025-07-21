@@ -39,13 +39,9 @@ const SPGImport = () => {
   const [endDate, setEndDate] = useState("");
 
   // Redux state untuk SPG Import
-  const {
-    data: spgImportData,
-    loading,
-    message,
-    errorMessage,
-    pagination,
-  } = useSelector((state) => state.spg.import);
+  const { data, loading, message, errorMessage, pagination } = useSelector(
+    (state) => state.spg.import
+  );
   const { warehouses } = useSelector((state) => state.master);
 
   // Fetch SPG Import data saat component mount
@@ -63,58 +59,56 @@ const SPGImport = () => {
     }
   }, [message, errorMessage, dispatch]);
 
-  // Filter data berdasarkan search query
   useEffect(() => {
-    if (spgImportData.length > 0) {
-      const filtered = spgImportData.filter(
-        (item) =>
-          item.document_number?.toLowerCase().includes(query.toLowerCase()) ||
-          item.sj_number?.toLowerCase().includes(query.toLowerCase()) ||
-          item.warehouse_name?.toLowerCase().includes(query.toLowerCase()) ||
-          item.user_username?.toLowerCase().includes(query.toLowerCase())
+    // Set initial filtered data from Redux
+    setFilteredData(data || []);
+  }, [data]);
+
+  // Combined filter effect
+  useEffect(() => {
+    let filtered = data || [];
+
+    // Apply search filter
+    if (query) {
+      filtered = filtered.filter((item) =>
+        (item.document_number || item.no_faktur || "")
+          .toLowerCase()
+          .includes(query.toLowerCase())
       );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData([]);
     }
-  }, [query, spgImportData]);
 
-  // Filter data berdasarkan tanggal
-  useEffect(() => {
-    if (startDate && endDate && spgImportData.length > 0) {
-      const filtered = spgImportData.filter((item) => {
-        const itemDate = new Date(item.transaction_date);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+    // Apply date filter
+    if (startDate && endDate) {
+      filtered = filtered.filter((item) => {
+        const itemDate = new Date(item.transaction_date || item.created_at);
+        const startDateOnly = new Date(startDate);
+        const endDateOnly = new Date(endDate);
+        return itemDate >= startDateOnly && itemDate <= endDateOnly;
       });
-      setFilteredData(filtered);
     }
-  }, [startDate, endDate, spgImportData]);
 
-  // Setup warehouse filter options
+    // Apply warehouse filter
+    if (selectedWarehouseFilter !== 0) {
+      filtered = filtered.filter(
+        (item) => item.warehouse_name === selectedWarehouseFilter
+      );
+    }
+
+    setFilteredData(filtered);
+  }, [query, data, startDate, endDate, selectedWarehouseFilter]);
+
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
         { label: "Semua Gudang", value: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name,
+          value: warehouse.name, // Assuming warehouse.name is unique
         })),
       ];
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
-
-  // Filter data berdasarkan warehouse
-  useEffect(() => {
-    if (selectedWarehouseFilter === 0) {
-      setFilteredData(spgImportData);
-    } else {
-      const filtered = spgImportData.filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, spgImportData]);
   //#endregion
 
   //#region Handlers

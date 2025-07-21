@@ -25,6 +25,7 @@ import {
 } from "../../../../../redux/actions/spgActions";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 import { printSPGKawat } from "../../../../../utils/printSPGKawat";
+import { formatDate } from "../../../../../utils/dateUtils";
 
 export const UBAH_SPG_KAWAT_PATH = "/mutasi-masuk/spg-kawat/ubah-spg-kawat";
 
@@ -35,6 +36,7 @@ const UbahSPGKawat = () => {
   const location = useLocation();
   const argument = location.state || {};
 
+  const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
   const [stok, setStok] = useState([]);
@@ -60,13 +62,17 @@ const UbahSPGKawat = () => {
 
   useEffect(() => {
     // Set initial values from argument
+    if (argument?.notes) {
+      setKeterangan(argument.notes);
+    }
+
     if (argument?.sj_number) {
       setNoSJ(argument.sj_number);
     }
     if (argument?.items) {
       setStok(argument.items);
     }
-  }, [argument.sj_number, argument.items]);
+  }, [argument.notes, argument.sj_number, argument.items]);
 
   useEffect(() => {
     setGudang(
@@ -117,6 +123,7 @@ const UbahSPGKawat = () => {
     const spgData = {
       warehouse: gudang.id || gudang,
       sj_number: noSJ,
+      notes: keterangan,
       items: stok.map((item) => ({
         product: item.product || item.id,
         packaging_size: item.packaging_size || "",
@@ -218,18 +225,36 @@ const UbahSPGKawat = () => {
           <InputField
             label="No SJ"
             type="text"
-            id="noSuratJalan"
-            name="noSuratJalan"
-            value={noSJ}
-            onChange={(e) => setNoSJ(e.target.value)}
+            id="noSJ"
+            name="noSJ"
+            defaultValue={argument?.sj_number ?? ""}
+            disabled={true}
           />
           <InputField
-            label="Gudang Tujuan"
+            label="Tanggal"
             type="text"
-            id="gudangTujuan"
-            name="gudangTujuan"
-            defaultValue={gudang?.name}
+            id="tanggal"
+            name="tanggal"
+            defaultValue={formatDate(argument?.transaction_date ?? "")}
             disabled={true}
+          />
+        </div>
+        <div className={styles.row}>
+          <InputField
+            label="Gudang"
+            type="text"
+            id="gudang"
+            name="gudang"
+            defaultValue={argument?.warehouse_name ?? ""}
+            disabled={true}
+          />
+          <InputField
+            label="Keterangan"
+            type="text"
+            id="keterangan"
+            name="keterangan"
+            value={keterangan}
+            onChange={(e) => setKeterangan(e.target.value)}
           />
         </div>
       </div>

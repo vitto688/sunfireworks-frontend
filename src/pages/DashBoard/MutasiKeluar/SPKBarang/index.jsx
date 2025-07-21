@@ -67,26 +67,56 @@ const SPKBarang = () => {
   }, [data]);
 
   useEffect(() => {
-    const filteredByQuery = data.filter((item) =>
-      (item.document_number || item.no_faktur || "")
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    // Update local filtered data for search
-    setFilteredData(filteredByQuery);
-  }, [query, data]);
-
-  useEffect(() => {
-    if (startDate && endDate) {
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      // Set initial filtered data from Redux
+      setFilteredData(data || []);
+    } else {
+      // Filter data based on query, date range, and selected filter
       const filtered = data.filter((item) => {
-        const itemDate = new Date(item.request_date || item.created_at);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+        const itemDate = new Date(item.transaction_date || item.created_at);
+
+        // Extract only date part for comparison (ignore time)
+        const itemDateOnly = new Date(
+          itemDate.getFullYear(),
+          itemDate.getMonth(),
+          itemDate.getDate()
+        );
+        const startDateOnly = startDate
+          ? new Date(
+              new Date(startDate).getFullYear(),
+              new Date(startDate).getMonth(),
+              new Date(startDate).getDate()
+            )
+          : null;
+        const endDateOnly = endDate
+          ? new Date(
+              new Date(endDate).getFullYear(),
+              new Date(endDate).getMonth(),
+              new Date(endDate).getDate()
+            )
+          : null;
+
+        const isInDateRange =
+          (!startDateOnly || itemDateOnly >= startDateOnly) &&
+          (!endDateOnly || itemDateOnly <= endDateOnly);
+        const matchesQuery =
+          (item.document_number || item.no_faktur || "")
+            .toLowerCase()
+            .includes(query.toLowerCase()) ||
+          (item.customer_name || "")
+            .toLowerCase()
+            .includes(query.toLowerCase());
+
+        return (
+          isInDateRange &&
+          matchesQuery &&
+          (selectedWarehouseFilter === 0 ||
+            item.warehouse_name === selectedWarehouseFilter)
+        );
       });
       setFilteredData(filtered);
-    } else {
-      setFilteredData(data || []);
     }
-  }, [startDate, endDate, data]);
+  }, [data, query, startDate, endDate, selectedWarehouseFilter]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -101,16 +131,6 @@ const SPKBarang = () => {
     }
   }, [warehouses]);
 
-  useEffect(() => {
-    if (selectedWarehouseFilter === 0) {
-      setFilteredData(data || []);
-    } else {
-      const filtered = (data || []).filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, data]);
   //#endregion
 
   //#region Handlers
@@ -199,8 +219,7 @@ const SPKBarang = () => {
                 />
                 <div className={styles.tableRowItem}>{index + 1}</div>
                 <div className={styles.tableRowItem}>
-                  {item.request_date ||
-                    new Date(item.created_at).toLocaleDateString()}
+                  {new Date(item.created_at).toLocaleDateString()}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number || item.id}

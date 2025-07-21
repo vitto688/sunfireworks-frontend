@@ -31,6 +31,9 @@ import {
   formatDate,
 } from "../../../../utils/numberUtils";
 
+// Import print utility
+import { printReturPembelianReport } from "../../../../utils/printReturPembelianReport";
+
 // Define the path for the Laporan Retur Pembelian page
 export const LAPORAN_RETUR_PEMBELIAN_PATH = "/laporan/retur-pembelian";
 
@@ -188,6 +191,22 @@ const LaporanReturPembelian = () => {
     dispatch(exportReturPembelianReportRequest(params));
   };
 
+  const handlePrintClick = () => {
+    // Create filter object for print function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    // Use current data for print
+    printReturPembelianReport(returPembelianReport, filters);
+  };
+
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
   };
@@ -203,25 +222,30 @@ const LaporanReturPembelian = () => {
       {loading && <Loading />}
       <div className={styles.actionsSection}>
         <CustomButton
+          label="Print"
+          onClick={handlePrintClick}
+          disabled={loading || returPembelianReport.length === 0}
+        />
+        {/* <CustomButton
           label={exportLoading ? "Downloading..." : "Download"}
           onClick={handleDownloadClick}
           disabled={exportLoading || loading}
-        />
+        /> */}
       </div>
       <div className={styles.searchFilterSection}>
         <div className={styles.searchSection}>
-          <SearchBar
+          {/* <SearchBar
             placeholder="Cari berdasarkan nomor dokumen, supplier..."
             value={query}
             onChange={setQuery}
-          />
+          /> */}
         </div>
         <div className={styles.filterSection}>
           <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
           <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
         </div>
         <div className={styles.filterSection}>
-          <FilterDropdown
+          {/* <FilterDropdown
             options={supplierFilterOptions}
             placeholder="Filter Supplier"
             onChange={(val) => setSelectedSupplierFilter(val.value)}
@@ -230,7 +254,7 @@ const LaporanReturPembelian = () => {
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
             onChange={(val) => setSelectedWarehouseFilter(val.value)}
-          />
+          /> */}
         </div>
       </div>
       <div className={styles.mutasiMasukTable}>

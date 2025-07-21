@@ -27,6 +27,9 @@ import Loading from "../../../../components/Loading";
 // Import number formatting utility
 import { formatNumberWithDot } from "../../../../utils/numberUtils";
 
+// Import print utility
+import { printStokBarangReport } from "../../../../utils/printStokBarangReport";
+
 // Define the path for the Laporan Stok Barang page
 export const LAPORAN_STOK_BARANG_PATH = "/laporan/stok-barang";
 
@@ -67,8 +70,9 @@ const LaporanStokBarang = () => {
 
   //#region Helper Functions
   const fetchStockData = useCallback(() => {
+    console.log("fetchStockData called");
     const params = {
-      page: currentPage,
+      page: 1,
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
         warehouse: selectedWarehouseFilter,
@@ -82,7 +86,6 @@ const LaporanStokBarang = () => {
     dispatch(fetchStockReportRequest(params));
   }, [
     dispatch,
-    currentPage,
     query,
     selectedWarehouseFilter,
     selectedCategoryFilter,
@@ -92,6 +95,8 @@ const LaporanStokBarang = () => {
   ]);
 
   const handlePageChange = (newPage) => {
+    console.log("handlePageChange called");
+
     if (newPage >= 1 && newPage <= totalPages) {
       const params = {
         page: newPage,
@@ -142,14 +147,14 @@ const LaporanStokBarang = () => {
     }
   }, [message, errorMessage, errorCode, dispatch]);
 
-  useEffect(() => {
-    // Fetch data when filters change
-    const delayedSearch = setTimeout(() => {
-      fetchStockData();
-    }, 500); // Debounce search
+  // useEffect(() => {
+  //   // Fetch data when filters change
+  //   const delayedSearch = setTimeout(() => {
+  //     fetchStockData();
+  //   }, 500); // Debounce search
 
-    return () => clearTimeout(delayedSearch);
-  }, [fetchStockData]);
+  //   return () => clearTimeout(delayedSearch);
+  // }, [fetchStockData]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -207,6 +212,23 @@ const LaporanStokBarang = () => {
     dispatch(exportStockReportRequest(params));
   };
 
+  const handlePrintClick = () => {
+    // Create filter object for print function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    // Use current data for print
+    printStokBarangReport(stockReport, filters);
+  };
+
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
   };
@@ -222,25 +244,30 @@ const LaporanStokBarang = () => {
       {loading && <Loading />}
       <div className={styles.actionsSection}>
         <CustomButton
+          label="Print"
+          onClick={handlePrintClick}
+          disabled={loading || stockReport.length === 0}
+        />
+        {/* <CustomButton
           label={exportLoading ? "Downloading..." : "Download"}
           onClick={handleDownloadClick}
           disabled={exportLoading || loading}
-        />
+        /> */}
       </div>
       <div className={styles.searchFilterSection}>
-        <div className={styles.searchSection}>
+        {/* <div className={styles.searchSection}>
           <SearchBar
             placeholder="Cari produk atau supplier..."
             value={query}
             onChange={setQuery}
           />
+        </div> */}
+        <div className={styles.filterSection}>
+          {/* <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
+          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} /> */}
         </div>
         <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
-        </div>
-        <div className={styles.filterSection}>
-          <FilterDropdown
+          {/* <FilterDropdown
             options={categoryFilterOptions}
             placeholder="Filter Kategori"
             onChange={(val) => setSelectedCategoryFilter(val.value)}
@@ -254,7 +281,7 @@ const LaporanStokBarang = () => {
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
             onChange={(val) => setSelectedWarehouseFilter(val.value)}
-          />
+          /> */}
         </div>
       </div>
       <div className={styles.mutasiMasukTable}>

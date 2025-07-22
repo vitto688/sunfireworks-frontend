@@ -69,28 +69,32 @@ const LaporanReturPembelian = () => {
   } = useSelector((state) => state.returPembelianReport);
 
   //#region Helper Functions
-  const fetchReturPembelianData = useCallback(() => {
-    const params = {
-      page: currentPage,
-      ...(query && { search: query }),
-      ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
-      }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
-      ...(startDate && { start_date: startDate }),
-      ...(endDate && { end_date: endDate }),
-    };
+  const fetchReturPembelianData = useCallback(
+    (page) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
 
-    dispatch(fetchReturPembelianReportRequest(params));
-  }, [
-    dispatch,
-    currentPage,
-    query,
-    selectedWarehouseFilter,
-    selectedSupplierFilter,
-    startDate,
-    endDate,
-  ]);
+      dispatch(fetchReturPembelianReportRequest(params));
+    },
+    [
+      dispatch,
+      query,
+      selectedWarehouseFilter,
+      selectedSupplierFilter,
+      startDate,
+      endDate,
+    ]
+  );
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -118,7 +122,7 @@ const LaporanReturPembelian = () => {
     dispatch(resetReturPembelianReportMessages());
 
     // Load initial data
-    fetchReturPembelianData();
+    fetchReturPembelianData(1);
 
     // Cleanup when component unmounts
     return () => {
@@ -140,14 +144,14 @@ const LaporanReturPembelian = () => {
     }
   }, [message, errorMessage, errorCode, dispatch]);
 
-  useEffect(() => {
-    // Fetch data when filters change
-    const delayedSearch = setTimeout(() => {
-      fetchReturPembelianData();
-    }, 500); // Debounce search
+  // useEffect(() => {
+  //   // Fetch data when filters change
+  //   const delayedSearch = setTimeout(() => {
+  //     fetchReturPembelianData(currentPage);
+  //   }, 500); // Debounce search
 
-    return () => clearTimeout(delayedSearch);
-  }, [fetchReturPembelianData]);
+  //   return () => clearTimeout(delayedSearch);
+  // }, [fetchReturPembelianData, currentPage]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -218,7 +222,7 @@ const LaporanReturPembelian = () => {
   //#endregion
 
   return (
-    <div className={styles.mutasiMasukSection}>
+    <div className={styles.mainSection}>
       {loading && <Loading />}
       <div className={styles.actionsSection}>
         <CustomButton
@@ -257,7 +261,7 @@ const LaporanReturPembelian = () => {
           /> */}
         </div>
       </div>
-      <div className={styles.mutasiMasukTable}>
+      <div className={styles.mainTable}>
         <div className={styles.tableHeader}>
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>No. Dokumen</div>

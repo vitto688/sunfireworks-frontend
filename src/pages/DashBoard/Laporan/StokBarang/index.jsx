@@ -69,30 +69,36 @@ const LaporanStokBarang = () => {
   } = useSelector((state) => state.stockReport);
 
   //#region Helper Functions
-  const fetchStockData = useCallback(() => {
-    console.log("fetchStockData called");
-    const params = {
-      page: 1,
-      ...(query && { search: query }),
-      ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
-      }),
-      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
-      ...(startDate && { start_date: startDate }),
-      ...(endDate && { end_date: endDate }),
-    };
+  const fetchStockData = useCallback(
+    (page) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedCategoryFilter !== 0 && {
+          category: selectedCategoryFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
 
-    dispatch(fetchStockReportRequest(params));
-  }, [
-    dispatch,
-    query,
-    selectedWarehouseFilter,
-    selectedCategoryFilter,
-    selectedSupplierFilter,
-    startDate,
-    endDate,
-  ]);
+      dispatch(fetchStockReportRequest(params));
+    },
+    [
+      dispatch,
+      query,
+      selectedWarehouseFilter,
+      selectedCategoryFilter,
+      selectedSupplierFilter,
+      startDate,
+      endDate,
+    ]
+  );
 
   const handlePageChange = (newPage) => {
     console.log("handlePageChange called");
@@ -125,7 +131,7 @@ const LaporanStokBarang = () => {
     dispatch(resetStockReportMessages());
 
     // Load initial data
-    fetchStockData();
+    fetchStockData(1);
 
     // Cleanup when component unmounts
     return () => {

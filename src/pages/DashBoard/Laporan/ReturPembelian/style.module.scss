@@ -1,6 +1,6 @@
 @import 'src/mixins.scss';
 
-.mutasiMasukSection {
+.mainSection {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -43,7 +43,7 @@
         }
     }
 
-    .mutasiMasukTable{
+    .mainTable{
         position: relative;
         display: flex;
         flex-direction: column;

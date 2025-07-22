@@ -13,6 +13,7 @@ function* expandMenu(action) {
   const expandedMenus = menuState.expandedMenus;
 
   const path = action.payload.path;
+  console.log("Expanding menu for path:", path);
 
   const idx = expandedMenus.indexOf(path);
   if (idx > -1) {

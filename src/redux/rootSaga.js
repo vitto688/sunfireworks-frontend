@@ -1,6 +1,7 @@
 import { all } from "redux-saga/effects";
 import authSaga from "./sagas/authSaga";
 import masterSaga from "./sagas/masterSaga";
+import menuSaga from "./sagas/menuSaga";
 import stockSaga from "./sagas/stockSaga";
 import mutasiMasukSaga from "./sagas/mutasiMasukSaga";
 import spgSaga from "./sagas/spgSaga";
@@ -22,6 +23,7 @@ export default function* rootSaga() {
   yield all([
     authSaga(),
     masterSaga(),
+    menuSaga(),
     stockSaga(),
     mutasiMasukSaga(),
     // Unified SPG Saga

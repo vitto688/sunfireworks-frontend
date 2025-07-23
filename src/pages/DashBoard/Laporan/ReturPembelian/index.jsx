@@ -144,15 +144,6 @@ const LaporanReturPembelian = () => {
     }
   }, [message, errorMessage, errorCode, dispatch]);
 
-  // useEffect(() => {
-  //   // Fetch data when filters change
-  //   const delayedSearch = setTimeout(() => {
-  //     fetchReturPembelianData(currentPage);
-  //   }, 500); // Debounce search
-
-  //   return () => clearTimeout(delayedSearch);
-  // }, [fetchReturPembelianData, currentPage]);
-
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
@@ -230,11 +221,6 @@ const LaporanReturPembelian = () => {
           onClick={handlePrintClick}
           disabled={loading || returPembelianReport.length === 0}
         />
-        {/* <CustomButton
-          label={exportLoading ? "Downloading..." : "Download"}
-          onClick={handleDownloadClick}
-          disabled={exportLoading || loading}
-        /> */}
       </div>
       <div className={styles.searchFilterSection}>
         <div className={styles.searchSection}>

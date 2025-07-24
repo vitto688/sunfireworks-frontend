@@ -1,9 +1,19 @@
 import React from "react";
+import { ArrowLeft } from "lucide-react";
 
 // Import styles
 import styles from "./style.module.scss";
+import { formatNumber } from "../../utils/numberFormat";
 
-const Chart = ({ title, period, data }) => {
+const Chart = ({
+  title,
+  period,
+  data,
+  showBackButton,
+  onBack,
+  showOverviewButton,
+  onOverview,
+}) => {
   const chartGradient = data
     .map((item, index, array) => {
       const start = array
@@ -17,10 +27,31 @@ const Chart = ({ title, period, data }) => {
   return (
     <div className={styles.chart}>
       <div className={styles.header}>
-        <h2>{title}</h2>
-        <button className={styles.dropdown}>
-          {period} <span className={styles.dropdownIcon}>▼</span>
-        </button>
+        <div className={styles.titleSection}>
+          {showBackButton && (
+            <ArrowLeft
+              size={16}
+              className={styles.backButton}
+              onClick={onBack}
+              title="Kembali ke Overview"
+            />
+          )}
+          <h2>{title}</h2>
+        </div>
+        <div className={styles.actionButtons}>
+          {showOverviewButton && (
+            <button
+              className={styles.overviewButton}
+              onClick={onOverview}
+              title="Lihat Semua Kategori"
+            >
+              Overview
+            </button>
+          )}
+          {/* <button className={styles.dropdown}>
+            {period} <span className={styles.dropdownIcon}>▼</span>
+          </button> */}
+        </div>
       </div>
       <div className={styles.content}>
         <div className={styles.chartCircleWrapper}>
@@ -29,7 +60,7 @@ const Chart = ({ title, period, data }) => {
             style={{ background: `conic-gradient(${chartGradient})` }}
           >
             <div className={styles.innerCircle}>
-              <span className={styles.chartIcon}>🛒</span>
+              <span className={styles.chartIcon}>📊</span>
             </div>
           </div>
         </div>
@@ -40,8 +71,17 @@ const Chart = ({ title, period, data }) => {
                 className={styles.legendCircle}
                 style={{ backgroundColor: item.color }}
               ></span>
-              {item.label}{" "}
-              <span className={styles.value}>{item.percentage}%</span>
+              <div className={styles.legendContent}>
+                <span className={styles.legendLabel}>{item.label}</span>
+                <div className={styles.legendValues}>
+                  <span className={styles.percentage}>{item.percentage}%</span>
+                  {item.value !== undefined && (
+                    <span className={styles.value}>
+                      ({formatNumber(item.value)} unit)
+                    </span>
+                  )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>

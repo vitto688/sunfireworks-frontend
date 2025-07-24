@@ -5,6 +5,8 @@ import {
   fetchReturPembelianReportFailure,
   exportReturPembelianReportSuccess,
   exportReturPembelianReportFailure,
+  fetchReturPembelianReportNPSuccess,
+  fetchReturPembelianReportNPFailure,
 } from "../actions/returPembelianReportActions";
 
 // Fetch Retur Pembelian Report Saga
@@ -18,6 +20,20 @@ function* fetchReturPembelianReportSaga(action) {
     yield put(fetchReturPembelianReportSuccess(response));
   } catch (error) {
     yield put(fetchReturPembelianReportFailure(error));
+  }
+}
+
+function* fetchReturPembelianReportNPSaga(action) {
+  try {
+    const { params } = action.payload;
+    params.paginate = false; // Disable pagination for non-paginated report
+    const response = yield call(
+      returPembelianReportAPI.fetchReturPembelianReport,
+      params
+    );
+    yield put(fetchReturPembelianReportNPSuccess(response));
+  } catch (error) {
+    yield put(fetchReturPembelianReportNPFailure(error));
   }
 }
 
@@ -54,6 +70,10 @@ export default function* returPembelianReportSaga() {
   yield takeEvery(
     "FETCH_RETUR_PEMBELIAN_REPORT_REQUEST",
     fetchReturPembelianReportSaga
+  );
+  yield takeEvery(
+    "FETCH_RETUR_PEMBELIAN_REPORT_NP_REQUEST",
+    fetchReturPembelianReportNPSaga
   );
   yield takeEvery(
     "EXPORT_RETUR_PEMBELIAN_REPORT_REQUEST",

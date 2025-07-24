@@ -16,6 +16,21 @@ export const fetchMutasiBarangReportFailure = (error) => ({
   payload: { error },
 });
 
+export const fetchMutasiBarangReportNPRequest = (params = {}) => ({
+  type: "FETCH_MUTASI_BARANG_REPORT_NP_REQUEST",
+  payload: { params },
+});
+
+export const fetchMutasiBarangReportNPSuccess = (data) => ({
+  type: "FETCH_MUTASI_BARANG_REPORT_NP_SUCCESS",
+  payload: { data },
+});
+
+export const fetchMutasiBarangReportNPFailure = (error) => ({
+  type: "FETCH_MUTASI_BARANG_REPORT_NP_FAILURE",
+  payload: { error },
+});
+
 // Export Mutasi Barang Report Actions
 export const exportMutasiBarangReportRequest = (params = {}) => ({
   type: "EXPORT_MUTASI_BARANG_REPORT_REQUEST",

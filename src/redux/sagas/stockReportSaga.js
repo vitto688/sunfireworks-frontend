@@ -5,6 +5,8 @@ import {
   fetchStockReportFailure,
   exportStockReportSuccess,
   exportStockReportFailure,
+  fetchStockReportNPSuccess,
+  fetchStockReportNPFailure,
 } from "../actions/stockReportActions";
 
 // Fetch Stock Report Saga
@@ -15,6 +17,17 @@ function* fetchStockReportSaga(action) {
     yield put(fetchStockReportSuccess(response));
   } catch (error) {
     yield put(fetchStockReportFailure(error));
+  }
+}
+
+function* fetchStockReportNPSaga(action) {
+  try {
+    const { params } = action.payload;
+    params.paginate = false; // Disable pagination for non-paginated report
+    const response = yield call(stockReportAPI.fetchStockReport, params);
+    yield put(fetchStockReportNPSuccess(response));
+  } catch (error) {
+    yield put(fetchStockReportNPFailure(error));
   }
 }
 
@@ -46,5 +59,6 @@ function* exportStockReportSaga(action) {
 // Root Stock Report Saga
 export default function* stockReportSaga() {
   yield takeEvery("FETCH_STOCK_REPORT_REQUEST", fetchStockReportSaga);
+  yield takeEvery("FETCH_STOCK_REPORT_NP_REQUEST", fetchStockReportNPSaga);
   yield takeEvery("EXPORT_STOCK_REPORT_REQUEST", exportStockReportSaga);
 }

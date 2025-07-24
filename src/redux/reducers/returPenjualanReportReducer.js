@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   returPenjualanReport: [],
+  returPenjualanReportNP: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const returPenjualanReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Retur Penjualan Report Cases
     case "FETCH_RETUR_PENJUALAN_REPORT_REQUEST":
+    case "FETCH_RETUR_PENJUALAN_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -55,6 +57,16 @@ const returPenjualanReportReducer = (state = initialState, action) => {
         errorCode: null,
       };
 
+    case "FETCH_RETUR_PENJUALAN_REPORT_NP_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        returPenjualanReportNP: action.payload.data || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
     case "FETCH_RETUR_PENJUALAN_REPORT_FAILURE":
       return {
         ...state,
@@ -68,6 +80,17 @@ const returPenjualanReportReducer = (state = initialState, action) => {
         errorMessage:
           action.payload.error?.message ||
           "Failed to fetch retur penjualan report",
+        errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_RETUR_PENJUALAN_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        returPenjualanReportNP: [],
+        errorMessage:
+          action.payload.error?.message ||
+          "Failed to fetch retur penjualan report NP",
         errorCode: action.payload.error?.code || "FETCH_ERROR",
       };
 

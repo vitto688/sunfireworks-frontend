@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   mutasiBarangReport: [],
+  mutasiBarangReportNP: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const mutasiBarangReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Mutasi Barang Report Cases
     case "FETCH_MUTASI_BARANG_REPORT_REQUEST":
+    case "FETCH_MUTASI_BARANG_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -55,6 +57,17 @@ const mutasiBarangReportReducer = (state = initialState, action) => {
         errorCode: null,
       };
 
+    case "FETCH_MUTASI_BARANG_REPORT_NP_SUCCESS":
+      const npData = action.payload.data;
+      return {
+        ...state,
+        loading: false,
+        mutasiBarangReportNP: npData || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
     case "FETCH_MUTASI_BARANG_REPORT_FAILURE":
       return {
         ...state,
@@ -69,6 +82,17 @@ const mutasiBarangReportReducer = (state = initialState, action) => {
           action.payload.error?.message ||
           "Failed to fetch mutasi barang report",
         errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_MUTASI_BARANG_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        mutasiBarangReportNP: [],
+        errorMessage:
+          action.payload.error?.message ||
+          "Failed to fetch mutasi barang report NP",
+        errorCode: action.payload.error?.code || "FETCH_NP_ERROR",
       };
 
     // Export Mutasi Barang Report Cases

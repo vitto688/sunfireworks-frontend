@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   penerimaanBarangReport: [],
+  penerimaanBarangNPReport: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const penerimaanBarangReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Penerimaan Barang Report Cases
     case "FETCH_PENERIMAAN_BARANG_REPORT_REQUEST":
+    case "FETCH_PENERIMAAN_BARANG_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -60,6 +62,33 @@ const penerimaanBarangReportReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         penerimaanBarangReport: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: 1,
+        nextPage: null,
+        previousPage: null,
+        errorMessage:
+          action.payload.error?.message ||
+          "Failed to fetch penerimaan barang report",
+        errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_PENERIMAAN_BARANG_REPORT_NP_SUCCESS":
+      const npData = action.payload.data;
+      return {
+        ...state,
+        loading: false,
+        penerimaanBarangNPReport: npData || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
+    case "FETCH_PENERIMAAN_BARANG_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        penerimaanBarangNPReport: [],
         totalCount: 0,
         totalPages: 0,
         currentPage: 1,

@@ -16,6 +16,21 @@ export const fetchReturPembelianReportFailure = (error) => ({
   payload: { error },
 });
 
+export const fetchReturPembelianReportNPRequest = (params = {}) => ({
+  type: "FETCH_RETUR_PEMBELIAN_REPORT_NP_REQUEST",
+  payload: { params },
+});
+
+export const fetchReturPembelianReportNPSuccess = (data) => ({
+  type: "FETCH_RETUR_PEMBELIAN_REPORT_NP_SUCCESS",
+  payload: { data },
+});
+
+export const fetchReturPembelianReportNPFailure = (error) => ({
+  type: "FETCH_RETUR_PEMBELIAN_REPORT_NP_FAILURE",
+  payload: { error },
+});
+
 // Export Retur Pembelian Report Actions
 export const exportReturPembelianReportRequest = (params = {}) => ({
   type: "EXPORT_RETUR_PEMBELIAN_REPORT_REQUEST",

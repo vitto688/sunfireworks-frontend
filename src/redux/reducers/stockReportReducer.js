@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   stockReport: [],
+  stockReportNP: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const stockReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Stock Report Cases
     case "FETCH_STOCK_REPORT_REQUEST":
+    case "FETCH_STOCK_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -55,6 +57,16 @@ const stockReportReducer = (state = initialState, action) => {
         errorCode: null,
       };
 
+    case "FETCH_STOCK_REPORT_NP_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        stockReportNP: action.payload.data || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
     case "FETCH_STOCK_REPORT_FAILURE":
       return {
         ...state,
@@ -67,6 +79,16 @@ const stockReportReducer = (state = initialState, action) => {
         previousPage: null,
         errorMessage:
           action.payload.error?.message || "Failed to fetch stock report",
+        errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_STOCK_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        stockReportNP: [],
+        errorMessage:
+          action.payload.error?.message || "Failed to fetch stock report NP",
         errorCode: action.payload.error?.code || "FETCH_ERROR",
       };
 

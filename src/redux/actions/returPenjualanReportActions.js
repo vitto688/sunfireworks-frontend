@@ -16,6 +16,21 @@ export const fetchReturPenjualanReportFailure = (error) => ({
   payload: { error },
 });
 
+export const fetchReturPenjualanReportNPRequest = (params = {}) => ({
+  type: "FETCH_RETUR_PENJUALAN_REPORT_NP_REQUEST",
+  payload: { params },
+});
+
+export const fetchReturPenjualanReportNPSuccess = (data) => ({
+  type: "FETCH_RETUR_PENJUALAN_REPORT_NP_SUCCESS",
+  payload: { data },
+});
+
+export const fetchReturPenjualanReportNPFailure = (error) => ({
+  type: "FETCH_RETUR_PENJUALAN_REPORT_NP_FAILURE",
+  payload: { error },
+});
+
 // Export Retur Penjualan Report Actions
 export const exportReturPenjualanReportRequest = (params = {}) => ({
   type: "EXPORT_RETUR_PENJUALAN_REPORT_REQUEST",

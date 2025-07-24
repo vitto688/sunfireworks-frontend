@@ -16,6 +16,21 @@ export const fetchStockReportFailure = (error) => ({
   payload: { error },
 });
 
+export const fetchStockReportNPRequest = (params = {}) => ({
+  type: "FETCH_STOCK_REPORT_NP_REQUEST",
+  payload: { params },
+});
+
+export const fetchStockReportNPSuccess = (data) => ({
+  type: "FETCH_STOCK_REPORT_NP_SUCCESS",
+  payload: { data },
+});
+
+export const fetchStockReportNPFailure = (error) => ({
+  type: "FETCH_STOCK_REPORT_NP_FAILURE",
+  payload: { error },
+});
+
 // Export Stock Report Actions
 export const exportStockReportRequest = (params = {}) => ({
   type: "EXPORT_STOCK_REPORT_REQUEST",

@@ -5,6 +5,8 @@ import {
   fetchMutasiBarangReportFailure,
   exportMutasiBarangReportSuccess,
   exportMutasiBarangReportFailure,
+  fetchMutasiBarangReportNPSuccess,
+  fetchMutasiBarangReportNPFailure,
 } from "../actions/mutasiBarangReportActions";
 
 // Fetch Mutasi Barang Report Saga
@@ -18,6 +20,20 @@ function* fetchMutasiBarangReportSaga(action) {
     yield put(fetchMutasiBarangReportSuccess(response));
   } catch (error) {
     yield put(fetchMutasiBarangReportFailure(error));
+  }
+}
+
+function* fetchMutasiBarangReportNPSaga(action) {
+  try {
+    const { params } = action.payload;
+    params.paginate = false; // Disable pagination for non-paginated report
+    const response = yield call(
+      mutasiBarangReportAPI.fetchMutasiBarangReport,
+      params
+    );
+    yield put(fetchMutasiBarangReportNPSuccess(response));
+  } catch (error) {
+    yield put(fetchMutasiBarangReportNPFailure(error));
   }
 }
 
@@ -54,6 +70,10 @@ export default function* mutasiBarangReportSaga() {
   yield takeEvery(
     "FETCH_MUTASI_BARANG_REPORT_REQUEST",
     fetchMutasiBarangReportSaga
+  );
+  yield takeEvery(
+    "FETCH_MUTASI_BARANG_REPORT_NP_REQUEST",
+    fetchMutasiBarangReportNPSaga
   );
   yield takeEvery(
     "EXPORT_MUTASI_BARANG_REPORT_REQUEST",

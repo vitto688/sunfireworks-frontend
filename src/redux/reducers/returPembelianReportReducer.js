@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   returPembelianReport: [],
+  returPembelianReportNP: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const returPembelianReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Retur Pembelian Report Cases
     case "FETCH_RETUR_PEMBELIAN_REPORT_REQUEST":
+    case "FETCH_RETUR_PEMBELIAN_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -55,6 +57,16 @@ const returPembelianReportReducer = (state = initialState, action) => {
         errorCode: null,
       };
 
+    case "FETCH_RETUR_PEMBELIAN_REPORT_NP_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        returPembelianReportNP: action.payload.data || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
     case "FETCH_RETUR_PEMBELIAN_REPORT_FAILURE":
       return {
         ...state,
@@ -68,6 +80,17 @@ const returPembelianReportReducer = (state = initialState, action) => {
         errorMessage:
           action.payload.error?.message ||
           "Failed to fetch retur pembelian report",
+        errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_RETUR_PEMBELIAN_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        returPembelianReportNP: [],
+        errorMessage:
+          action.payload.error?.message ||
+          "Failed to fetch retur pembelian report NP",
         errorCode: action.payload.error?.code || "FETCH_ERROR",
       };
 

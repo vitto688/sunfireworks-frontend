@@ -5,6 +5,8 @@ import {
   fetchPenerimaanBarangReportFailure,
   exportPenerimaanBarangReportSuccess,
   exportPenerimaanBarangReportFailure,
+  fetchPenerimaanBarangReportNPSuccess,
+  fetchPenerimaanBarangReportNPFailure,
 } from "../actions/penerimaanBarangReportActions";
 
 // Fetch Penerimaan Barang Report Saga
@@ -18,6 +20,20 @@ function* fetchPenerimaanBarangReportSaga(action) {
     yield put(fetchPenerimaanBarangReportSuccess(response));
   } catch (error) {
     yield put(fetchPenerimaanBarangReportFailure(error));
+  }
+}
+
+function* fetchPenerimaanBarangReportNPSaga(action) {
+  try {
+    const { params } = action.payload;
+    params.paginate = false; // Disable pagination for non-paginated report
+    const response = yield call(
+      penerimaanBarangReportAPI.fetchPenerimaanBarangReport,
+      params
+    );
+    yield put(fetchPenerimaanBarangReportNPSuccess(response));
+  } catch (error) {
+    yield put(fetchPenerimaanBarangReportNPFailure(error));
   }
 }
 
@@ -54,6 +70,10 @@ export default function* penerimaanBarangReportSaga() {
   yield takeEvery(
     "FETCH_PENERIMAAN_BARANG_REPORT_REQUEST",
     fetchPenerimaanBarangReportSaga
+  );
+  yield takeEvery(
+    "FETCH_PENERIMAAN_BARANG_REPORT_NP_REQUEST",
+    fetchPenerimaanBarangReportNPSaga
   );
   yield takeEvery(
     "EXPORT_PENERIMAAN_BARANG_REPORT_REQUEST",

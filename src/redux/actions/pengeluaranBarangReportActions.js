@@ -16,6 +16,21 @@ export const fetchPengeluaranBarangReportFailure = (error) => ({
   payload: { error },
 });
 
+export const fetchPengeluaranBarangReportNPRequest = (params = {}) => ({
+  type: "FETCH_PENGELUARAN_BARANG_REPORT_NP_REQUEST",
+  payload: { params },
+});
+
+export const fetchPengeluaranBarangReportNPSuccess = (data) => ({
+  type: "FETCH_PENGELUARAN_BARANG_REPORT_NP_SUCCESS",
+  payload: { data },
+});
+
+export const fetchPengeluaranBarangReportNPFailure = (error) => ({
+  type: "FETCH_PENGELUARAN_BARANG_REPORT_NP_FAILURE",
+  payload: { error },
+});
+
 // Export Pengeluaran Barang Report Actions
 export const exportPengeluaranBarangReportRequest = (params = {}) => ({
   type: "EXPORT_PENGELUARAN_BARANG_REPORT_REQUEST",

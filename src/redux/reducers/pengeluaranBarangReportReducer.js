@@ -1,6 +1,7 @@
 const initialState = {
   // Data
   pengeluaranBarangReport: [],
+  pengeluaranBarangReportNP: [],
   totalCount: 0,
   totalPages: 0,
   currentPage: 1,
@@ -32,6 +33,7 @@ const pengeluaranBarangReportReducer = (state = initialState, action) => {
   switch (action.type) {
     // Fetch Pengeluaran Barang Report Cases
     case "FETCH_PENGELUARAN_BARANG_REPORT_REQUEST":
+    case "FETCH_PENGELUARAN_BARANG_REPORT_NP_REQUEST":
       return {
         ...state,
         loading: true,
@@ -55,6 +57,16 @@ const pengeluaranBarangReportReducer = (state = initialState, action) => {
         errorCode: null,
       };
 
+    case "FETCH_PENGELUARAN_BARANG_REPORT_NP_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        pengeluaranBarangReportNP: action.payload.data || [],
+        message: null,
+        errorMessage: null,
+        errorCode: null,
+      };
+
     case "FETCH_PENGELUARAN_BARANG_REPORT_FAILURE":
       return {
         ...state,
@@ -68,6 +80,17 @@ const pengeluaranBarangReportReducer = (state = initialState, action) => {
         errorMessage:
           action.payload.error?.message ||
           "Failed to fetch pengeluaran barang report",
+        errorCode: action.payload.error?.code || "FETCH_ERROR",
+      };
+
+    case "FETCH_PENGELUARAN_BARANG_REPORT_NP_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        pengeluaranBarangReportNP: [],
+        errorMessage:
+          action.payload.error?.message ||
+          "Failed to fetch pengeluaran barang report NP",
         errorCode: action.payload.error?.code || "FETCH_ERROR",
       };
 

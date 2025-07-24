@@ -5,6 +5,8 @@ import {
   fetchReturPenjualanReportFailure,
   exportReturPenjualanReportSuccess,
   exportReturPenjualanReportFailure,
+  fetchReturPenjualanReportNPSuccess,
+  fetchReturPenjualanReportNPFailure,
 } from "../actions/returPenjualanReportActions";
 
 // Fetch Retur Penjualan Report Saga
@@ -18,6 +20,20 @@ function* fetchReturPenjualanReportSaga(action) {
     yield put(fetchReturPenjualanReportSuccess(response));
   } catch (error) {
     yield put(fetchReturPenjualanReportFailure(error));
+  }
+}
+
+function* fetchReturPenjualanReportNPSaga(action) {
+  try {
+    const { params } = action.payload;
+    params.paginate = false; // Disable pagination for non-paginated report
+    const response = yield call(
+      returPenjualanReportAPI.fetchReturPenjualanReport,
+      params
+    );
+    yield put(fetchReturPenjualanReportNPSuccess(response));
+  } catch (error) {
+    yield put(fetchReturPenjualanReportNPFailure(error));
   }
 }
 
@@ -54,6 +70,10 @@ export default function* returPenjualanReportSaga() {
   yield takeEvery(
     "FETCH_RETUR_PENJUALAN_REPORT_REQUEST",
     fetchReturPenjualanReportSaga
+  );
+  yield takeEvery(
+    "FETCH_RETUR_PENJUALAN_REPORT_NP_REQUEST",
+    fetchReturPenjualanReportNPSaga
   );
   yield takeEvery(
     "EXPORT_RETUR_PENJUALAN_REPORT_REQUEST",

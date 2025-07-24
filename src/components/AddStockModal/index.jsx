@@ -112,7 +112,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="packSize">Ukuran Pack</label>
+              <label htmlFor="packSize">Packing</label>
               <input
                 type="text"
                 id="packSize"

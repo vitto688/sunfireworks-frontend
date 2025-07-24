@@ -297,9 +297,7 @@ const UbahSuratTerimaBarang = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks.filter(
-          (stock) => stock.warehouse === argument?.warehouse
-        )}
+        stocks={stocks}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

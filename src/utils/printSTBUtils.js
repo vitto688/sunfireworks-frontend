@@ -21,26 +21,27 @@ export const printSTB = (data) => {
         }</title>
         <style>
           @page {
-            margin: 15mm;
-            size: A4;
+            margin: 10mm;
+            size: 9.5in 5.5in;
           }
           body {
-            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
             font-size: 13px;
             line-height: 1.4;
             color: black;
+            font-weight: 400;
           }
           .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid black;
+            border-bottom: 0.5px solid black;
             padding-bottom: 10px;
           }
           .header h1 {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 400;
             margin: 0;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -61,12 +62,12 @@ export const printSTB = (data) => {
             margin-bottom: 8px;
           }
           .infoRow .label {
-            font-weight: bold;
+            font-weight: 400;
             min-width: 110px;
             font-size: 12px;
           }
           .infoRow .value {
-            font-weight: normal;
+            font-weight: 400;
             font-size: 12px;
           }
           .infoRow .sj {
@@ -76,11 +77,11 @@ export const printSTB = (data) => {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
-            border: 1.5px solid black;
+            border: 0.25px solid black;
             font-size: 12px;
           }
           th, td {
-            border: 1px solid black;
+            border: 0.25px solid black;
             padding: 6px 4px;
             text-align: center;
             vertical-align: middle;
@@ -89,7 +90,7 @@ export const printSTB = (data) => {
           }
           th {
             background: white !important;
-            font-weight: bold;
+            font-weight: 400;
             font-size: 12px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -139,24 +140,24 @@ export const printSTB = (data) => {
             background: white !important;
             font-size: 12px;
             height: 25px;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row {
             background: white !important;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row .total-label {
             text-align: right !important;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 400;
             padding-right: 15px;
           }
           .total-row td {
-            font-weight: bold;
+            font-weight: 400;
             font-size: 12px;
           }
           .footer {
@@ -170,7 +171,7 @@ export const printSTB = (data) => {
           }
           .notesLabel {
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 400;
             margin-bottom: 10px;
           }
           .notesContent {
@@ -188,7 +189,7 @@ export const printSTB = (data) => {
           .signatureLeft p, .signatureRight p {
             margin: 0;
             font-size: 12px;
-            font-weight: normal;
+            font-weight: 400;
           }
           .signatureRight {
             margin-top: 50px;

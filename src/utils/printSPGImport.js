@@ -21,26 +21,27 @@ export const printSPGImport = (data) => {
         }</title>
         <style>
           @page {
-            margin: 15mm;
-            size: A4 landscape;
+            margin: 10mm;
+            size: 9.5in 5.5in;
           }
           body {
-            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
             font-size: 11px;
             line-height: 1.3;
             color: black;
+            font-weight: 400;
           }
           .header {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid black;
+            border-bottom: 0.5px solid black;
             padding-bottom: 8px;
           }
           .header h1 {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 400;
             margin: 0;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -61,23 +62,23 @@ export const printSPGImport = (data) => {
             margin-bottom: 6px;
           }
           .infoRow .label {
-            font-weight: bold;
+            font-weight: 400;
             min-width: 100px;
             font-size: 10px;
           }
           .infoRow .value {
-            font-weight: normal;
+            font-weight: 400;
             font-size: 10px;
           }
           table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            border: 1.5px solid black;
+            border: 0.25px solid black;
             font-size: 9px;
           }
           th, td {
-            border: 1px solid black;
+            border: 0.25px solid black;
             padding: 3px 2px;
             text-align: center;
             vertical-align: middle;
@@ -86,7 +87,7 @@ export const printSPGImport = (data) => {
           }
           th {
             background: white !important;
-            font-weight: bold;
+            font-weight: 400;
             font-size: 9px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -160,24 +161,24 @@ export const printSPGImport = (data) => {
             background: white !important;
             font-size: 9px;
             height: 20px;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row {
             background: white !important;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row .total-label {
             text-align: right !important;
             font-size: 9px;
-            font-weight: bold;
+            font-weight: 400;
             padding-right: 10px;
           }
           .total-row td {
-            font-weight: bold;
+            font-weight: 400;
             font-size: 9px;
           }
           .footer {
@@ -192,7 +193,7 @@ export const printSPGImport = (data) => {
           }
           .notesLabel {
             font-size: 10px;
-            font-weight: bold;
+            font-weight: 400;
             margin-bottom: 8px;
           }
           .notesContent {
@@ -211,7 +212,7 @@ export const printSPGImport = (data) => {
           .signatureLeft p, .signatureRight p {
             margin: 0;
             font-size: 10px;
-            font-weight: normal;
+            font-weight: 400;
           }
           .signatureRight {
             margin-top: 40px;
@@ -220,7 +221,7 @@ export const printSPGImport = (data) => {
       </head>
       <body>
         <div class="header">
-          <h1>SURAT PENGIRIMAN GUDANG (SPG) IMPORT</h1>
+          <h1>SURAT PENERIMAAN GUDANG (SPG) IMPORT</h1>
         </div>
 
         <div class="documentInfo">

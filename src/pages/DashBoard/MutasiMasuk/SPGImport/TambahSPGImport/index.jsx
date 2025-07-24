@@ -354,7 +354,7 @@ const TambahSPGImport = () => {
       </div>
 
       <AddStockModalImport
-        stocks={stocks.filter((stock) => stock.warehouse === gudang.id)}
+        stocks={stocks}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

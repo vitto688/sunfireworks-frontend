@@ -172,7 +172,7 @@ const UbahSPB = () => {
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
         <CustomButton
-          label="Print SPK"
+          label="Print SPB"
           variant="outline"
           onClick={handlePrintClick}
           disabled={loading}

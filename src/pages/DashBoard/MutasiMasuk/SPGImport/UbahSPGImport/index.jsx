@@ -237,7 +237,7 @@ const UbahSPGImport = () => {
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
         <CustomButton
-          label="Print SJ"
+          label="Print SPG"
           variant="outline"
           onClick={handlePrintClick}
           disabled={loading}

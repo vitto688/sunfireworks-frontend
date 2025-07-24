@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Import styles
 import styles from "./style.module.scss";
@@ -15,12 +15,27 @@ const ItemSearchDialog = ({
   onSelect,
 }) => {
   const [search, setSearch] = useState("");
+  const [filtered, setFiltered] = useState([]);
 
-  const filtered = data.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.code.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    const results = data.filter(
+      (product) =>
+        product.name?.toLowerCase()?.includes(search?.toLowerCase()) ||
+        product.code?.toLowerCase()?.includes(search?.toLowerCase())
+    );
+
+    // Remove duplicates dan debug
+    // const uniqueResults = results.reduce((acc, current) => {
+    //   const isDuplicate = acc.find((item) => item.code === current.code||);
+    //   if (!isDuplicate) {
+    //     acc.push(current);
+    //   }
+    //   return acc;
+    // }, []);
+
+    // console.log("Unique filtered results:", uniqueResults);
+    setFiltered(results);
+  }, [data, search]);
 
   if (!isOpen) return null;
 
@@ -35,68 +50,69 @@ const ItemSearchDialog = ({
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className={styles.resultList}>
-          {filtered.map((product) => (
-            <div
-              key={product.code}
-              className={styles.productItem}
-              onClick={() => {
-                onSelect(product);
-                onClose();
-              }}
-            >
-              <div className={styles.productHeader}>
-                <div className={styles.productCode}>{product.code}</div>
-                <div className={styles.productName}>{product.name}</div>
-              </div>
+          {filtered.length > 0 &&
+            filtered.map((product, index) => (
+              <div
+                key={`${product.code}-${index}`}
+                className={styles.productItem}
+                onClick={() => {
+                  onSelect(product);
+                  onClose();
+                }}
+              >
+                <div className={styles.productHeader}>
+                  <div className={styles.productCode}>{product.code}</div>
+                  <div className={styles.productName}>{product.name}</div>
+                </div>
 
-              <div className={styles.productDetails}>
-                {product.gudang && (
-                  <div className={styles.productInfo}>
-                    <span className={styles.label}>Gudang:</span>
-                    <span className={styles.value}>
-                      {product.gudang || product.warehouse || "-"}
-                    </span>
-                  </div>
-                )}
-                {product.pelanggan && (
-                  <div className={styles.productInfo}>
-                    <span className={styles.label}>Pelanggan:</span>
-                    <span className={styles.value}>
-                      {product.pelanggan || "-"}
-                    </span>
-                  </div>
-                )}
-                {product.supplierName && product.packing && (
-                  <div className={styles.productQuantity}>
-                    <div className={styles.quantityItem}>
-                      <span className={styles.label}>KP:</span>
+                <div className={styles.productDetails}>
+                  {product.gudang && (
+                    <div className={styles.productInfo}>
+                      <span className={styles.label}>Gudang:</span>
                       <span className={styles.value}>
-                        {product.supplierName || ""}
+                        {product.gudang || product.warehouse || "-"}
                       </span>
                     </div>
-                    <div className={styles.quantityItem}>
-                      <span className={styles.label}>Pack:</span>
+                  )}
+                  {product.pelanggan && (
+                    <div className={styles.productInfo}>
+                      <span className={styles.label}>Pelanggan:</span>
                       <span className={styles.value}>
-                        {product.packing || ""}
+                        {product.pelanggan || "-"}
                       </span>
                     </div>
-                    <div className={styles.quantityItem}>
-                      <span className={styles.label}>Karton:</span>
-                      <span className={styles.value}>
-                        {formatNumberWithDot(product.cartonQuantity || 0)}
-                      </span>
+                  )}
+                  {product.supplierName && product.packing && (
+                    <div className={styles.productQuantity}>
+                      <div className={styles.quantityItem}>
+                        <span className={styles.label}>KP:</span>
+                        <span className={styles.value}>
+                          {product.supplierName || ""}
+                        </span>
+                      </div>
+                      <div className={styles.quantityItem}>
+                        <span className={styles.label}>Packing:</span>
+                        <span className={styles.value}>
+                          {product.packing || ""}
+                        </span>
+                      </div>
+                      <div className={styles.quantityItem}>
+                        <span className={styles.label}>Karton:</span>
+                        <span className={styles.value}>
+                          {formatNumberWithDot(product.cartonQuantity || 0)}
+                        </span>
+                      </div>
+                      <div className={styles.quantityItem}>
+                        <span className={styles.label}>Pack:</span>
+                        <span className={styles.value}>
+                          {formatNumberWithDot(product.packQuantity || 0)}
+                        </span>
+                      </div>
                     </div>
-                    <div className={styles.quantityItem}>
-                      <span className={styles.label}>Pack:</span>
-                      <span className={styles.value}>
-                        {formatNumberWithDot(product.packQuantity || 0)}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           {filtered.length === 0 && (
             <div className={styles.empty}>Tidak ditemukan</div>
           )}

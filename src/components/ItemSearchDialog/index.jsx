@@ -96,18 +96,22 @@ const ItemSearchDialog = ({
                           {product.packing || ""}
                         </span>
                       </div>
-                      <div className={styles.quantityItem}>
-                        <span className={styles.label}>Karton:</span>
-                        <span className={styles.value}>
-                          {formatNumberWithDot(product.cartonQuantity || 0)}
-                        </span>
-                      </div>
-                      <div className={styles.quantityItem}>
-                        <span className={styles.label}>Pack:</span>
-                        <span className={styles.value}>
-                          {formatNumberWithDot(product.packQuantity || 0)}
-                        </span>
-                      </div>
+                      {product.cartonQuantity && (
+                        <div className={styles.quantityItem}>
+                          <span className={styles.label}>Karton:</span>
+                          <span className={styles.value}>
+                            {formatNumberWithDot(product.cartonQuantity || 0)}
+                          </span>
+                        </div>
+                      )}
+                      {product.packQuantity && (
+                        <div className={styles.quantityItem}>
+                          <span className={styles.label}>Pack:</span>
+                          <span className={styles.value}>
+                            {formatNumberWithDot(product.packQuantity || 0)}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

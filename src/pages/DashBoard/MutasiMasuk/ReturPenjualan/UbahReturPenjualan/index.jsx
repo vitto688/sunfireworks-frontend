@@ -313,7 +313,10 @@ const UbahReturPenjualan = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks}
+        stocks={stocks.filter(
+          (stock) => stock.warehouse === argument?.warehouse
+        )}
+        cartonQuantity={totalCarton}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

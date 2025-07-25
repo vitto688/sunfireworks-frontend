@@ -282,7 +282,8 @@ const TambahReturPenjualan = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

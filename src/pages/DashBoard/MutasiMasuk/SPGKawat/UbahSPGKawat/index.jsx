@@ -316,7 +316,7 @@ const UbahSPGKawat = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

@@ -127,6 +127,25 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
                 disabled={true}
               />
             </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="packing">Packing</label>
+              <input
+                type="text"
+                id="packing"
+                defaultValue={stock?.packing ?? ""}
+                disabled={true}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="ukuranDus">Ukuran Dus</label>
+              <input
+                type="text"
+                id="ukuranDus"
+                value={packSize}
+                onChange={(e) => setPackSize(e.target.value)}
+              />
+            </div>
 
             <div className={styles.formGroup}>
               <label htmlFor="inn">Inn</label>
@@ -157,31 +176,21 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="packSize">Ukuran Pack</label>
-              <input
-                type="text"
-                id="packSize"
-                value={packSize}
-                onChange={(e) => setPackSize(e.target.value)}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="packWeight">Berat Pack</label>
-              <input
-                type="text"
-                id="packWeight"
-                value={packWeight}
-                onChange={(e) => setPackWeight(e.target.value)}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
               <label htmlFor="warehouseSize">Ukuran Gudang</label>
               <input
                 type="text"
                 id="warehouseSize"
                 value={warehouseSize}
                 onChange={(e) => setWarehouseSize(e.target.value)}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="beratDus">Berat Dus</label>
+              <input
+                type="text"
+                id="beratDus"
+                value={packWeight}
+                onChange={(e) => setPackWeight(e.target.value)}
               />
             </div>
             <div className={styles.formGroup}>
@@ -223,7 +232,7 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
                 <input
                   type="text"
                   id="pack"
-                  value={(pack) => formatNumberWithDot(pack)}
+                  value={formatNumberWithDot(pack)}
                   onChange={handlePackChange}
                 />
                 <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(

@@ -72,8 +72,8 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               code: stock.product_code,
               name: stock.product_name,
               gudang: stock.warehouse_name,
-              packQuantity: stock.pack_quantity,
-              cartonQuantity: stock.carton_quantity,
+              // packQuantity: stock.pack_quantity,
+              // cartonQuantity: stock.carton_quantity,
               packing: stock.packing,
               supplierName: stock.supplier_name,
             }))}

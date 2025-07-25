@@ -4,7 +4,7 @@ import axiosInstance from "./axios";
 const warehouseAPI = {
   getWarehouses: async () => {
     try {
-      const response = await axiosInstance.get("/warehouses");
+      const response = await axiosInstance.get("/warehouses/");
       return response.data;
     } catch (error) {
       console.error("Error fetching warehouses:", error);

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -39,14 +39,40 @@ const ReturPenjualan = () => {
   const [endDate, setEndDate] = useState("");
 
   const { warehouses } = useSelector((state) => state.master);
-  const { data, loading, message, errorMessage } = useSelector(
+  const { data, loading, message, errorMessage, pagination } = useSelector(
     (state) => state.returPenjualan
   );
 
+  //#region Helper Functions
+  const fetchReturPenjualanData = useCallback(
+    (page = 1) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      dispatch(fetchReturPenjualanRequest(params));
+    },
+    [dispatch, query, selectedWarehouseFilter, startDate, endDate]
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= (pagination?.total_pages || 1)) {
+      fetchReturPenjualanData(newPage);
+    }
+  };
+  //#endregion
+
+  // Fetch Retur Penjualan data on component mount
   useEffect(() => {
-    // Fetch Retur Penjualan data on component mount
-    dispatch(fetchReturPenjualanRequest());
-  }, [dispatch]);
+    fetchReturPenjualanData(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle success/error messages
   useEffect(() => {
@@ -66,38 +92,20 @@ const ReturPenjualan = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Combined filter effect
+  // Filter data when filters change
   useEffect(() => {
-    let filtered = data || [];
-
-    // Apply search filter
-    if (query) {
-      filtered = filtered.filter((item) =>
-        (item.document_number || item.no_faktur || "")
-          .toLowerCase()
-          .includes(query.toLowerCase())
-      );
+    // Skip if all filters are empty/default (to prevent initial double call)
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      return;
     }
 
-    // Apply date filter
-    if (startDate && endDate) {
-      filtered = filtered.filter((item) => {
-        const itemDate = new Date(item.transaction_date || item.created_at);
-        const startDateOnly = new Date(startDate);
-        const endDateOnly = new Date(endDate);
-        return itemDate >= startDateOnly && itemDate <= endDateOnly;
-      });
-    }
+    const delayedSearch = setTimeout(() => {
+      fetchReturPenjualanData(1); // Reset to page 1 when filters change
+    }, 500); // Debounce search
 
-    // Apply warehouse filter
-    if (selectedWarehouseFilter !== 0) {
-      filtered = filtered.filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-    }
-
-    setFilteredData(filtered);
-  }, [query, data, startDate, endDate, selectedWarehouseFilter]);
+    return () => clearTimeout(delayedSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -172,21 +180,21 @@ const ReturPenjualan = () => {
         <div className={styles.tableBody}>
           {loading ? (
             <div className={styles.loadingMessage}>
-              Loading Retur Pembelian data...
+              Loading Retur Penjualan data...
             </div>
-          ) : filteredData.length === 0 ? (
+          ) : data.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>
-                  Tidak ada data Retur Pembelian yang tersedia.
+                  Tidak ada data Retur Penjualan yang tersedia.
                 </h3>
                 <p className={styles.emptyStateSubtitle}>
-                  Klik tombol "Tambah" untuk menambahkan Retur Pembelian baru.
+                  Klik tombol "Tambah" untuk menambahkan Retur Penjualan baru.
                 </p>
               </div>
             </div>
-          ) : Array.isArray(filteredData) && filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
+          ) : (
+            data.map((item, index) => (
               <div
                 key={item.id}
                 role="presentation"
@@ -199,7 +207,9 @@ const ReturPenjualan = () => {
                     setModalOpen(item);
                   }}
                 />
-                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {((pagination?.current_page || 1) - 1) * 10 + index + 1}
+                </div>
                 <div className={styles.tableRowItem}>
                   {new Date(item.transaction_date).toLocaleDateString()}
                 </div>
@@ -218,20 +228,37 @@ const ReturPenjualan = () => {
                 <div className={styles.tableRowItem}>{item.notes || "-"}</div>
               </div>
             ))
-          ) : (
-            <div className={styles.emptyStateContainer}>
-              <div className={styles.emptyStateContent}>
-                <h3 className={styles.emptyStateTitle}>
-                  Tidak ada data Retur Penjualan yang tersedia.
-                </h3>
-                <p className={styles.emptyStateSubtitle}>
-                  Klik tombol "Tambah" untuk menambahkan Retur Penjualan baru.
-                </p>
-              </div>
-            </div>
           )}
         </div>
       </div>
+
+      {/* Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) - 1)}
+            disabled={(pagination.current_page || 1) === 1 || loading}
+          >
+            Previous
+          </button>
+          <span className={styles.paginationInfo}>
+            Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
+            ({pagination.count || 0} items)
+          </span>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) + 1)}
+            disabled={
+              (pagination.current_page || 1) ===
+                (pagination.total_pages || 1) || loading
+            }
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus Retur Pembelian ini?"
         open={!!modalOpen}

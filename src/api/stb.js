@@ -7,7 +7,7 @@ const ENDPOINT = "/stb";
 export const fetchSTB = async (params = {}) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `${ENDPOINT}?${queryString}` : ENDPOINT;
+    const url = queryString ? `${ENDPOINT}/?${queryString}` : ENDPOINT;
 
     const response = await axios.get(url);
     return response.data;

@@ -3,7 +3,7 @@ import axiosInstance from "./axios";
 const supplierAPI = {
   getSuppliers: async () => {
     try {
-      const response = await axiosInstance.get("/suppliers");
+      const response = await axiosInstance.get("/suppliers/");
       return response.data;
     } catch (error) {
       console.error("Error fetching suppliers:", error);

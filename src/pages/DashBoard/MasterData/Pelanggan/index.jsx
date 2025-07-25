@@ -81,7 +81,7 @@ const Pelanggan = () => {
       <div className={styles.searchFilterSection}>
         <SearchBar
           type="text"
-          placeholder="Cari pengguna..."
+          placeholder="Cari pelanggan..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />

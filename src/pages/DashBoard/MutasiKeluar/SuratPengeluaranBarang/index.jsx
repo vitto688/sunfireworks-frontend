@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -45,10 +45,36 @@ const SuratPengeluaranBarang = () => {
     (state) => state.suratPengeluaranBarang
   );
 
+  //#region Helper Functions
+  const fetchSuratPengeluaranBarangData = useCallback(
+    (page = 1) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      dispatch(fetchSuratPengeluaranBarangRequest(params));
+    },
+    [dispatch, query, selectedWarehouseFilter, startDate, endDate]
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= (pagination?.total_pages || 1)) {
+      fetchSuratPengeluaranBarangData(newPage);
+    }
+  };
+  //#endregion
+
   useEffect(() => {
     // Fetch Surat Pengeluaran Barang data on component mount
-    dispatch(fetchSuratPengeluaranBarangRequest());
-  }, [dispatch]);
+    fetchSuratPengeluaranBarangData(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle success/error messages
   useEffect(() => {
@@ -63,56 +89,24 @@ const SuratPengeluaranBarang = () => {
   }, [message, errorMessage, dispatch]);
 
   useEffect(() => {
+    // Set initial filtered data from Redux
+    setFilteredData(data || []);
+  }, [data]);
+
+  // Filter data when filters change
+  useEffect(() => {
+    // Skip if all filters are empty/default (to prevent initial double call)
     if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
-      // Set initial filtered data from Redux
-      setFilteredData(data || []);
-    } else {
-      // Filter data based on query, date range, and selected filter
-      const filtered = data.filter((item) => {
-        const itemDate = new Date(item.transaction_date || item.created_at);
-
-        // Extract only date part for comparison (ignore time)
-        const itemDateOnly = new Date(
-          itemDate.getFullYear(),
-          itemDate.getMonth(),
-          itemDate.getDate()
-        );
-        const startDateOnly = startDate
-          ? new Date(
-              new Date(startDate).getFullYear(),
-              new Date(startDate).getMonth(),
-              new Date(startDate).getDate()
-            )
-          : null;
-        const endDateOnly = endDate
-          ? new Date(
-              new Date(endDate).getFullYear(),
-              new Date(endDate).getMonth(),
-              new Date(endDate).getDate()
-            )
-          : null;
-
-        const isInDateRange =
-          (!startDateOnly || itemDateOnly >= startDateOnly) &&
-          (!endDateOnly || itemDateOnly <= endDateOnly);
-        const matchesQuery =
-          (item.document_number || item.no_faktur || "")
-            .toLowerCase()
-            .includes(query.toLowerCase()) ||
-          (item.customer_name || "")
-            .toLowerCase()
-            .includes(query.toLowerCase());
-
-        return (
-          isInDateRange &&
-          matchesQuery &&
-          (selectedWarehouseFilter === 0 ||
-            item.warehouse_name === selectedWarehouseFilter)
-        );
-      });
-      setFilteredData(filtered);
+      return;
     }
-  }, [data, query, startDate, endDate, selectedWarehouseFilter]);
+
+    const delayedSearch = setTimeout(() => {
+      fetchSuratPengeluaranBarangData(1); // Reset to page 1 when filters change
+    }, 500); // Debounce search
+
+    return () => clearTimeout(delayedSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -198,7 +192,7 @@ const SuratPengeluaranBarang = () => {
               </div>
             </div>
           ) : (
-            filteredData.map((item, index) => (
+            data.map((item, index) => (
               <div
                 key={item.id}
                 role="presentation"
@@ -211,7 +205,9 @@ const SuratPengeluaranBarang = () => {
                     setModalOpen(item);
                   }}
                 />
-                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {((pagination?.current_page || 1) - 1) * 10 + index + 1}
+                </div>
                 <div className={styles.tableRowItem}>
                   {new Date(item.created_at).toLocaleDateString("id-ID")}
                 </div>
@@ -235,6 +231,34 @@ const SuratPengeluaranBarang = () => {
           )}
         </div>
       </div>
+
+      {/* Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) - 1)}
+            disabled={(pagination.current_page || 1) === 1 || loading}
+          >
+            Previous
+          </button>
+          <span className={styles.paginationInfo}>
+            Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
+            ({pagination.count || 0} items)
+          </span>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) + 1)}
+            disabled={
+              (pagination.current_page || 1) ===
+                (pagination.total_pages || 1) || loading
+            }
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus surat pengeluaran barang ini?"
         open={!!modalOpen}

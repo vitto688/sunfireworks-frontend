@@ -7,7 +7,7 @@ const ENDPOINT = "/retur-pembelian";
 export const fetchReturPembelian = async (params = {}) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `/${ENDPOINT}?${queryString}` : ENDPOINT;
+    const url = queryString ? `${ENDPOINT}/?${queryString}` : ENDPOINT;
 
     const response = await axios.get(url);
     return response.data;

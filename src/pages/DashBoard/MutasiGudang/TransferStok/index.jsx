@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -47,14 +47,40 @@ const TransferStok = () => {
     (state) => state.stokTransfer
   );
 
+  //#region Helper Functions
+  const fetchTransferStokData = useCallback(
+    (page = 1) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      dispatch(fetchStokTransferRequest(params));
+    },
+    [dispatch, query, selectedWarehouseFilter, startDate, endDate]
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= (pagination?.total_pages || 1)) {
+      fetchTransferStokData(newPage);
+    }
+  };
+  //#endregion
+
+  // Fetch StokTransfer data on component mount
   useEffect(() => {
-    // Fetch StokTransfer data on component mount
-    dispatch(fetchStokTransferRequest());
-  }, [dispatch]);
+    fetchTransferStokData(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Initialize filteredData when data changes
   useEffect(() => {
-    setFilteredData(data);
+    setFilteredData(data || []);
   }, [data]);
 
   // Handle success/error messages
@@ -69,27 +95,20 @@ const TransferStok = () => {
     }
   }, [message, errorMessage, dispatch]);
 
+  // Filter data when filters change
   useEffect(() => {
-    const filteredByQuery = data.filter((item) =>
-      (item.transfer_number || item.no_faktur || "")
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    // Update local filtered data for search
-    setFilteredData(filteredByQuery);
-  }, [query, data]);
-
-  useEffect(() => {
-    if (startDate && endDate) {
-      const filtered = data.filter((item) => {
-        const itemDate = new Date(item.tanggal_transaksi);
-        return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-      });
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data || []);
+    // Skip if all filters are empty/default (to prevent initial double call)
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      return;
     }
-  }, [startDate, endDate, data]);
+
+    const delayedSearch = setTimeout(() => {
+      fetchTransferStokData(1); // Reset to page 1 when filters change
+    }, 500); // Debounce search
+
+    return () => clearTimeout(delayedSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -103,19 +122,6 @@ const TransferStok = () => {
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
-
-  useEffect(() => {
-    if (selectedWarehouseFilter === 0) {
-      setFilteredData(data || []);
-    } else {
-      const filtered = data.filter(
-        (item) =>
-          item.source_warehouse_name === selectedWarehouseFilter ||
-          item.destination_warehouse_name === selectedWarehouseFilter
-      );
-      setFilteredData(filtered);
-    }
-  }, [selectedWarehouseFilter, data]);
   //#endregion
 
   //#region Handlers
@@ -174,13 +180,13 @@ const TransferStok = () => {
             <div className={styles.emptyState}>
               <p>Memuat data...</p>
             </div>
-          ) : filteredData.length === 0 ? (
+          ) : data.length === 0 ? (
             <div className={styles.emptyState}>
               <p>Tidak ada data transfer stok yang tersedia.</p>
               <p>Klik tombol "Tambah" untuk menambahkan transfer stok baru.</p>
             </div>
           ) : (
-            filteredData.map((item, index) => (
+            data.map((item, index) => (
               <div
                 key={item.id || index}
                 role="presentation"
@@ -193,7 +199,9 @@ const TransferStok = () => {
                     setModalOpen(item);
                   }}
                 />
-                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {((pagination?.current_page || 1) - 1) * 10 + index + 1}
+                </div>
                 <div className={styles.tableRowItem}>
                   {formatDate(item.created_at || item.tanggal_transaksi)}
                 </div>
@@ -214,6 +222,34 @@ const TransferStok = () => {
           )}
         </div>
       </div>
+
+      {/* Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) - 1)}
+            disabled={(pagination.current_page || 1) === 1 || loading}
+          >
+            Previous
+          </button>
+          <span className={styles.paginationInfo}>
+            Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
+            ({pagination.count || 0} items)
+          </span>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) + 1)}
+            disabled={
+              (pagination.current_page || 1) ===
+                (pagination.total_pages || 1) || loading
+            }
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"
         open={modalOpen}

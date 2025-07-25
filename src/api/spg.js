@@ -2,9 +2,9 @@ import axiosInstance from "./axios";
 
 // SPG Import API
 const spgImportAPI = {
-  getAllSPGImport: async () => {
+  getAllSPGImport: async (params = {}) => {
     try {
-      const response = await axiosInstance.get("/spg/import/");
+      const response = await axiosInstance.get("/spg/import/", { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching SPG import:", error);
@@ -55,9 +55,9 @@ const spgImportAPI = {
 
 // SPG Bawang API
 const spgBawangAPI = {
-  getAllSPGBawang: async () => {
+  getAllSPGBawang: async (params = {}) => {
     try {
-      const response = await axiosInstance.get("/spg/bawang/");
+      const response = await axiosInstance.get("/spg/bawang/", { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching SPG bawang:", error);
@@ -108,9 +108,9 @@ const spgBawangAPI = {
 
 // SPG Kawat API
 const spgKawatAPI = {
-  getAllSPGKawat: async () => {
+  getAllSPGKawat: async (params = {}) => {
     try {
-      const response = await axiosInstance.get("/spg/kawat/");
+      const response = await axiosInstance.get("/spg/kawat/", { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching SPG kawat:", error);
@@ -161,9 +161,9 @@ const spgKawatAPI = {
 
 // SPG Lain API
 const spgLainAPI = {
-  getAllSPGLain: async () => {
+  getAllSPGLain: async (params = {}) => {
     try {
-      const response = await axiosInstance.get("/spg/lain-lain/");
+      const response = await axiosInstance.get("/spg/lain-lain/", { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching SPG lain:", error);

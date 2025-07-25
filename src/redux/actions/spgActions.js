@@ -1,8 +1,8 @@
 // Unified SPG Actions with spgType parameter
 
-export const fetchSPGRequest = (spgType) => ({
+export const fetchSPGRequest = (spgType, params = {}) => ({
   type: "FETCH_SPG_REQUEST",
-  payload: { spgType },
+  payload: { spgType, params },
 });
 
 export const fetchSPGSuccess = (spgType, data) => ({

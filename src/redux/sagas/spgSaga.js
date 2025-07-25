@@ -68,10 +68,10 @@ const getSPGMethods = (spgType) => {
 // Generic SPG Sagas
 function* fetchSPG(action) {
   try {
-    const { spgType } = action.payload;
+    const { spgType, params = {} } = action.payload;
     const api = getSPGAPI(spgType);
     const methods = getSPGMethods(spgType);
-    const response = yield call(api[methods.getAll]);
+    const response = yield call(api[methods.getAll], params);
     yield put(fetchSPGSuccess(spgType, response));
   } catch (error) {
     const { spgType } = action.payload;

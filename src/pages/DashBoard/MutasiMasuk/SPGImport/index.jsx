@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -44,10 +44,36 @@ const SPGImport = () => {
   );
   const { warehouses } = useSelector((state) => state.master);
 
+  //#region Helper Functions
+  const fetchSPGData = useCallback(
+    (page = 1) => {
+      const params = {
+        page,
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      dispatch(fetchSPGRequest("import", params));
+    },
+    [dispatch, query, selectedWarehouseFilter, startDate, endDate]
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= (pagination?.total_pages || 1)) {
+      fetchSPGData(newPage);
+    }
+  };
+  //#endregion
+
   // Fetch SPG Import data saat component mount
   useEffect(() => {
-    dispatch(fetchSPGRequest("import"));
-  }, [dispatch]);
+    fetchSPGData(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Reset messages setelah 3 detik
   useEffect(() => {
@@ -64,38 +90,20 @@ const SPGImport = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Combined filter effect
+  // Filter data when filters change
   useEffect(() => {
-    let filtered = data || [];
-
-    // Apply search filter
-    if (query) {
-      filtered = filtered.filter((item) =>
-        (item.document_number || item.no_faktur || "")
-          .toLowerCase()
-          .includes(query.toLowerCase())
-      );
+    // Skip if all filters are empty/default (to prevent initial double call)
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      return;
     }
 
-    // Apply date filter
-    if (startDate && endDate) {
-      filtered = filtered.filter((item) => {
-        const itemDate = new Date(item.transaction_date || item.created_at);
-        const startDateOnly = new Date(startDate);
-        const endDateOnly = new Date(endDate);
-        return itemDate >= startDateOnly && itemDate <= endDateOnly;
-      });
-    }
+    const delayedSearch = setTimeout(() => {
+      fetchSPGData(1); // Reset to page 1 when filters change
+    }, 500); // Debounce search
 
-    // Apply warehouse filter
-    if (selectedWarehouseFilter !== 0) {
-      filtered = filtered.filter(
-        (item) => item.warehouse_name === selectedWarehouseFilter
-      );
-    }
-
-    setFilteredData(filtered);
-  }, [query, data, startDate, endDate, selectedWarehouseFilter]);
+    return () => clearTimeout(delayedSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -188,8 +196,8 @@ const SPGImport = () => {
           <div className={styles.tableHeaderItem}>Selesai Muat</div>
         </div>
         <div className={styles.tableBody}>
-          {filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
+          {data.length > 0 ? (
+            data.map((item, index) => (
               <div
                 key={item.id || index}
                 role="presentation"
@@ -202,7 +210,9 @@ const SPGImport = () => {
                     handleDeleteClick(item);
                   }}
                 />
-                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {((pagination?.current_page || 1) - 1) * 10 + index + 1}
+                </div>
                 <div className={styles.tableRowItem}>
                   {new Date(item.transaction_date).toLocaleDateString("id-ID")}
                 </div>
@@ -233,20 +243,30 @@ const SPGImport = () => {
         </div>
       </div>
 
-      {/* Pagination Info */}
-      {pagination && pagination.count > 0 && (
-        <div className={styles.paginationInfo}>
-          <p>
-            Menampilkan {filteredData.length} dari {pagination.count} data SPG
-            Import
-            {pagination.total_pages > 1 && (
-              <span>
-                {" "}
-                - Halaman {pagination.current_page} dari{" "}
-                {pagination.total_pages}
-              </span>
-            )}
-          </p>
+      {/* Pagination */}
+      {pagination && pagination.total_pages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) - 1)}
+            disabled={(pagination.current_page || 1) === 1 || loading}
+          >
+            Previous
+          </button>
+          <span className={styles.paginationInfo}>
+            Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
+            ({pagination.count || 0} items)
+          </span>
+          <button
+            className={styles.paginationButton}
+            onClick={() => handlePageChange((pagination.current_page || 1) + 1)}
+            disabled={
+              (pagination.current_page || 1) ===
+                (pagination.total_pages || 1) || loading
+            }
+          >
+            Next
+          </button>
         </div>
       )}
 

@@ -72,7 +72,8 @@ const SPGBawang = () => {
   // Fetch SPG Bawang data saat component mount
   useEffect(() => {
     fetchSPGData(1);
-  }, [fetchSPGData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Reset messages setelah 3 detik
   useEffect(() => {
@@ -91,12 +92,18 @@ const SPGBawang = () => {
 
   // Filter data when filters change
   useEffect(() => {
+    // Skip if all filters are empty/default (to prevent initial double call)
+    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+      return;
+    }
+
     const delayedSearch = setTimeout(() => {
       fetchSPGData(1); // Reset to page 1 when filters change
     }, 500); // Debounce search
 
     return () => clearTimeout(delayedSearch);
-  }, [query, selectedWarehouseFilter, startDate, endDate, fetchSPGData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {

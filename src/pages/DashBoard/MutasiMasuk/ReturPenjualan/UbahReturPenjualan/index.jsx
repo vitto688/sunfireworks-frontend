@@ -15,6 +15,7 @@ import styles from "./style.module.scss";
 // Import components
 import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
+import DatePicker from "../../../../../components/DatePicker";
 import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
@@ -26,6 +27,7 @@ import EditStockModal from "../../../../../components/EditStockModal";
 import { formatDate } from "../../../../../utils/dateUtils";
 import { printReturPenjualan } from "../../../../../utils/printReturPenjualan";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import SearchField from "../../../../../components/SearchField";
 
 export const UBAH_RETUR_PENJUALAN_PATH =
   "/mutasi-masuk/retur-penjualan/ubah-retur-penjualan";
@@ -38,7 +40,9 @@ const UbahReturPenjualan = () => {
   const argument = location.state || {};
 
   const [keterangan, setKeterangan] = useState("");
+  const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState("");
   const [stok, setStok] = useState([]);
   const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
@@ -50,6 +54,7 @@ const UbahReturPenjualan = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
 
   const { stocks } = useSelector((state) => state.stock);
+  const { warehouses } = useSelector((state) => state.master);
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.returPenjualan
   );
@@ -62,6 +67,10 @@ const UbahReturPenjualan = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (argument?.warehouse) {
+      setGudang(warehouses.find((w) => w.id === argument.warehouse) || null);
+    }
+
     if (argument?.notes) {
       setKeterangan(argument.notes);
     }
@@ -70,10 +79,22 @@ const UbahReturPenjualan = () => {
       setNoSJ(argument.sj_number);
     }
 
+    if (argument?.transaction_date) {
+      // Convert date to YYYY-MM-DD format for DatePicker
+      const date = new Date(argument.transaction_date);
+      setTanggal(date.toISOString().split("T")[0]);
+    }
+
     if (argument?.items) {
       setStok(argument.items);
     }
-  }, [argument.notes, argument.sj_number, argument.items]);
+  }, [
+    argument.warehouse,
+    argument.notes,
+    argument.sj_number,
+    argument.transaction_date,
+    argument.items,
+  ]);
 
   useEffect(() => {
     if (message !== null) {
@@ -108,15 +129,21 @@ const UbahReturPenjualan = () => {
   const handleSimpanClick = () => {
     // Validate required fields
     if (stok.length === 0) {
-      console.error("Harap lengkapi semua field yang diperlukan");
+      alert("Harap tambahkan minimal 1 produk");
+      return;
+    }
+
+    if (!tanggal) {
+      alert("Tanggal transaksi harus diisi");
       return;
     }
 
     // Prepare data for API
     const returPenjualanData = {
-      warehouse: argument.warehouse,
+      warehouse: gudang.id || argument.warehouse,
       sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         carton_quantity: item.carton_quantity || 0,
@@ -138,6 +165,7 @@ const UbahReturPenjualan = () => {
       warehouse: argument.warehouse,
       sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok,
     });
   };
@@ -218,24 +246,28 @@ const UbahReturPenjualan = () => {
             defaultValue={argument?.document_number ?? ""}
             disabled={true}
           />
-          <InputField
-            label="Tanggal Transaksi"
+
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang Asal"
             type="text"
-            id="tanggalTransaksi"
-            name="tanggalTransaksi"
-            defaultValue={formatDate(argument?.transaction_date ?? "")}
-            disabled={true}
+            id="gudang"
+            name="gudang"
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
         </div>
 
         <div className={styles.row}>
-          <InputField
-            label="Gudang Asal"
-            type="text"
-            id="gudangAsal"
-            name="gudangAsal"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
+          <DatePicker
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
           />
           <InputField
             label="No Surat Jalan"
@@ -244,6 +276,7 @@ const UbahReturPenjualan = () => {
             name="noSuratJalan"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
           <InputField
             label="Keterangan"
@@ -252,6 +285,7 @@ const UbahReturPenjualan = () => {
             name="keterangan"
             value={keterangan}
             onChange={(e) => setKeterangan(e.target.value)}
+            placeholder="Masukkan keterangan retur penjualan..."
           />
         </div>
       </div>

@@ -96,7 +96,7 @@ const ItemSearchDialog = ({
                           {product.packing || ""}
                         </span>
                       </div>
-                      {product.cartonQuantity && (
+                      {product.cartonQuantity !== null && (
                         <div className={styles.quantityItem}>
                           <span className={styles.label}>Karton:</span>
                           <span className={styles.value}>
@@ -104,7 +104,7 @@ const ItemSearchDialog = ({
                           </span>
                         </div>
                       )}
-                      {product.packQuantity && (
+                      {product.packQuantity !== null && (
                         <div className={styles.quantityItem}>
                           <span className={styles.label}>Pack:</span>
                           <span className={styles.value}>

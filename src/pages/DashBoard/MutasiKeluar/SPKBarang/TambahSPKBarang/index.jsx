@@ -47,9 +47,10 @@ const TambahSPKBarang = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
+  const [globalStock, setGlobalStock] = useState([]);
 
   const { stocks } = useSelector((state) => state.stock);
-  const { warehouses, customers } = useSelector((state) => state.master);
+  const { customers } = useSelector((state) => state.master);
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.spk
   );
@@ -88,6 +89,29 @@ const TambahSPKBarang = () => {
     setTotalPack(totalPack);
     setTotalAll(totalCarton + totalPack);
   }, [stok]);
+
+  useEffect(() => {
+    // Initialize global stock when stocks change
+
+    if (stocks && stocks.length > 0) {
+      const gStock = {};
+      stocks.forEach((stock) => {
+        if (gStock[stock.product]) {
+          gStock[stock.product].carton_quantity += stock.carton_quantity;
+          gStock[stock.product].pack_quantity += stock.pack_quantity;
+        } else {
+          gStock[stock.product] = { ...stock };
+        }
+      });
+
+      console.log("Global Stock:", gStock, Object.values(gStock));
+      // Convert object to array for easier mapping
+
+      setGlobalStock(Object.values(gStock));
+    } else {
+      setGlobalStock([]);
+    }
+  }, [stocks]);
   //#endregion
 
   //#region Handlers
@@ -120,10 +144,10 @@ const TambahSPKBarang = () => {
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
 
-    if (!gudang) {
-      alert("Harap pilih gudang terlebih dahulu");
-      return;
-    }
+    // if (!gudang) {
+    //   alert("Harap pilih gudang terlebih dahulu");
+    //   return;
+    // }
     setModalOpen(true);
 
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
@@ -133,9 +157,7 @@ const TambahSPKBarang = () => {
     e.stopPropagation();
 
     setWarehouseStock(
-      stocks.find(
-        (s) => s.warehouse === gudang?.id && s.product === value?.product
-      ) || null
+      globalStock.find((s) => s.product === value?.product) || null
     );
 
     setEditModalOpen(value);
@@ -201,7 +223,7 @@ const TambahSPKBarang = () => {
             onChange={(customer) => setCustomer(customer)}
           />
 
-          <SearchField
+          {/* <SearchField
             title="Cari Gudang"
             label="Gudang"
             type="text"
@@ -213,7 +235,7 @@ const TambahSPKBarang = () => {
             }))}
             defaultValue={gudang}
             onChange={(warehouse) => setGudang(warehouse)}
-          />
+          /> */}
         </div>
 
         <div className={styles.row}>
@@ -285,7 +307,7 @@ const TambahSPKBarang = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        stocks={globalStock}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

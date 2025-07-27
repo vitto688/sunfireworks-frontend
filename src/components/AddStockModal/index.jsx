@@ -72,8 +72,8 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               code: stock.product_code,
               name: stock.product_name,
               gudang: stock.warehouse_name,
-              // packQuantity: stock.pack_quantity,
-              // cartonQuantity: stock.carton_quantity,
+              packQuantity: stock.pack_quantity,
+              cartonQuantity: stock.carton_quantity,
               packing: stock.packing,
               supplierName: stock.supplier_name,
             }))}
@@ -130,9 +130,11 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
                   value={formatNumberWithDot(carton)}
                   onChange={handleCartonChange}
                 />
-                <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                  stock?.carton_quantity ?? 0
-                )}`}</label>
+                {stock?.carton_quantity !== null && (
+                  <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
+                    stock?.carton_quantity ?? 0
+                  )}`}</label>
+                )}
               </div>
             </div>
             <div className={styles.formGroup}>
@@ -144,9 +146,11 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
                   value={formatNumberWithDot(pack)}
                   onChange={handlePackChange}
                 />
-                <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                  stock?.pack_quantity ?? 0
-                )}`}</label>
+                {stock?.pack_quantity !== null && (
+                  <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
+                    stock?.pack_quantity ?? 0
+                  )}`}</label>
+                )}
               </div>
             </div>
 

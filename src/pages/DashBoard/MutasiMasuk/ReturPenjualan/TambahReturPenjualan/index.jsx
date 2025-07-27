@@ -16,6 +16,7 @@ import styles from "./style.module.scss";
 import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import SearchField from "../../../../../components/SearchField";
+import DatePicker from "../../../../../components/DatePicker";
 import AddStockModal from "../../../../../components/AddStockModal";
 import EditStockModal from "../../../../../components/EditStockModal";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
@@ -38,6 +39,11 @@ const TambahReturPenjualan = () => {
 
   const [keterangan, setKeterangan] = useState("");
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState(() => {
+    // Set default to today's date in YYYY-MM-DD format
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
   const [gudang, setGudang] = useState(null);
   const [stok, setStok] = useState([]);
   const [warehouseStock, setWarehouseStock] = useState(null);
@@ -95,7 +101,14 @@ const TambahReturPenjualan = () => {
   const handleSimpanClick = () => {
     // Validate required fields
     if (!gudang || stok.length === 0) {
-      console.error("Harap lengkapi semua field yang diperlukan");
+      alert(
+        "Harap lengkapi semua field yang diperlukan:\n- Pilih gudang\n- Tambahkan minimal 1 produk"
+      );
+      return;
+    }
+
+    if (!tanggal) {
+      alert("Tanggal transaksi harus diisi");
       return;
     }
 
@@ -104,6 +117,7 @@ const TambahReturPenjualan = () => {
       warehouse: gudang.id || gudang,
       notes: keterangan,
       sj_number: noSJ,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         carton_quantity: item.carton_quantity || 0,
@@ -203,6 +217,15 @@ const TambahReturPenjualan = () => {
             onChange={(warehouse) => setGudang(warehouse)}
           />
 
+          <DatePicker
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
+          />
+        </div>
+
+        <div className={styles.row}>
           <InputField
             label="No Surat Jalan"
             type="text"
@@ -210,10 +233,9 @@ const TambahReturPenjualan = () => {
             name="noSJ"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
-        </div>
 
-        <div className={styles.row}>
           <InputField
             label="Keterangan"
             type="text"
@@ -221,6 +243,7 @@ const TambahReturPenjualan = () => {
             name="keterangan"
             value={keterangan}
             onChange={(e) => setKeterangan(e.target.value)}
+            placeholder="Masukkan keterangan retur penjualan..."
           />
         </div>
       </div>
@@ -282,8 +305,13 @@ const TambahReturPenjualan = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
-        cartonQuantity={totalCarton}
+        stocks={stocks
+          .filter((stock) => stock.warehouse === gudang?.id)
+          .map((stock) => ({
+            ...stock,
+            carton_quantity: null,
+            pack_quantity: null,
+          }))}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}

@@ -14,17 +14,19 @@ import {
 } from "../../utils/numberUtils";
 
 const AddStockModal = ({
+  defaultStock = null,
+  defaultCarton = 0,
+  defaultPack = 0,
   isEdit = false,
   stocks,
   isOpen,
   onClose,
   onSave,
-  defaultStock = null,
-  defaultCarton = 0,
-  defaultPack = 0,
 }) => {
-  const [carton, setCarton] = useState(defaultCarton);
-  const [pack, setPack] = useState(defaultPack);
+  const [carton, setCarton] = useState(0);
+  const [pack, setPack] = useState(0);
+  const [cartonLeft, setCartonLeft] = useState(0);
+  const [packLeft, setPackLeft] = useState(0);
   // const [packSize, setPackSize] = useState("");
   const [stock, setStock] = useState(defaultStock);
 
@@ -32,8 +34,10 @@ const AddStockModal = ({
   useEffect(() => {
     if (isOpen) {
       setStock(defaultStock);
-      setCarton(defaultCarton);
-      setPack(defaultPack);
+      setCarton(defaultStock?.carton_quantity ?? 0);
+      setPack(defaultStock?.pack_quantity ?? 0);
+      setCartonLeft(defaultCarton);
+      setPackLeft(defaultPack);
     }
   }, [isOpen, defaultStock, defaultCarton, defaultPack]);
 
@@ -44,11 +48,12 @@ const AddStockModal = ({
       ...stock,
       carton_quantity: carton,
       pack_quantity: pack,
-      // packaging_size: packSize,
     });
-    setCarton(defaultCarton);
-    setPack(defaultPack);
+    setCarton(defaultStock?.carton_quantity ?? 0);
+    setPack(defaultStock?.pack_quantity ?? 0);
     setStock(defaultStock);
+    setCartonLeft(defaultCarton);
+    setPackLeft(defaultPack);
     onClose();
   };
 
@@ -109,9 +114,12 @@ const AddStockModal = ({
                   }
                 : null
             }
-            onChange={(selectedStock) =>
-              setStock(stocks.find((s) => s.id === selectedStock.id))
-            }
+            onChange={(selectedStock) => {
+              const selected = stocks.find((s) => s.id === selectedStock.id);
+              setStock(selected);
+              setCartonLeft(selected?.carton_quantity ?? 0);
+              setPackLeft(selected?.pack_quantity ?? 0);
+            }}
           />
           <form onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
@@ -164,7 +172,7 @@ const AddStockModal = ({
                 />
                 {stock?.carton_quantity !== null && (
                   <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                    stock?.carton_quantity ?? 0
+                    cartonLeft
                   )}`}</label>
                 )}
               </div>
@@ -180,7 +188,7 @@ const AddStockModal = ({
                 />
                 {stock?.pack_quantity !== null && (
                   <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                    stock?.pack_quantity ?? 0
+                    packLeft
                   )}`}</label>
                 )}
               </div>

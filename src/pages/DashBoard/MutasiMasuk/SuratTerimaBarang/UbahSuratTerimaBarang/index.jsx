@@ -17,6 +17,7 @@ import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
+import DatePicker from "../../../../../components/DatePicker";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditButton from "../../../../../components/EditButton";
@@ -37,6 +38,7 @@ const UbahSuratTerimaBarang = () => {
   const argument = location.state || {};
 
   const [keterangan, setKeterangan] = useState(argument?.notes ?? "");
+  const [tanggal, setTanggal] = useState(argument?.transaction_date ?? "");
   const [stok, setStok] = useState(argument?.items ?? []);
   const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
@@ -210,13 +212,12 @@ const UbahSuratTerimaBarang = () => {
             defaultValue={argument?.sj_number ?? ""}
             disabled={true}
           />
-          <InputField
-            label="Tanggal"
-            type="text"
-            id="tanggal"
-            name="tanggal"
-            defaultValue={formatDate(argument?.transaction_date ?? "")}
-            disabled={true}
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
           />
         </div>
 

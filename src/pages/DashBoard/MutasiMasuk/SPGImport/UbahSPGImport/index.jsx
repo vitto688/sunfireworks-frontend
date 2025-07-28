@@ -12,6 +12,7 @@ import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import SearchField from "../../../../../components/SearchField";
+import DatePicker from "../../../../../components/DatePicker";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditButton from "../../../../../components/EditButton";
@@ -38,11 +39,13 @@ const UbahSPGImport = () => {
   const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState("");
   const [noKontainer, setNoKontainer] = useState("");
   const [noKendaraan, setNoKendaraan] = useState("");
   const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
   const [selesaiBongkar, setSelesaiBongkar] = useState(""); // type date time
   const [stok, setStok] = useState(argument?.items || []);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -66,12 +69,21 @@ const UbahSPGImport = () => {
   useEffect(() => {
     // Set initial values from argument
 
+    if (argument?.warehouse) {
+      setGudang(warehouses.find((w) => w.id === argument.warehouse) || null);
+    }
+
     if (argument?.notes) {
       setKeterangan(argument.notes);
     }
 
     if (argument?.sj_number) {
       setNoSJ(argument.sj_number);
+    }
+    if (argument?.transaction_date) {
+      // Convert date to YYYY-MM-DD format for DatePicker
+      const date = new Date(argument.transaction_date);
+      setTanggal(date.toISOString().split("T")[0]);
     }
     if (argument?.container_number) {
       setNoKontainer(argument.container_number);
@@ -89,8 +101,11 @@ const UbahSPGImport = () => {
       setStok(argument.items);
     }
   }, [
+    warehouses,
+    argument.warehouse,
     argument.notes,
     argument.sj_number,
+    argument.transaction_date,
     argument.container_number,
     argument.vehicle_number,
     argument.start_unload,
@@ -160,6 +175,7 @@ const UbahSPGImport = () => {
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         production_code: item.production_code || "",
@@ -193,6 +209,7 @@ const UbahSPGImport = () => {
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
       items: stok,
+      transaction_date: tanggal,
     });
   };
 
@@ -206,6 +223,12 @@ const UbahSPGImport = () => {
   const handleEdit = (e, value) => {
     e.stopPropagation();
 
+    setWarehouseStock(
+      stocks.find(
+        (s) =>
+          s.warehouse === argument?.warehouse && s.product === value?.product
+      ) || null
+    );
     setEditModalOpen(value);
   };
 
@@ -261,6 +284,13 @@ const UbahSPGImport = () => {
       )}
       <div className={styles.formSection}>
         <div className={styles.row}>
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
+          />
           <InputField
             label="No SPG"
             type="text"
@@ -311,13 +341,19 @@ const UbahSPGImport = () => {
             value={selesaiBongkar}
             onChange={(e) => setSelesaiBongkar(e.target.value)}
           />
-          <InputField
+
+          <SearchField
+            title="Cari Gudang"
             label="Gudang Tujuan"
             type="text"
-            id="gudangTujuan"
-            name="gudangTujuan"
-            defaultValue={gudang?.name}
-            disabled={true}
+            id="gudang"
+            name="gudang"
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
           <InputField
             label="Keterangan"
@@ -420,10 +456,14 @@ const UbahSPGImport = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModalImport
-        stocks={stocks}
-        stock={editModalOpen}
+      <AddStockModalImport
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
       />

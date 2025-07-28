@@ -18,7 +18,6 @@ import InputField from "../../../../../components/InputField";
 import SearchField from "../../../../../components/SearchField";
 import DatePicker from "../../../../../components/DatePicker";
 import AddStockModal from "../../../../../components/AddStockModal";
-import EditStockModal from "../../../../../components/EditStockModal";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import AddStockButton from "../../../../../components/AddStockButton";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
@@ -320,9 +319,7 @@ const TambahReturPenjualan = () => {
 
       <AddStockModal
         isEdit={true}
-        stocks={stocks.filter(
-          (stock) => stock.warehouse === argument?.warehouse
-        )}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
         cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
         defaultStock={editModalOpen}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 // Import styles
@@ -13,7 +13,16 @@ import {
   parseFormattedNumber,
 } from "../../utils/numberUtils";
 
-const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
+const AddStockModalImport = ({
+  defaultStock = null,
+  defaultCarton = 0,
+  defaultPack = 0,
+  isEdit = false,
+  stocks,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
   const [carton, setCarton] = useState(0);
   const [pack, setPack] = useState(0);
   const [packSize, setPackSize] = useState("");
@@ -25,6 +34,23 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
   const [warehouseWeight, setWarehouseWeight] = useState("");
   const [productionCode, setProductionCode] = useState("");
   const [stock, setStock] = useState(null);
+
+  // Set default values when modal opens or defaults change
+  useEffect(() => {
+    if (isOpen) {
+      setStock(defaultStock);
+      setCarton(defaultCarton);
+      setPack(defaultPack);
+      setPackSize(stock?.packaging_size ?? "");
+      setInn(stock?.inn ?? "");
+      setOut(stock?.out ?? "");
+      setPjg(stock?.pjg ?? "");
+      setPackWeight(stock?.packaging_weight ?? "");
+      setWarehouseSize(stock?.warehouse_size ?? "");
+      setWarehouseWeight(stock?.warehouse_weight ?? "");
+      setProductionCode(stock?.production_code ?? "");
+    }
+  }, [isOpen, stock, defaultStock, defaultCarton, defaultPack]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -101,9 +127,23 @@ const AddStockModalImport = ({ stocks, isOpen, onClose, onSave }) => {
               code: stock.product_code,
               name: stock.product_name,
               gudang: stock.warehouse_name,
-              packQuantity: stock.pack_quantity,
-              cartonQuantity: stock.carton_quantity,
+              packQuantity: null,
+              cartonQuantity: null,
             }))}
+            defaultValue={
+              defaultStock
+                ? {
+                    id: defaultStock.id,
+                    code: defaultStock.product_code,
+                    name: defaultStock.product_name,
+                    gudang: defaultStock.warehouse_name,
+                    packQuantity: defaultStock.pack_quantity,
+                    cartonQuantity: defaultStock.carton_quantity,
+                    packing: defaultStock.packing,
+                    supplierName: defaultStock.supplier_name,
+                  }
+                : null
+            }
             onChange={(stock) =>
               setStock(stocks.find((s) => s.id === stock.id))
             }

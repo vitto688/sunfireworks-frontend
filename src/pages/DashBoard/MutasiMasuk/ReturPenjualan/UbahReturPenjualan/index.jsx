@@ -263,6 +263,7 @@ const UbahReturPenjualan = () => {
 
         <div className={styles.row}>
           <DatePicker
+            isInput={true}
             label="Tanggal Transaksi"
             value={tanggal}
             onChange={setTanggal}
@@ -346,9 +347,7 @@ const UbahReturPenjualan = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks.filter(
-          (stock) => stock.warehouse === argument?.warehouse
-        )}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
         cartonQuantity={totalCarton}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -357,9 +356,7 @@ const UbahReturPenjualan = () => {
 
       <AddStockModal
         isEdit={true}
-        stocks={stocks.filter(
-          (stock) => stock.warehouse === argument?.warehouse
-        )}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
         cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
         defaultStock={editModalOpen}

@@ -49,6 +49,7 @@ const TambahSPGImport = () => {
   const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
   const [selesaiBongkar, setSelesaiBongkar] = useState(""); // type date time
   const [stok, setStok] = useState([]);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -162,6 +163,13 @@ const TambahSPGImport = () => {
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
+
+    setWarehouseStock(
+      stocks.find(
+        (s) =>
+          s.warehouse === argument?.warehouse && s.product === value?.product
+      ) || null
+    );
 
     setEditModalOpen(value);
   };
@@ -374,13 +382,25 @@ const TambahSPGImport = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModalImport
+      <AddStockModalImport
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModalImport
         stocks={stocks}
         stock={editModalOpen}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

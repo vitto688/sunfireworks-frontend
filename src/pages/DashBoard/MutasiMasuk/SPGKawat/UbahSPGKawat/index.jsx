@@ -13,6 +13,7 @@ import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
 import SearchField from "../../../../../components/SearchField";
+import DatePicker from "../../../../../components/DatePicker";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
@@ -39,6 +40,7 @@ const UbahSPGKawat = () => {
   const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState("");
   const [stok, setStok] = useState([]);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
@@ -69,10 +71,18 @@ const UbahSPGKawat = () => {
     if (argument?.sj_number) {
       setNoSJ(argument.sj_number);
     }
+    if (argument?.transaction_date) {
+      setTanggal(argument.transaction_date);
+    }
     if (argument?.items) {
       setStok(argument.items);
     }
-  }, [argument.notes, argument.sj_number, argument.items]);
+  }, [
+    argument.notes,
+    argument.sj_number,
+    argument.transaction_date,
+    argument.items,
+  ]);
 
   useEffect(() => {
     setGudang(
@@ -230,13 +240,12 @@ const UbahSPGKawat = () => {
             defaultValue={argument?.sj_number ?? ""}
             disabled={true}
           />
-          <InputField
-            label="Tanggal"
-            type="text"
-            id="tanggal"
-            name="tanggal"
-            defaultValue={formatDate(argument?.transaction_date ?? "")}
-            disabled={true}
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
           />
         </div>
         <div className={styles.row}>

@@ -29,9 +29,10 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
     case "FETCH_STOK_TRANSFER_SUCCESS":
       return {
         ...state,
-        data: (action.payload.data.results || []).sort(
-          (a, b) => new Date(a.created_at) - new Date(b.created_at)
-        ),
+        // data: (action.payload.data.results || []).sort(
+        //   (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        // ),
+        data: action.payload.data.results || [],
         loading: false,
         pagination: {
           count: action.payload.data.count || 0,
@@ -46,7 +47,9 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
         ...state,
         loading: false,
         errorCode: action.payload.error?.response?.status || 500,
-        errorMessage: action.payload.error?.response?.data?.message || "Error fetching stok transfer",
+        errorMessage:
+          action.payload.error?.response?.data?.message ||
+          "Error fetching stok transfer",
       };
     case "FETCH_STOK_TRANSFER_BY_ID_REQUEST":
       return {
@@ -67,7 +70,9 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
         ...state,
         loading: false,
         errorCode: action.payload.error?.response?.status || 500,
-        errorMessage: action.payload.error?.response?.data?.message || "Error fetching stok transfer by ID",
+        errorMessage:
+          action.payload.error?.response?.data?.message ||
+          "Error fetching stok transfer by ID",
       };
     case "ADD_STOK_TRANSFER_REQUEST":
       return {
@@ -89,7 +94,9 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
         ...state,
         loading: false,
         errorCode: action.payload.error?.response?.status || 500,
-        errorMessage: action.payload.error?.response?.data?.message || "Error adding stok transfer",
+        errorMessage:
+          action.payload.error?.response?.data?.message ||
+          "Error adding stok transfer",
       };
     case "UPDATE_STOK_TRANSFER_REQUEST":
       return {
@@ -114,7 +121,9 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
         ...state,
         loading: false,
         errorCode: action.payload.error?.response?.status || 500,
-        errorMessage: action.payload.error?.response?.data?.message || "Error updating stok transfer",
+        errorMessage:
+          action.payload.error?.response?.data?.message ||
+          "Error updating stok transfer",
       };
     case "DELETE_STOK_TRANSFER_REQUEST":
       return {
@@ -136,7 +145,9 @@ const stokTransferReducer = (state = initialStokTransferState, action) => {
         ...state,
         loading: false,
         errorCode: action.payload.error?.response?.status || 500,
-        errorMessage: action.payload.error?.response?.data?.message || "Error deleting stok transfer",
+        errorMessage:
+          action.payload.error?.response?.data?.message ||
+          "Error deleting stok transfer",
       };
     case "RESET_STOK_TRANSFER_MESSAGES":
       return {

@@ -32,9 +32,10 @@ const suratPengeluaranBarangReducer = (
     case "FETCH_SURAT_PENGELUARAN_BARANG_SUCCESS":
       return {
         ...state,
-        data: (action.payload.data.results || []).sort(
-          (a, b) => new Date(a.created_at) - new Date(b.created_at)
-        ),
+        // data: (action.payload.data.results || []).sort(
+        //   (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        // ),
+        data: action.payload.data.results || [],
         loading: false,
         pagination: {
           count: action.payload.data.count || 0,

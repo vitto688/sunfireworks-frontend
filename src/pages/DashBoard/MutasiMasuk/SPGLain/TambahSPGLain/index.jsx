@@ -13,6 +13,7 @@ import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
 import SearchField from "../../../../../components/SearchField";
+import DatePicker from "../../../../../components/DatePicker";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditStockModal from "../../../../../components/EditStockModal";
@@ -37,6 +38,11 @@ const TambahSPGLain = () => {
   const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState(() => {
+    // Set default to today's date in YYYY-MM-DD format
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
   const [stok, setStok] = useState([]);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
@@ -100,6 +106,7 @@ const TambahSPGLain = () => {
       warehouse: gudang.id,
       sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         carton_quantity: item.carton_quantity || 0,
@@ -189,6 +196,14 @@ const TambahSPGLain = () => {
             name="noSuratJalan"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
+          />
+
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
           />
         </div>
         <div className={styles.row}>

@@ -90,9 +90,10 @@ const spgReducer = (state = initialSPGState, action) => {
         ...state,
         [spgType]: {
           ...state[spgType],
-          data: (action.payload.data.results || []).sort(
-            (a, b) => new Date(a.created_at) - new Date(b.created_at)
-          ),
+          // data: (action.payload.data.results || []).sort(
+          //   (a, b) => new Date(a.created_at) - new Date(b.created_at)
+          // ),
+          data: action.payload.data.results || [],
           loading: false,
           // Update pagination info
           pagination: {

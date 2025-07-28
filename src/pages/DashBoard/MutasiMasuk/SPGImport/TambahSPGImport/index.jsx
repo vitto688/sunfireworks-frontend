@@ -12,6 +12,7 @@ import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
 import AddStockButton from "../../../../../components/AddStockButton";
 import SearchField from "../../../../../components/SearchField";
+import DatePicker from "../../../../../components/DatePicker";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditButton from "../../../../../components/EditButton";
@@ -38,6 +39,11 @@ const TambahSPGImport = () => {
   const [keterangan, setKeterangan] = useState("");
   const [gudang, setGudang] = useState("");
   const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState(() => {
+    // Set default to today's date in YYYY-MM-DD format
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
   const [noKontainer, setNoKontainer] = useState("");
   const [noKendaraan, setNoKendaraan] = useState("");
   const [mulaiBongkar, setMulaiBongkar] = useState(""); // type date time
@@ -118,6 +124,7 @@ const TambahSPGImport = () => {
       start_unload: mulaiBongkar,
       finish_load: selesaiBongkar,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         production_code: item.production_code || "",
@@ -205,6 +212,13 @@ const TambahSPGImport = () => {
       )}
       <div className={styles.formSection}>
         <div className={styles.row}>
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
+          />
           <InputField
             label="No SJ"
             type="text"
@@ -222,14 +236,6 @@ const TambahSPGImport = () => {
             onChange={(e) => setNoKontainer(e.target.value)}
           />
           <InputField
-            label="No Kendaraan"
-            type="text"
-            id="noKendaraan"
-            name="noKendaraan"
-            value={noKendaraan}
-            onChange={(e) => setNoKendaraan(e.target.value)}
-          />
-          <InputField
             label="Keterangan"
             type="text"
             id="keterangan"
@@ -239,6 +245,14 @@ const TambahSPGImport = () => {
           />
         </div>
         <div className={styles.row}>
+          <InputField
+            label="No Kendaraan"
+            type="text"
+            id="noKendaraan"
+            name="noKendaraan"
+            value={noKendaraan}
+            onChange={(e) => setNoKendaraan(e.target.value)}
+          />
           <InputField
             label="Mulai Bongkar"
             type="text"

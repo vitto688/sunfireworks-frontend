@@ -29,9 +29,10 @@ const stbReducer = (state = initialSTBState, action) => {
     case "FETCH_STB_SUCCESS":
       return {
         ...state,
-        data: (action.payload.data.results || []).sort(
-          (a, b) => new Date(a.created_at) - new Date(b.created_at)
-        ),
+        // data: (action.payload.data.results || []).sort(
+        //   (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        // ),
+        data: action.payload.data.results || [],
         loading: false,
         pagination: {
           count: action.payload.data.count || 0,

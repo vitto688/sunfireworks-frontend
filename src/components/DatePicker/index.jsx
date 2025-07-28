@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./style.module.scss";
 
-const DatePicker = ({ label, value, onChange }) => {
+const DatePicker = ({ isInput = false, label, value, onChange }) => {
   return (
-    <div className={styles.datePicker}>
+    <div className={`${styles.datePicker} ${isInput ? styles.input : ""}`}>
       <label>{label}</label>
       <input
         type="date"

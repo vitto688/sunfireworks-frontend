@@ -21,10 +21,8 @@ import AddStockModal from "../../../../../components/AddStockModal";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
 import EditButton from "../../../../../components/EditButton";
-import EditStockModal from "../../../../../components/EditStockModal";
 
 // Import utility functions
-import { formatDate } from "../../../../../utils/dateUtils";
 import { printReturPenjualan } from "../../../../../utils/printReturPenjualan";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 import SearchField from "../../../../../components/SearchField";
@@ -89,6 +87,7 @@ const UbahReturPenjualan = () => {
       setStok(argument.items);
     }
   }, [
+    warehouses,
     argument.warehouse,
     argument.notes,
     argument.sj_number,
@@ -356,11 +355,16 @@ const UbahReturPenjualan = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
-        stock={editModalOpen}
-        cartonQuantity={warehouseStock?.carton_quantity ?? 0}
-        packQuantity={warehouseStock?.pack_quantity ?? 0}
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter(
+          (stock) => stock.warehouse === argument?.warehouse
+        )}
+        cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
       />

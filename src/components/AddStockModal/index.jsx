@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 // Import styles
@@ -13,11 +13,29 @@ import {
   parseFormattedNumber,
 } from "../../utils/numberUtils";
 
-const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
-  const [carton, setCarton] = useState(0);
-  const [pack, setPack] = useState(0);
+const AddStockModal = ({
+  isEdit = false,
+  stocks,
+  isOpen,
+  onClose,
+  onSave,
+  defaultStock = null,
+  defaultCarton = 0,
+  defaultPack = 0,
+}) => {
+  const [carton, setCarton] = useState(defaultCarton);
+  const [pack, setPack] = useState(defaultPack);
   // const [packSize, setPackSize] = useState("");
-  const [stock, setStock] = useState(null);
+  const [stock, setStock] = useState(defaultStock);
+
+  // Set default values when modal opens or defaults change
+  useEffect(() => {
+    if (isOpen) {
+      setStock(defaultStock);
+      setCarton(defaultCarton);
+      setPack(defaultPack);
+    }
+  }, [isOpen, defaultStock, defaultCarton, defaultPack]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,9 +46,9 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
       pack_quantity: pack,
       // packaging_size: packSize,
     });
-    setCarton(0);
-    setPack(0);
-    setStock(null);
+    setCarton(defaultCarton);
+    setPack(defaultPack);
+    setStock(defaultStock);
     onClose();
   };
 
@@ -57,7 +75,7 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
           <button className={styles.closeButton} onClick={onClose}>
             <X size={20} />
           </button>
-          <h2>Tambah Stok Produk</h2>
+          <h2>{isEdit ? "Edit" : "Tambah"} Stok Produk</h2>
         </div>
 
         <div className={styles.modalBody}>
@@ -72,13 +90,27 @@ const AddStockModal = ({ stocks, isOpen, onClose, onSave }) => {
               code: stock.product_code,
               name: stock.product_name,
               gudang: stock.warehouse_name,
-              packQuantity: stock.pack_quantity,
-              cartonQuantity: stock.carton_quantity,
+              packQuantity: null,
+              cartonQuantity: null,
               packing: stock.packing,
               supplierName: stock.supplier_name,
             }))}
-            onChange={(stock) =>
-              setStock(stocks.find((s) => s.id === stock.id))
+            defaultValue={
+              defaultStock
+                ? {
+                    id: defaultStock.id,
+                    code: defaultStock.product_code,
+                    name: defaultStock.product_name,
+                    gudang: defaultStock.warehouse_name,
+                    packQuantity: defaultStock.pack_quantity,
+                    cartonQuantity: defaultStock.carton_quantity,
+                    packing: defaultStock.packing,
+                    supplierName: defaultStock.supplier_name,
+                  }
+                : null
+            }
+            onChange={(selectedStock) =>
+              setStock(stocks.find((s) => s.id === selectedStock.id))
             }
           />
           <form onSubmit={handleSubmit}>

@@ -218,6 +218,7 @@ const TambahReturPenjualan = () => {
           />
 
           <DatePicker
+            isInput={true}
             label="Tanggal Transaksi"
             value={tanggal}
             onChange={setTanggal}
@@ -317,14 +318,28 @@ const TambahReturPenjualan = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter(
+          (stock) => stock.warehouse === argument?.warehouse
+        )}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModal
         stock={editModalOpen}
         cartonQuantity={warehouseStock?.carton_quantity ?? 0}
         packQuantity={warehouseStock?.pack_quantity ?? 0}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

@@ -175,8 +175,7 @@ const UbahSuratTerimaBarang = () => {
 
     setWarehouseStock(
       stocks.find(
-        (s) =>
-          s.warehouse === argument?.warehouse && s.product === value?.product
+        (s) => s.warehouse === gudang?.id && s.product === value?.product
       ) || null
     );
     setEditModalOpen(value);

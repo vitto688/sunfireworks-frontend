@@ -188,7 +188,9 @@ const UbahSPGLain = () => {
   const handleSaveEditStok = (data) => {
     // Update stok state with new data
     setStok((prevStok) =>
-      prevStok.map((item) => (item.id === data.id ? data : item))
+      prevStok.map((item) =>
+        item.product_code === data.product_code ? data : item
+      )
     );
     setEditModalOpen(null);
     // Kirim ke backend di sini...

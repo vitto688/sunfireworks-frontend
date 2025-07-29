@@ -41,6 +41,12 @@ export const printReturPenjualanReport = (reportData, filters = {}) => {
           @page {
             margin: 15mm;
             size: A4 landscape;
+            @top-left { content: ""; }
+            @top-center { content: ""; }
+            @top-right { content: ""; }
+            @bottom-left { content: ""; }
+            @bottom-center { content: ""; }
+            @bottom-right { content: ""; }
           }
           body {
             font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;

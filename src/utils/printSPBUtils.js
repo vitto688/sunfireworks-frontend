@@ -21,6 +21,12 @@ export const printSPB = (data) => {
           @page {
             margin: 10mm;
             size: 9.5in 5.5in;
+            @top-left { content: ""; }
+            @top-center { content: ""; }
+            @top-right { content: ""; }
+            @bottom-left { content: ""; }
+            @bottom-center { content: ""; }
+            @bottom-right { content: ""; }
           }
           body {
             font-family: 'Courier New', Courier, monospace;

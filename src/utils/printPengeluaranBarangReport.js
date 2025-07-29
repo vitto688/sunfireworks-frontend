@@ -1,5 +1,280 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
 
+// Function to generate Excel file from pengeluaran barang data
+export const exportPengeluaranBarangToExcel = (reportData, filters = {}) => {
+  // Create filter info string
+  const createFilterInfo = () => {
+    let filterText = [];
+    if (filters.start_date && filters.end_date) {
+      filterText.push(
+        `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+          filters.end_date
+        )}`
+      );
+    }
+    if (filters.supplier && filters.supplier !== 0) {
+      filterText.push(`Supplier: ${filters.supplier}`);
+    }
+    if (filters.warehouse && filters.warehouse !== 0) {
+      filterText.push(`Gudang: ${filters.warehouse}`);
+    }
+    if (filters.search) {
+      filterText.push(`Pencarian: ${filters.search}`);
+    }
+    return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+  };
+
+  // Calculate totals
+  const totalCarton =
+    reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+    0;
+  const totalPack =
+    reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+
+  // Create CSV content (Excel-compatible)
+  const csvContent = [];
+
+  // Header information
+  csvContent.push(["LAPORAN PENGELUARAN BARANG"]);
+  csvContent.push(["SUN FIREWORKS"]);
+  csvContent.push([""]);
+  csvContent.push(["Filter:", createFilterInfo()]);
+  csvContent.push(["Total Data:", `${reportData?.length || 0} item`]);
+  csvContent.push(["Tanggal Export:", formatDate(new Date())]);
+  csvContent.push([""]);
+
+  // Table headers
+  csvContent.push([
+    "NO",
+    "NO. DOKUMEN",
+    "TANGGAL TRANSAKSI",
+    "NAMA PRODUK",
+    "SUPPLIER",
+    "PACKING",
+    "GUDANG",
+    "CARTON",
+    "PACK",
+  ]);
+
+  // Table data
+  if (reportData?.length > 0) {
+    reportData.forEach((item, index) => {
+      csvContent.push([
+        index + 1,
+        item.document_number || "-",
+        formatDate(item.transaction_date),
+        item.product_name || "-",
+        item.supplier_name || "-",
+        item.packing || "-",
+        item.warehouse_name || "-",
+        item.carton_quantity || 0,
+        item.pack_quantity || 0,
+      ]);
+    });
+
+    // Total row
+    csvContent.push(["", "", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+  } else {
+    csvContent.push([
+      "",
+      "",
+      "",
+      "",
+      "Tidak ada data pengeluaran barang yang ditemukan",
+      "",
+      "",
+      "",
+      "",
+    ]);
+  }
+
+  // Convert to CSV string
+  const csvString = csvContent
+    .map((row) =>
+      row
+        .map((cell) => {
+          const cellString = String(cell || "");
+          if (
+            cellString.includes(",") ||
+            cellString.includes('"') ||
+            cellString.includes("\n")
+          ) {
+            return `"${cellString.replace(/"/g, '""')}"`;
+          }
+          return cellString;
+        })
+        .join(",")
+    )
+    .join("\n");
+
+  // Add BOM for proper UTF-8 encoding in Excel
+  const BOM = "\uFEFF";
+  const finalCsvContent = BOM + csvString;
+
+  // Create and download file
+  const blob = new Blob([finalCsvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+
+  // Generate filename with current date
+  const currentDate = new Date().toISOString().split("T")[0];
+  const filename = `Laporan_Pengeluaran_Barang_${currentDate}.csv`;
+  link.setAttribute("download", filename);
+
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Clean up
+  URL.revokeObjectURL(url);
+
+  return filename;
+};
+
+// Enhanced Excel export using XLSX library
+export const exportPengeluaranBarangToExcelAdvanced = (
+  reportData,
+  filters = {},
+  XLSX = null
+) => {
+  try {
+    // Check if XLSX library is available
+    if (!XLSX && typeof window.XLSX === "undefined") {
+      console.warn("XLSX library not found. Falling back to CSV export.");
+      return exportPengeluaranBarangToExcel(reportData, filters);
+    }
+
+    // Use provided XLSX or fallback to window.XLSX
+    const xlsxLib = XLSX || window.XLSX;
+
+    // Create filter info string
+    const createFilterInfo = () => {
+      let filterText = [];
+      if (filters.start_date && filters.end_date) {
+        filterText.push(
+          `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+            filters.end_date
+          )}`
+        );
+      }
+      if (filters.supplier && filters.supplier !== 0) {
+        filterText.push(`Supplier: ${filters.supplier}`);
+      }
+      if (filters.warehouse && filters.warehouse !== 0) {
+        filterText.push(`Gudang: ${filters.warehouse}`);
+      }
+      if (filters.search) {
+        filterText.push(`Pencarian: ${filters.search}`);
+      }
+      return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+    };
+
+    // Calculate totals
+    const totalCarton =
+      reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+      0;
+    const totalPack =
+      reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) ||
+      0;
+
+    // Create workbook and worksheet
+    const wb = xlsxLib.utils.book_new();
+    const wsData = [];
+
+    // Header information
+    wsData.push(["LAPORAN PENGELUARAN BARANG"]);
+    wsData.push(["SUN FIREWORKS"]);
+    wsData.push([""]);
+    wsData.push(["Filter:", createFilterInfo()]);
+    wsData.push(["Total Data:", `${reportData?.length || 0} item`]);
+    wsData.push(["Tanggal Export:", formatDate(new Date())]);
+    wsData.push([""]);
+
+    // Table headers
+    wsData.push([
+      "NO",
+      "NO. DOKUMEN",
+      "TANGGAL TRANSAKSI",
+      "NAMA PRODUK",
+      "SUPPLIER",
+      "PACKING",
+      "GUDANG",
+      "CARTON",
+      "PACK",
+    ]);
+
+    // Table data
+    if (reportData?.length > 0) {
+      reportData.forEach((item, index) => {
+        wsData.push([
+          index + 1,
+          item.document_number || "-",
+          formatDate(item.transaction_date),
+          item.product_name || "-",
+          item.supplier_name || "-",
+          item.packing || "-",
+          item.warehouse_name || "-",
+          item.carton_quantity || 0,
+          item.pack_quantity || 0,
+        ]);
+      });
+
+      // Total row
+      wsData.push(["", "", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+    } else {
+      wsData.push([
+        "",
+        "",
+        "",
+        "",
+        "Tidak ada data pengeluaran barang yang ditemukan",
+        "",
+        "",
+        "",
+        "",
+      ]);
+    }
+
+    // Create worksheet
+    const ws = xlsxLib.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 5 }, // NO
+      { wch: 15 }, // NO. DOKUMEN
+      { wch: 12 }, // TANGGAL TRANSAKSI
+      { wch: 25 }, // NAMA PRODUK
+      { wch: 15 }, // SUPPLIER
+      { wch: 10 }, // PACKING
+      { wch: 15 }, // GUDANG
+      { wch: 8 }, // CARTON
+      { wch: 8 }, // PACK
+    ];
+    ws["!cols"] = colWidths;
+
+    // Add worksheet to workbook
+    xlsxLib.utils.book_append_sheet(wb, ws, "Laporan Pengeluaran Barang");
+
+    // Generate filename with current date
+    const currentDate = new Date().toISOString().split("T")[0];
+    const filename = `Laporan_Pengeluaran_Barang_${currentDate}.xlsx`;
+
+    // Write and download file
+    xlsxLib.writeFile(wb, filename);
+
+    return filename;
+  } catch (error) {
+    console.error("Error creating Excel file:", error);
+    // Fallback to CSV export
+    return exportPengeluaranBarangToExcel(reportData, filters);
+  }
+};
+
 export const printPengeluaranBarangReport = (reportData, filters = {}) => {
   // Calculate totals
   const totalCarton =

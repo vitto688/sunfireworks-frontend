@@ -2,6 +2,15 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx";
+
+/*
+EXPORT EXCEL SETUP:
+- Export CSV: Works immediately (no dependencies required)
+- Export Excel (Advanced): Uses XLSX library (now installed)
+  
+Both export options are now available and fully functional.
+*/
 
 // Import Redux actions
 import {
@@ -27,8 +36,12 @@ import Loading from "../../../../components/Loading";
 // Import number formatting utility
 import { formatNumberWithDot } from "../../../../utils/numberUtils";
 
-// Import print utility
-import { printStokBarangReport } from "../../../../utils/printStokBarangReport";
+// Import print and export utilities
+import {
+  printStokBarangReport,
+  exportStokBarangToExcel,
+  exportStokBarangToExcelAdvanced,
+} from "../../../../utils/printStokBarangReport";
 
 // Define the path for the Laporan Stok Barang page
 export const LAPORAN_STOK_BARANG_PATH = "/laporan/stok-barang";
@@ -235,6 +248,62 @@ const LaporanStokBarang = () => {
     printStokBarangReport(stockReport, filters);
   };
 
+  const handleExportExcelClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      // Try advanced Excel export with XLSX library
+      const filename = exportStokBarangToExcelAdvanced(
+        stockReport,
+        filters,
+        XLSX
+      );
+      console.log(`Excel file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      // Fallback to CSV export
+      try {
+        const filename = exportStokBarangToExcel(stockReport, filters);
+        console.log(`CSV file exported: ${filename}`);
+      } catch (csvError) {
+        console.error("Error exporting CSV:", csvError);
+        alert("Gagal mengexport data. Silakan coba lagi.");
+      }
+    }
+  };
+
+  const handleExportCSVClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      const filename = exportStokBarangToExcel(stockReport, filters);
+      console.log(`CSV file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      alert("Gagal mengexport data CSV. Silakan coba lagi.");
+    }
+  };
+
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
   };
@@ -249,6 +318,16 @@ const LaporanStokBarang = () => {
     <div className={styles.mutasiMasukSection}>
       {loading && <Loading />}
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Export Excel"
+          onClick={handleExportExcelClick}
+          disabled={loading || stockReport.length === 0}
+        />
+        <CustomButton
+          label="Export CSV"
+          onClick={handleExportCSVClick}
+          disabled={loading || stockReport.length === 0}
+        />
         <CustomButton
           label="Print"
           onClick={handlePrintClick}

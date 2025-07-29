@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx";
 
 // Import Redux actions
 import {
@@ -30,7 +31,11 @@ import {
   formatNumberWithDot,
   formatDate,
 } from "../../../../utils/numberUtils";
-import { printPengeluaranBarangReport } from "../../../../utils/printPengeluaranBarangReport";
+import {
+  printPengeluaranBarangReport,
+  exportPengeluaranBarangToExcel,
+  exportPengeluaranBarangToExcelAdvanced,
+} from "../../../../utils/printPengeluaranBarangReport";
 
 // Define the path for the Laporan Pengeluaran Barang page
 export const LAPORAN_PENGELUARAN_BARANG_PATH = "/laporan/pengeluaran-barang";
@@ -240,6 +245,66 @@ const LaporanPengeluaranBarang = () => {
     printPengeluaranBarangReport(pengeluaranBarangReport, filters);
   };
 
+  const handleExportExcelClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      // Try advanced Excel export with XLSX library
+      const filename = exportPengeluaranBarangToExcelAdvanced(
+        pengeluaranBarangReport,
+        filters,
+        XLSX
+      );
+      console.log(`Excel file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      // Fallback to CSV export
+      try {
+        const filename = exportPengeluaranBarangToExcel(
+          pengeluaranBarangReport,
+          filters
+        );
+        console.log(`CSV file exported: ${filename}`);
+      } catch (csvError) {
+        console.error("Error exporting CSV:", csvError);
+        alert("Gagal mengexport data. Silakan coba lagi.");
+      }
+    }
+  };
+
+  const handleExportCSVClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      const filename = exportPengeluaranBarangToExcel(
+        pengeluaranBarangReport,
+        filters
+      );
+      console.log(`CSV file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      alert("Gagal mengexport data CSV. Silakan coba lagi.");
+    }
+  };
+
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
   };
@@ -266,6 +331,16 @@ const LaporanPengeluaranBarang = () => {
         <CustomButton
           label="Print"
           onClick={handlePrintClick}
+          disabled={loading || pengeluaranBarangReport.length === 0}
+        />
+        <CustomButton
+          label="Export Excel"
+          onClick={handleExportExcelClick}
+          disabled={loading || pengeluaranBarangReport.length === 0}
+        />
+        <CustomButton
+          label="Export CSV"
+          onClick={handleExportCSVClick}
           disabled={loading || pengeluaranBarangReport.length === 0}
         />
       </div>

@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx";
 
 // Import Redux actions
 import {
@@ -32,7 +33,11 @@ import {
 } from "../../../../utils/numberUtils";
 
 // Import print utility
-import { printReturPembelianReport } from "../../../../utils/printReturPembelianReport";
+import {
+  printReturPembelianReport,
+  exportReturPembelianToExcel,
+  exportReturPembelianToExcelAdvanced,
+} from "../../../../utils/printReturPembelianReport";
 
 // Define the path for the Laporan Retur Pembelian page
 export const LAPORAN_RETUR_PEMBELIAN_PATH = "/laporan/retur-pembelian";
@@ -202,6 +207,66 @@ const LaporanReturPembelian = () => {
     printReturPembelianReport(returPembelianReport, filters);
   };
 
+  const handleExportExcelClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      // Try advanced Excel export with XLSX library
+      const filename = exportReturPembelianToExcelAdvanced(
+        returPembelianReport,
+        filters,
+        XLSX
+      );
+      console.log(`Excel file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      // Fallback to CSV export
+      try {
+        const filename = exportReturPembelianToExcel(
+          returPembelianReport,
+          filters
+        );
+        console.log(`CSV file exported: ${filename}`);
+      } catch (csvError) {
+        console.error("Error exporting CSV:", csvError);
+        alert("Gagal mengexport data. Silakan coba lagi.");
+      }
+    }
+  };
+
+  const handleExportCSVClick = () => {
+    // Create filter object for export function
+    const filters = {
+      ...(query && { search: query }),
+      ...(selectedWarehouseFilter !== 0 && {
+        warehouse: selectedWarehouseFilter,
+      }),
+      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(startDate && { start_date: startDate }),
+      ...(endDate && { end_date: endDate }),
+    };
+
+    try {
+      const filename = exportReturPembelianToExcel(
+        returPembelianReport,
+        filters
+      );
+      console.log(`CSV file exported: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      alert("Gagal mengexport data CSV. Silakan coba lagi.");
+    }
+  };
+
   const handleDelete = (value) => {
     setModalOpen((old) => !old);
   };
@@ -219,6 +284,16 @@ const LaporanReturPembelian = () => {
         <CustomButton
           label="Print"
           onClick={handlePrintClick}
+          disabled={loading || returPembelianReport.length === 0}
+        />
+        <CustomButton
+          label="Export Excel"
+          onClick={handleExportExcelClick}
+          disabled={loading || returPembelianReport.length === 0}
+        />
+        <CustomButton
+          label="Export CSV"
+          onClick={handleExportCSVClick}
           disabled={loading || returPembelianReport.length === 0}
         />
       </div>

@@ -44,6 +44,7 @@ const TambahSPGKawat = () => {
     return today.toISOString().split("T")[0];
   });
   const [stok, setStok] = useState([]);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -138,6 +139,12 @@ const TambahSPGKawat = () => {
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
+
+    setWarehouseStock(
+      stocks.find(
+        (s) => s.warehouse === gudang?.id && s.product === value?.product
+      ) || null
+    );
 
     setEditModalOpen(value);
   };
@@ -294,10 +301,14 @@ const TambahSPGKawat = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
-        stocks={stocks}
-        stock={editModalOpen}
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
       />

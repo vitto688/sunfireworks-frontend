@@ -27,7 +27,6 @@ const AddStockModal = ({
   const [pack, setPack] = useState(0);
   const [cartonLeft, setCartonLeft] = useState(0);
   const [packLeft, setPackLeft] = useState(0);
-  // const [packSize, setPackSize] = useState("");
   const [stock, setStock] = useState(defaultStock);
 
   // Set default values when modal opens or defaults change

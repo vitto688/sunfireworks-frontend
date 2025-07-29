@@ -42,6 +42,7 @@ const UbahSPGKawat = () => {
   const [noSJ, setNoSJ] = useState("");
   const [tanggal, setTanggal] = useState("");
   const [stok, setStok] = useState([]);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -64,6 +65,10 @@ const UbahSPGKawat = () => {
 
   useEffect(() => {
     // Set initial values from argument
+    if (argument?.warehouse) {
+      setGudang(warehouses.find((w) => w.id === argument.warehouse) || null);
+    }
+
     if (argument?.notes) {
       setKeterangan(argument.notes);
     }
@@ -72,12 +77,16 @@ const UbahSPGKawat = () => {
       setNoSJ(argument.sj_number);
     }
     if (argument?.transaction_date) {
-      setTanggal(argument.transaction_date);
+      // Convert date to YYYY-MM-DD format for DatePicker
+      const date = new Date(argument.transaction_date);
+      setTanggal(date.toISOString().split("T")[0]);
     }
     if (argument?.items) {
       setStok(argument.items);
     }
   }, [
+    warehouses,
+    argument.warehouse,
     argument.notes,
     argument.sj_number,
     argument.transaction_date,
@@ -134,6 +143,7 @@ const UbahSPGKawat = () => {
       warehouse: gudang.id || gudang,
       sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         packaging_size: item.packaging_size || "",
@@ -159,6 +169,12 @@ const UbahSPGKawat = () => {
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
+    setWarehouseStock(
+      stocks.find(
+        (s) =>
+          s.warehouse === argument?.warehouse && s.product === value?.product
+      ) || null
+    );
 
     setEditModalOpen(value);
   };
@@ -191,6 +207,7 @@ const UbahSPGKawat = () => {
       ...argument,
       warehouse_name: gudang?.name,
       sj_number: noSJ,
+      transaction_date: tanggal,
       items: stok,
     });
   };
@@ -235,10 +252,11 @@ const UbahSPGKawat = () => {
           <InputField
             label="No SJ"
             type="text"
-            id="noSJ"
-            name="noSJ"
-            defaultValue={argument?.sj_number ?? ""}
-            disabled={true}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
           <DatePicker
             isInput={true}
@@ -249,13 +267,18 @@ const UbahSPGKawat = () => {
           />
         </div>
         <div className={styles.row}>
-          <InputField
-            label="Gudang"
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang "
             type="text"
             id="gudang"
             name="gudang"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
           <InputField
             label="Keterangan"
@@ -331,13 +354,25 @@ const UbahSPGKawat = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModal
         stocks={stocks}
         stock={editModalOpen}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

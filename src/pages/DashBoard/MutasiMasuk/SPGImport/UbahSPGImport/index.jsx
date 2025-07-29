@@ -169,7 +169,7 @@ const UbahSPGImport = () => {
     // Prepare data for API
     const spgData = {
       warehouse: gudang.id || gudang,
-      sj_number: noSJ,
+      sj_number: "",
       container_number: noKontainer,
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
@@ -203,7 +203,6 @@ const UbahSPGImport = () => {
     printSPGImport({
       ...argument,
       warehouse_name: gudang?.name,
-      sj_number: noSJ,
       container_number: noKontainer,
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
@@ -299,14 +298,14 @@ const UbahSPGImport = () => {
             defaultValue={argument.document_number || ""}
             disabled={true}
           />
-          <InputField
+          {/* <InputField
             label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
-          />
+          /> */}
           <InputField
             label="No Kontainer"
             type="text"

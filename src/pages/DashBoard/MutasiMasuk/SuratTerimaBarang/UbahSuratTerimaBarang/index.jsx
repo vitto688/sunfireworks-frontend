@@ -27,6 +27,7 @@ import EditStockModal from "../../../../../components/EditStockModal";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 import { formatDate } from "../../../../../utils/dateUtils";
 import { printSTB } from "../../../../../utils/printSTBUtils";
+import SearchField from "../../../../../components/SearchField";
 
 export const UBAH_SURAT_TERIMA_BARANG_PATH = "/mutasi-masuk/stb/ubah-stb";
 
@@ -37,9 +38,11 @@ const UbahSuratTerimaBarang = () => {
   const location = useLocation();
   const argument = location.state || {};
 
-  const [keterangan, setKeterangan] = useState(argument?.notes ?? "");
-  const [tanggal, setTanggal] = useState(argument?.transaction_date ?? "");
-  const [stok, setStok] = useState(argument?.items ?? []);
+  const [gudang, setGudang] = useState(null);
+  const [keterangan, setKeterangan] = useState("");
+  const [noSJ, setNoSJ] = useState("");
+  const [tanggal, setTanggal] = useState("");
+  const [stok, setStok] = useState([]);
   const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
@@ -50,6 +53,7 @@ const UbahSuratTerimaBarang = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
 
   const { stocks } = useSelector((state) => state.stock);
+  const { warehouses } = useSelector((state) => state.master);
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.stb
   );
@@ -61,6 +65,36 @@ const UbahSuratTerimaBarang = () => {
     // Reset messages when component mounts
     dispatch(resetSTBMessages());
   }, [dispatch]);
+
+  useEffect(() => {
+    // Set initial values from argument
+    if (argument?.warehouse) {
+      setGudang(warehouses.find((w) => w.id === argument.warehouse) || null);
+    }
+
+    if (argument?.notes) {
+      setKeterangan(argument.notes);
+    }
+
+    if (argument?.sj_number) {
+      setNoSJ(argument.sj_number);
+    }
+    if (argument?.transaction_date) {
+      // Convert date to YYYY-MM-DD format for DatePicker
+      const date = new Date(argument.transaction_date);
+      setTanggal(date.toISOString().split("T")[0]);
+    }
+    if (argument?.items) {
+      setStok(argument.items);
+    }
+  }, [
+    warehouses,
+    argument.warehouse,
+    argument.notes,
+    argument.sj_number,
+    argument.transaction_date,
+    argument.items,
+  ]);
 
   useEffect(() => {
     if (message !== null) {
@@ -101,11 +135,13 @@ const UbahSuratTerimaBarang = () => {
 
     // Prepare data for API
     const stbData = {
-      warehouse: argument.warehouse,
-      customer: argument.customer,
+      warehouse: gudang.id,
+      sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
+        packaging_size: item.packaging_size || "",
         carton_quantity: item.carton_quantity || 0,
         pack_quantity: item.pack_quantity || 0,
       })),
@@ -122,7 +158,9 @@ const UbahSuratTerimaBarang = () => {
   const handlePrintClick = () => {
     printSTB({
       ...argument,
-      notes: keterangan,
+      warehouse_name: gudang?.name,
+      transaction_date: tanggal,
+      sj_number: noSJ,
       items: stok,
     });
   };
@@ -207,10 +245,11 @@ const UbahSuratTerimaBarang = () => {
           <InputField
             label="No SJ"
             type="text"
-            id="noSJ"
-            name="noSJ"
-            defaultValue={argument?.sj_number ?? ""}
-            disabled={true}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
           <DatePicker
             isInput={true}
@@ -222,13 +261,18 @@ const UbahSuratTerimaBarang = () => {
         </div>
 
         <div className={styles.row}>
-          <InputField
-            label="Gudang"
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang Tujuan"
             type="text"
             id="gudang"
             name="gudang"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
           <InputField
             label="Keterangan"
@@ -304,14 +348,26 @@ const UbahSuratTerimaBarang = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModal
         stock={editModalOpen}
         cartonQuantity={warehouseStock?.carton_quantity ?? 0}
         packQuantity={warehouseStock?.pack_quantity ?? 0}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

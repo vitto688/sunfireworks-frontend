@@ -119,7 +119,7 @@ const TambahSPGImport = () => {
     // Prepare data for API
     const spgData = {
       warehouse: gudang.id,
-      sj_number: noSJ,
+      sj_number: "",
       container_number: noKontainer,
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
@@ -227,14 +227,14 @@ const TambahSPGImport = () => {
             onChange={setTanggal}
             required
           />
-          <InputField
+          {/* <InputField
             label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"
             value={noSJ}
             onChange={(e) => setNoSJ(e.target.value)}
-          />
+          /> */}
           <InputField
             label="No Kontainer"
             type="text"

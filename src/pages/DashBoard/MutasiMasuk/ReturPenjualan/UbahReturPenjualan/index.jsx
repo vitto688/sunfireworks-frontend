@@ -270,7 +270,7 @@ const UbahReturPenjualan = () => {
             required
           />
           <InputField
-            label="No Surat Jalan"
+            label="No SJ"
             type="text"
             id="noSuratJalan"
             name="noSuratJalan"

@@ -255,10 +255,11 @@ const UbahSPGBawang = () => {
           <InputField
             label="No SJ"
             type="text"
-            id="noSJ"
-            name="noSJ"
-            defaultValue={argument?.sj_number ?? ""}
-            disabled={true}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
           <DatePicker
             isInput={true}
@@ -269,13 +270,18 @@ const UbahSPGBawang = () => {
           />
         </div>
         <div className={styles.row}>
-          <InputField
-            label="Gudang"
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang "
             type="text"
             id="gudang"
             name="gudang"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
           <InputField
             label="Keterangan"

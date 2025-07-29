@@ -42,6 +42,7 @@ const UbahSPGLain = () => {
   const [noSJ, setNoSJ] = useState("");
   const [tanggal, setTanggal] = useState("");
   const [stok, setStok] = useState([]);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
@@ -64,6 +65,9 @@ const UbahSPGLain = () => {
 
   useEffect(() => {
     // Set initial values from argument
+    if (argument?.warehouse) {
+      setGudang(warehouses.find((w) => w.id === argument.warehouse) || null);
+    }
 
     if (argument?.notes) {
       setKeterangan(argument.notes);
@@ -73,12 +77,16 @@ const UbahSPGLain = () => {
       setNoSJ(argument.sj_number);
     }
     if (argument?.transaction_date) {
-      setTanggal(argument.transaction_date);
+      // Convert date to YYYY-MM-DD format for DatePicker
+      const date = new Date(argument.transaction_date);
+      setTanggal(date.toISOString().split("T")[0]);
     }
     if (argument?.items) {
       setStok(argument.items);
     }
   }, [
+    warehouses,
+    argument.warehouse,
     argument.notes,
     argument.sj_number,
     argument.transaction_date,
@@ -132,9 +140,10 @@ const UbahSPGLain = () => {
 
     // Prepare data for API
     const spgData = {
-      warehouse: gudang.id || gudang,
+      warehouse: gudang.id,
       sj_number: noSJ,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         packaging_size: item.packaging_size || "",
@@ -160,7 +169,12 @@ const UbahSPGLain = () => {
 
   const handleEdit = (e, value) => {
     e.stopPropagation();
-
+    setWarehouseStock(
+      stocks.find(
+        (s) =>
+          s.warehouse === argument?.warehouse && s.product === value?.product
+      ) || null
+    );
     setEditModalOpen(value);
   };
 
@@ -191,6 +205,7 @@ const UbahSPGLain = () => {
     printSPGLain({
       ...argument,
       warehouse_name: gudang?.name,
+      transaction_date: tanggal,
       sj_number: noSJ,
       items: stok,
     });
@@ -236,10 +251,11 @@ const UbahSPGLain = () => {
           <InputField
             label="No SJ"
             type="text"
-            id="noSJ"
-            name="noSJ"
-            defaultValue={argument?.sj_number ?? ""}
-            disabled={true}
+            id="noSuratJalan"
+            name="noSuratJalan"
+            value={noSJ}
+            onChange={(e) => setNoSJ(e.target.value)}
+            placeholder="Masukkan nomor surat jalan..."
           />
           <DatePicker
             isInput={true}
@@ -250,13 +266,18 @@ const UbahSPGLain = () => {
           />
         </div>
         <div className={styles.row}>
-          <InputField
-            label="Gudang"
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang "
             type="text"
             id="gudang"
             name="gudang"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            defaultValue={gudang}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
           <InputField
             label="Keterangan"
@@ -332,10 +353,14 @@ const UbahSPGLain = () => {
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
-        stocks={stocks}
-        stock={editModalOpen}
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
       />

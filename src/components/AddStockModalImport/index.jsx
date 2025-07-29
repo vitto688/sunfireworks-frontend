@@ -25,6 +25,8 @@ const AddStockModalImport = ({
 }) => {
   const [carton, setCarton] = useState(0);
   const [pack, setPack] = useState(0);
+  const [cartonLeft, setCartonLeft] = useState(0);
+  const [packLeft, setPackLeft] = useState(0);
   const [packSize, setPackSize] = useState("");
   const [inn, setInn] = useState("");
   const [out, setOut] = useState("");
@@ -39,8 +41,10 @@ const AddStockModalImport = ({
   useEffect(() => {
     if (isOpen) {
       setStock(defaultStock);
-      setCarton(defaultCarton);
-      setPack(defaultPack);
+      setCarton(defaultStock?.carton_quantity ?? 0);
+      setPack(defaultStock?.pack_quantity ?? 0);
+      setCartonLeft(defaultCarton);
+      setPackLeft(defaultPack);
       setPackSize(stock?.packaging_size ?? "");
       setInn(stock?.inn ?? "");
       setOut(stock?.out ?? "");
@@ -75,9 +79,11 @@ const AddStockModalImport = ({
       warehouse_weight: warehouseWeight,
       production_code: productionCode,
     });
-    setCarton(0);
-    setPack(0);
-    setStock(null);
+    setCarton(defaultStock?.carton_quantity ?? 0);
+    setPack(defaultStock?.pack_quantity ?? 0);
+    setStock(defaultStock);
+    setCartonLeft(defaultCarton);
+    setPackLeft(defaultPack);
     setPackSize("");
     setInn("");
     setOut("");
@@ -112,7 +118,7 @@ const AddStockModalImport = ({
           <button className={styles.closeButton} onClick={onClose}>
             <X size={20} />
           </button>
-          <h2>Tambah Stok Produk</h2>
+          <h2>{isEdit ? "Edit" : "Tambah"} Stok Produk</h2>
         </div>
 
         <div className={styles.modalBody}>
@@ -129,6 +135,7 @@ const AddStockModalImport = ({
               gudang: stock.warehouse_name,
               packQuantity: null,
               cartonQuantity: null,
+              supplierName: stock.supplier_name,
             }))}
             defaultValue={
               defaultStock
@@ -262,7 +269,7 @@ const AddStockModalImport = ({
                   onChange={handleCartonChange}
                 />
                 <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                  stock?.carton_quantity ?? 0
+                  cartonLeft
                 )}`}</label>
               </div>
             </div>
@@ -276,7 +283,7 @@ const AddStockModalImport = ({
                   onChange={handlePackChange}
                 />
                 <label htmlFor="sisaKarton">{`stok tersedia ${formatNumberWithDot(
-                  stock?.pack_quantity ?? 0
+                  packLeft
                 )}`}</label>
               </div>
             </div>

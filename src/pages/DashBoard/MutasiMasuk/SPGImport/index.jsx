@@ -34,7 +34,9 @@ const SPGImport = () => {
   const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
-  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState({
+    id: 0,
+  });
   const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -51,8 +53,8 @@ const SPGImport = () => {
       const params = {
         page,
         ...(query && { document_number: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id, // Menggunakan selectedWarehouseFilter.id
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -91,28 +93,38 @@ const SPGImport = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Filter data when filters change
+  // Debounced search effect
   useEffect(() => {
-    // Skip if all filters are empty/default (to prevent initial double call)
-    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+    if (!query) {
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     const delayedSearch = setTimeout(() => {
-      fetchSPGData(1); // Reset to page 1 when filters change
-    }, 500); // Debounce search
+      fetchSPGData(1);
+      setIsSearching(false);
+    }, 300);
 
-    return () => clearTimeout(delayedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, selectedWarehouseFilter, startDate, endDate]);
+    return () => {
+      clearTimeout(delayedSearch);
+      setIsSearching(false);
+    };
+  }, [query, fetchSPGData]);
+
+  // Filter changes effect (immediate)
+  useEffect(() => {
+    fetchSPGData(1);
+  }, [selectedWarehouseFilter, startDate, endDate, fetchSPGData]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
-        { label: "Semua Gudang", value: 0 },
+        { label: "Semua Gudang", value: 0, id: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name, // Assuming warehouse.name is unique
+          value: warehouse.id,
+          id: warehouse.id, // Menambahkan property id
         })),
       ];
       setWarehouseFilterOptions(options);
@@ -141,7 +153,35 @@ const SPGImport = () => {
   const handleItemClick = (value) => {
     navigate(UBAH_SPGIMPORT_PATH, { state: value });
   };
+
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setQuery("");
+  };
+
+  const handleWarehouseFilterChange = (selectedOption) => {
+    setSelectedWarehouseFilter(selectedOption);
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleClearFilters = () => {
+    setQuery("");
+    setSelectedWarehouseFilter({ id: 0 });
+    setStartDate("");
+    setEndDate("");
+  };
   //#endregion
+
   return (
     <div className={styles.spgImportSection}>
       {/* Loading indicator */}
@@ -167,20 +207,72 @@ const SPGImport = () => {
         <CustomButton label="+ Tambah" onClick={handleAddClick} />
       </div>
       <div className={styles.searchFilterSection}>
-        <SearchBar
-          type="text"
-          placeholder="Cari SPG..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div style={{ position: "relative", flex: 1 }}>
+          <SearchBar
+            type="text"
+            placeholder={
+              isSearching ? "Mencari..." : "Cari berdasarkan No SPG..."
+            }
+            value={query}
+            onChange={handleSearchChange}
+          >
+            {query && (
+              <button
+                onClick={handleClearSearch}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </SearchBar>
+        </div>
         <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
+          <DatePicker
+            label="Dari "
+            value={startDate}
+            onChange={handleStartDateChange}
+          />
+          <DatePicker
+            label="Sampai "
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
           <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
-            onChange={(val) => setSelectedWarehouseFilter(val.value)}
+            onChange={handleWarehouseFilterChange}
           />
+          {(query ||
+            selectedWarehouseFilter.id !== 0 ||
+            startDate ||
+            endDate) && (
+            <button
+              onClick={handleClearFilters}
+              style={{
+                padding: "8px 12px",
+                background: "#f5f5f5",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                color: "#666",
+              }}
+              title="Clear all filters"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.returPenjualanTable}>

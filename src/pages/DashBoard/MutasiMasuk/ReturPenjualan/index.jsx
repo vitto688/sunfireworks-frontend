@@ -33,7 +33,9 @@ const ReturPenjualan = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
-  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState({
+    id: 0,
+  });
   const [isSearching, setIsSearching] = useState(false);
 
   const [startDate, setStartDate] = useState("");
@@ -50,8 +52,8 @@ const ReturPenjualan = () => {
       const params = {
         page,
         ...(query && { document_number: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id, // Menggunakan selectedWarehouseFilter.id
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -117,19 +119,18 @@ const ReturPenjualan = () => {
 
   // Handle filter changes (warehouse, dates) with immediate effect
   useEffect(() => {
-    if (selectedWarehouseFilter !== 0 || startDate || endDate) {
-      fetchReturPenjualanData(1); // Reset to page 1 when filters change
-    }
+    fetchReturPenjualanData(1); // Reset to page 1 when filters change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
-        { label: "Semua Gudang", value: 0 },
+        { label: "Semua Gudang", value: 0, id: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name, // Assuming warehouse.name is unique
+          value: warehouse.id,
+          id: warehouse.id, // Menambahkan property id
         })),
       ];
       setWarehouseFilterOptions(options);
@@ -144,6 +145,25 @@ const ReturPenjualan = () => {
 
   const handleClearSearch = () => {
     setQuery("");
+  };
+
+  const handleWarehouseFilterChange = (selectedOption) => {
+    setSelectedWarehouseFilter(selectedOption);
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleClearFilters = () => {
+    setQuery("");
+    setSelectedWarehouseFilter({ id: 0 });
+    setStartDate("");
+    setEndDate("");
   };
 
   const handleAddClick = () => {
@@ -204,13 +224,41 @@ const ReturPenjualan = () => {
           </SearchBar>
         </div>
         <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
+          <DatePicker
+            label="Dari "
+            value={startDate}
+            onChange={handleStartDateChange}
+          />
+          <DatePicker
+            label="Sampai "
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
           <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
-            onChange={(val) => setSelectedWarehouseFilter(val.value)}
+            onChange={handleWarehouseFilterChange}
           />
+          {(query ||
+            selectedWarehouseFilter.id !== 0 ||
+            startDate ||
+            endDate) && (
+            <button
+              onClick={handleClearFilters}
+              style={{
+                padding: "8px 12px",
+                background: "#f5f5f5",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                color: "#666",
+              }}
+              title="Clear all filters"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.mainTable}>
@@ -300,7 +348,24 @@ const ReturPenjualan = () => {
           <span className={styles.paginationInfo}>
             Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
             ({pagination.count || 0} items)
-            {query && ` - Filtering by: "${query}"`}
+            {(query ||
+              selectedWarehouseFilter !== 0 ||
+              startDate ||
+              endDate) && (
+              <span style={{ fontSize: "12px", color: "#666" }}>
+                {" "}
+                - Filters:
+                {query && ` Search: "${query}"`}
+                {selectedWarehouseFilter !== 0 &&
+                  ` Warehouse: ${
+                    warehouseFilterOptions.find(
+                      (w) => w.value === selectedWarehouseFilter
+                    )?.label
+                  }`}
+                {startDate && ` From: ${startDate}`}
+                {endDate && ` To: ${endDate}`}
+              </span>
+            )}
           </span>
           <button
             className={styles.paginationButton}

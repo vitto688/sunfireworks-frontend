@@ -34,6 +34,7 @@ const ReturPenjualan = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -48,7 +49,7 @@ const ReturPenjualan = () => {
     (page = 1) => {
       const params = {
         page,
-        ...(query && { search: query }),
+        ...(query && { document_number: query }),
         ...(selectedWarehouseFilter !== 0 && {
           warehouse: selectedWarehouseFilter,
         }),
@@ -92,20 +93,35 @@ const ReturPenjualan = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Filter data when filters change
+  // Debounce search query specifically
   useEffect(() => {
-    // Skip if all filters are empty/default (to prevent initial double call)
-    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
-      return;
+    if (query) {
+      setIsSearching(true);
     }
 
     const delayedSearch = setTimeout(() => {
-      fetchReturPenjualanData(1); // Reset to page 1 when filters change
-    }, 500); // Debounce search
+      if (query || selectedWarehouseFilter !== 0 || startDate || endDate) {
+        fetchReturPenjualanData(1); // Reset to page 1 when search query changes
+      }
+      setIsSearching(false);
+    }, 300); // Shorter debounce for better UX
 
-    return () => clearTimeout(delayedSearch);
+    return () => {
+      clearTimeout(delayedSearch);
+      if (query) {
+        setIsSearching(false);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, selectedWarehouseFilter, startDate, endDate]);
+  }, [query]);
+
+  // Handle filter changes (warehouse, dates) with immediate effect
+  useEffect(() => {
+    if (selectedWarehouseFilter !== 0 || startDate || endDate) {
+      fetchReturPenjualanData(1); // Reset to page 1 when filters change
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -122,6 +138,13 @@ const ReturPenjualan = () => {
   //#endregion
 
   //#region Handlers
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setQuery("");
+  };
 
   const handleAddClick = () => {
     navigate(TAMBAH_RETUR_PENJUALAN_PATH);
@@ -150,12 +173,36 @@ const ReturPenjualan = () => {
         />
       </div>
       <div className={styles.searchFilterSection}>
-        <SearchBar
-          type="text"
-          placeholder="Cari Retur Pembelian..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div style={{ position: "relative", flex: 1 }}>
+          <SearchBar
+            type="text"
+            placeholder={
+              isSearching ? "Mencari..." : "Cari berdasarkan No Faktur..."
+            }
+            value={query}
+            onChange={handleSearchChange}
+          >
+            {query && (
+              <button
+                onClick={handleClearSearch}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </SearchBar>
+        </div>
         <div className={styles.filterSection}>
           <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
           <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
@@ -178,18 +225,24 @@ const ReturPenjualan = () => {
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {loading ? (
+          {loading || isSearching ? (
             <div className={styles.loadingMessage}>
-              Loading Retur Penjualan data...
+              {isSearching
+                ? "Mencari data..."
+                : "Loading Retur Penjualan data..."}
             </div>
           ) : data.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>
-                  Tidak ada data Retur Penjualan yang tersedia.
+                  {query
+                    ? `Tidak ada data Retur Penjualan dengan No Faktur "${query}".`
+                    : "Tidak ada data Retur Penjualan yang tersedia."}
                 </h3>
                 <p className={styles.emptyStateSubtitle}>
-                  Klik tombol "Tambah" untuk menambahkan Retur Penjualan baru.
+                  {query
+                    ? "Coba cari dengan No Faktur yang berbeda."
+                    : 'Klik tombol "Tambah" untuk menambahkan Retur Penjualan baru.'}
                 </p>
               </div>
             </div>
@@ -238,20 +291,25 @@ const ReturPenjualan = () => {
           <button
             className={styles.paginationButton}
             onClick={() => handlePageChange((pagination.current_page || 1) - 1)}
-            disabled={(pagination.current_page || 1) === 1 || loading}
+            disabled={
+              (pagination.current_page || 1) === 1 || loading || isSearching
+            }
           >
             Previous
           </button>
           <span className={styles.paginationInfo}>
             Page {pagination.current_page || 1} of {pagination.total_pages || 1}{" "}
             ({pagination.count || 0} items)
+            {query && ` - Filtering by: "${query}"`}
           </span>
           <button
             className={styles.paginationButton}
             onClick={() => handlePageChange((pagination.current_page || 1) + 1)}
             disabled={
               (pagination.current_page || 1) ===
-                (pagination.total_pages || 1) || loading
+                (pagination.total_pages || 1) ||
+              loading ||
+              isSearching
             }
           >
             Next

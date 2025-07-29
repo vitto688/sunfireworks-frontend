@@ -35,6 +35,7 @@ const SPGLain = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -49,7 +50,7 @@ const SPGLain = () => {
     (page = 1) => {
       const params = {
         page,
-        ...(query && { search: query }),
+        ...(query && { document_number: query }),
         ...(selectedWarehouseFilter !== 0 && {
           warehouse: selectedWarehouseFilter,
         }),
@@ -90,20 +91,35 @@ const SPGLain = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Filter data when filters change
+  // Debounce search query specifically
   useEffect(() => {
-    // Skip if all filters are empty/default (to prevent initial double call)
-    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
-      return;
+    if (query) {
+      setIsSearching(true);
     }
 
     const delayedSearch = setTimeout(() => {
-      fetchSPGData(1); // Reset to page 1 when filters change
-    }, 500); // Debounce search
+      if (query || selectedWarehouseFilter !== 0 || startDate || endDate) {
+        fetchSPGData(1); // Reset to page 1 when search query changes
+      }
+      setIsSearching(false);
+    }, 300); // Shorter debounce for better UX
 
-    return () => clearTimeout(delayedSearch);
+    return () => {
+      clearTimeout(delayedSearch);
+      if (query) {
+        setIsSearching(false);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, selectedWarehouseFilter, startDate, endDate]);
+  }, [query]);
+
+  // Handle filter changes (warehouse, dates) with immediate effect
+  useEffect(() => {
+    if (selectedWarehouseFilter !== 0 || startDate || endDate) {
+      fetchSPGData(1); // Reset to page 1 when filters change
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedWarehouseFilter, startDate, endDate]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
@@ -120,6 +136,14 @@ const SPGLain = () => {
   //#endregion
 
   //#region Handlers
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setQuery("");
+  };
+
   const handleAddClick = () => {
     navigate(TAMBAH_SPG_LAIN_PATH);
   };
@@ -167,12 +191,36 @@ const SPGLain = () => {
         <CustomButton label="+ Tambah" onClick={handleAddClick} />
       </div>
       <div className={styles.searchFilterSection}>
-        <SearchBar
-          type="text"
-          placeholder="Cari SPG..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div style={{ position: "relative", flex: 1 }}>
+          <SearchBar
+            type="text"
+            placeholder={
+              isSearching ? "Mencari..." : "Cari berdasarkan No SPG..."
+            }
+            value={query}
+            onChange={handleSearchChange}
+          >
+            {query && (
+              <button
+                onClick={handleClearSearch}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </SearchBar>
+        </div>
         <div className={styles.filterSection}>
           <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
           <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />

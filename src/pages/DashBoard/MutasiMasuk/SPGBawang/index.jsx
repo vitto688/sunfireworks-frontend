@@ -35,6 +35,7 @@ const SPGBawang = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -49,7 +50,7 @@ const SPGBawang = () => {
     (page = 1) => {
       const params = {
         page,
-        ...(query && { search: query }),
+        ...(query && { document_number: query }),
         ...(selectedWarehouseFilter !== 0 && {
           warehouse: selectedWarehouseFilter,
         }),

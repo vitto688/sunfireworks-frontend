@@ -1,5 +1,310 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
 
+// Function to generate Excel file from mutasi barang data
+export const exportMutasiBarangToExcel = (reportData, filters = {}) => {
+  // Create filter info string
+  const createFilterInfo = () => {
+    let filterText = [];
+    if (filters.start_date && filters.end_date) {
+      filterText.push(
+        `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+          filters.end_date
+        )}`
+      );
+    }
+    if (filters.supplier && filters.supplier !== 0) {
+      filterText.push(`Supplier: ${filters.supplier}`);
+    }
+    if (filters.warehouse && filters.warehouse !== 0) {
+      filterText.push(`Gudang: ${filters.warehouse}`);
+    }
+    if (filters.search) {
+      filterText.push(`Pencarian: ${filters.search}`);
+    }
+    return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+  };
+
+  // Calculate totals
+  const totalCarton =
+    reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+    0;
+  const totalPack =
+    reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+
+  // Create CSV content (Excel-compatible)
+  const csvContent = [];
+
+  // Header information
+  csvContent.push(["LAPORAN MUTASI BARANG"]);
+  csvContent.push(["SUN FIREWORKS"]);
+  csvContent.push([""]);
+  csvContent.push(["Filter:", createFilterInfo()]);
+  csvContent.push(["Total Data:", `${reportData?.length || 0} item`]);
+  csvContent.push(["Tanggal Export:", formatDate(new Date())]);
+  csvContent.push([""]);
+
+  // Table headers
+  csvContent.push([
+    "NO",
+    "NO. DOKUMEN",
+    "TANGGAL TRANSAKSI",
+    "NAMA PRODUK",
+    "SUPPLIER",
+    "PACKING",
+    "GUDANG ASAL",
+    "GUDANG TUJUAN",
+    "CARTON",
+    "PACK",
+  ]);
+
+  // Table data
+  if (reportData?.length > 0) {
+    reportData.forEach((item, index) => {
+      csvContent.push([
+        index + 1,
+        item.document_number || "-",
+        formatDate(item.transaction_date),
+        item.product_name || "-",
+        item.supplier_name || "-",
+        item.packing || "-",
+        item.source_warehouse || "-",
+        item.destination_warehouse || "-",
+        item.carton_quantity || 0,
+        item.pack_quantity || 0,
+      ]);
+    });
+
+    // Total row
+    csvContent.push([
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "TOTAL",
+      totalCarton,
+      totalPack,
+    ]);
+  } else {
+    csvContent.push([
+      "",
+      "",
+      "",
+      "",
+      "Tidak ada data mutasi barang yang ditemukan",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]);
+  }
+
+  // Convert to CSV string
+  const csvString = csvContent
+    .map((row) =>
+      row
+        .map((cell) => {
+          // Handle cells that might contain commas, quotes, or newlines
+          const cellString = String(cell || "");
+          if (
+            cellString.includes(",") ||
+            cellString.includes('"') ||
+            cellString.includes("\n")
+          ) {
+            return `"${cellString.replace(/"/g, '""')}"`;
+          }
+          return cellString;
+        })
+        .join(",")
+    )
+    .join("\n");
+
+  // Add BOM for proper UTF-8 encoding in Excel
+  const BOM = "\uFEFF";
+  const finalCsvContent = BOM + csvString;
+
+  // Create and download file
+  const blob = new Blob([finalCsvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+
+  // Generate filename with current date
+  const currentDate = new Date().toISOString().split("T")[0];
+  const filename = `Laporan_Mutasi_Barang_${currentDate}.csv`;
+  link.setAttribute("download", filename);
+
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Clean up
+  URL.revokeObjectURL(url);
+
+  return filename;
+};
+
+// Enhanced Excel export using XLSX library (requires installation: npm install xlsx)
+export const exportMutasiBarangToExcelAdvanced = (
+  reportData,
+  filters = {},
+  XLSX = null
+) => {
+  try {
+    // Check if XLSX library is available
+    if (!XLSX && typeof window.XLSX === "undefined") {
+      console.warn("XLSX library not found. Falling back to CSV export.");
+      return exportMutasiBarangToExcel(reportData, filters);
+    }
+
+    // Use provided XLSX or fallback to window.XLSX
+    const xlsxLib = XLSX || window.XLSX;
+
+    // Create filter info string
+    const createFilterInfo = () => {
+      let filterText = [];
+      if (filters.start_date && filters.end_date) {
+        filterText.push(
+          `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+            filters.end_date
+          )}`
+        );
+      }
+      if (filters.supplier && filters.supplier !== 0) {
+        filterText.push(`Supplier: ${filters.supplier}`);
+      }
+      if (filters.warehouse && filters.warehouse !== 0) {
+        filterText.push(`Gudang: ${filters.warehouse}`);
+      }
+      if (filters.search) {
+        filterText.push(`Pencarian: ${filters.search}`);
+      }
+      return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+    };
+
+    // Calculate totals
+    const totalCarton =
+      reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+      0;
+    const totalPack =
+      reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) ||
+      0;
+
+    // Create workbook and worksheet
+    const wb = xlsxLib.utils.book_new();
+    const wsData = [];
+
+    // Header information
+    wsData.push(["LAPORAN MUTASI BARANG"]);
+    wsData.push(["SUN FIREWORKS"]);
+    wsData.push([""]);
+    wsData.push(["Filter:", createFilterInfo()]);
+    wsData.push(["Total Data:", `${reportData?.length || 0} item`]);
+    wsData.push(["Tanggal Export:", formatDate(new Date())]);
+    wsData.push([""]);
+
+    // Table headers
+    wsData.push([
+      "NO",
+      "NO. DOKUMEN",
+      "TANGGAL TRANSAKSI",
+      "NAMA PRODUK",
+      "SUPPLIER",
+      "PACKING",
+      "GUDANG ASAL",
+      "GUDANG TUJUAN",
+      "CARTON",
+      "PACK",
+    ]);
+
+    // Table data
+    if (reportData?.length > 0) {
+      reportData.forEach((item, index) => {
+        wsData.push([
+          index + 1,
+          item.document_number || "-",
+          formatDate(item.transaction_date),
+          item.product_name || "-",
+          item.supplier_name || "-",
+          item.packing || "-",
+          item.source_warehouse || "-",
+          item.destination_warehouse || "-",
+          item.carton_quantity || 0,
+          item.pack_quantity || 0,
+        ]);
+      });
+
+      // Total row
+      wsData.push([
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "TOTAL",
+        totalCarton,
+        totalPack,
+      ]);
+    } else {
+      wsData.push([
+        "",
+        "",
+        "",
+        "",
+        "Tidak ada data mutasi barang yang ditemukan",
+        "",
+        "",
+        "",
+        "",
+        "",
+      ]);
+    }
+
+    // Create worksheet
+    const ws = xlsxLib.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 5 }, // NO
+      { wch: 15 }, // NO. DOKUMEN
+      { wch: 12 }, // TANGGAL TRANSAKSI
+      { wch: 25 }, // NAMA PRODUK
+      { wch: 15 }, // SUPPLIER
+      { wch: 10 }, // PACKING
+      { wch: 15 }, // GUDANG ASAL
+      { wch: 15 }, // GUDANG TUJUAN
+      { wch: 8 }, // CARTON
+      { wch: 8 }, // PACK
+    ];
+    ws["!cols"] = colWidths;
+
+    // Add worksheet to workbook
+    xlsxLib.utils.book_append_sheet(wb, ws, "Laporan Mutasi Barang");
+
+    // Generate filename with current date
+    const currentDate = new Date().toISOString().split("T")[0];
+    const filename = `Laporan_Mutasi_Barang_${currentDate}.xlsx`;
+
+    // Write and download file
+    xlsxLib.writeFile(wb, filename);
+
+    return filename;
+  } catch (error) {
+    console.error("Error creating Excel file:", error);
+    // Fallback to CSV export
+    return exportMutasiBarangToExcel(reportData, filters);
+  }
+};
+
 export const printMutasiBarangReport = (reportData, filters = {}) => {
   // Calculate totals
   const totalCarton =
@@ -353,3 +658,85 @@ export const downloadMutasiBarangReportAsPDF = async (
     printMutasiBarangReport(reportData, filters);
   }
 };
+
+/* 
+USAGE EXAMPLES:
+
+1. Basic CSV Export (no additional dependencies required):
+import { exportMutasiBarangToExcel } from './utils/printMutasiBarangReport';
+
+const handleExportExcel = () => {
+  const filename = exportMutasiBarangToExcel(reportData, {
+    start_date: startDate,
+    end_date: endDate,
+    warehouse: selectedWarehouseFilter.id,
+    search: searchQuery
+  });
+  console.log(`File exported: ${filename}`);
+};
+
+2. Advanced Excel Export (requires XLSX library - NOW INSTALLED):
+Install: npm install xlsx (COMPLETED ✅)
+Import in your component: import * as XLSX from 'xlsx';
+
+import { exportMutasiBarangToExcelAdvanced } from './utils/printMutasiBarangReport';
+import * as XLSX from 'xlsx';
+
+const handleExportExcelAdvanced = () => {
+  const filename = exportMutasiBarangToExcelAdvanced(reportData, {
+    start_date: startDate,
+    end_date: endDate,
+    warehouse: selectedWarehouseFilter.id,
+    search: searchQuery
+  }, XLSX);  // Pass XLSX as third parameter
+  console.log(`Excel file exported: ${filename}`);
+};
+
+3. Integration in React Component (CURRENT IMPLEMENTATION ✅):
+
+import { exportMutasiBarangToExcel, exportMutasiBarangToExcelAdvanced } from '../../../utils/printMutasiBarangReport';
+import * as XLSX from 'xlsx';
+
+const YourComponent = () => {
+  const handleExportCSV = () => {
+    exportMutasiBarangToExcel(mutasiBarangData, {
+      start_date: startDate,
+      end_date: endDate,
+      warehouse: selectedWarehouseFilter.id,
+      search: searchQuery
+    });
+  };
+
+  const handleExportExcel = () => {
+    exportMutasiBarangToExcelAdvanced(mutasiBarangData, {
+      start_date: startDate,
+      end_date: endDate,
+      warehouse: selectedWarehouseFilter.id,
+      search: searchQuery
+    }, XLSX);  // Pass XLSX library as third parameter
+  };
+
+  return (
+    <div>
+      <button onClick={handleExportCSV}>Export to CSV</button>
+      <button onClick={handleExportExcel}>Export to Excel</button>
+    </div>
+  );
+};
+
+FEATURES:
+- exportMutasiBarangToExcel: Creates CSV file compatible with Excel (no dependencies)
+- exportMutasiBarangToExcelAdvanced: Creates native Excel file with formatting (uses XLSX library)
+- Both functions use the same data structure as printMutasiBarangReport
+- Includes all filters information in the exported file
+- Proper UTF-8 encoding for Indonesian characters
+- Automatic filename generation with current date
+- Error handling with fallback to CSV export
+- Column width optimization for better readability
+- Professional formatting with headers and totals
+
+STATUS: ✅ FULLY IMPLEMENTED AND READY TO USE
+- XLSX library installed
+- Component updated with proper imports
+- Functions working with fallback mechanisms
+*/

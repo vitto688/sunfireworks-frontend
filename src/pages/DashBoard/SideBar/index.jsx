@@ -50,10 +50,13 @@ const SideBar = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
+  const [masterDataMenu, setMasterDataMenu] = useState(null);
   const [pengaturanSubMenus, setPengaturanSubMenus] = useState([]);
 
   const { expandedMenus } = useSelector((state) => state.menu);
   const { user } = useSelector((state) => state.auth);
+
+  const firstPath = pathname.split("/")[1];
 
   useEffect(() => {
     if (user?.role === null || user?.role === 1) {
@@ -78,9 +81,58 @@ const SideBar = () => {
         },
       ]);
     }
-  }, [user, pathname]);
 
-  const firstPath = pathname.split("/")[1];
+    if (user?.role !== 3) {
+      setMasterDataMenu(
+        <>
+          <div className={styles.devider}></div>
+          <SideMenuItem
+            name="Master Data"
+            path="/master-data"
+            icon={
+              <MasterDataIcon
+                className={`${styles.icon} ${
+                  firstPath === "/master-data" && styles.selected
+                }`}
+              />
+            }
+            isSelected={firstPath === "/master-data"}
+            isExpanded={expandedMenus.includes("/master-data")}
+            onExpandCollapse={() => {
+              dispatch(expandMenu({ path: "/master-data" }));
+            }}
+            subMenus={[
+              {
+                name: "Data Produk",
+                to: PRODUK_PATH,
+                isSelected: PRODUK_PATH === pathname,
+              },
+              {
+                name: "Data Kategori Produk",
+                to: KATEGORI_PRODUK_PATH,
+                isSelected: KATEGORI_PRODUK_PATH === pathname,
+              },
+              {
+                name: "Data Eksportir",
+                to: EKSPORTIR_PATH,
+                isSelected: EKSPORTIR_PATH === pathname,
+              },
+              {
+                name: "Data Pelanggan",
+                to: PELANGGAN_PATH,
+                isSelected: PELANGGAN_PATH === pathname,
+              },
+              {
+                name: "Data Gudang",
+                to: GUDANG_PATH,
+                isSelected: GUDANG_PATH === pathname,
+              },
+            ]}
+          />
+        </>
+      );
+    }
+  }, [user, pathname, dispatch, expandedMenus, firstPath]);
 
   return (
     <div className={styles.sideBarSection}>
@@ -109,50 +161,8 @@ const SideBar = () => {
         }
         isSelected={BERANDA_PATH === pathname}
       />
-      <div className={styles.devider}></div>
-      <SideMenuItem
-        name="Master Data"
-        path="/master-data"
-        icon={
-          <MasterDataIcon
-            className={`${styles.icon} ${
-              firstPath === "/master-data" && styles.selected
-            }`}
-          />
-        }
-        isSelected={firstPath === "/master-data"}
-        isExpanded={expandedMenus.includes("/master-data")}
-        onExpandCollapse={() => {
-          dispatch(expandMenu({ path: "/master-data" }));
-        }}
-        subMenus={[
-          {
-            name: "Data Produk",
-            to: PRODUK_PATH,
-            isSelected: PRODUK_PATH === pathname,
-          },
-          {
-            name: "Data Kategori Produk",
-            to: KATEGORI_PRODUK_PATH,
-            isSelected: KATEGORI_PRODUK_PATH === pathname,
-          },
-          {
-            name: "Data Eksportir",
-            to: EKSPORTIR_PATH,
-            isSelected: EKSPORTIR_PATH === pathname,
-          },
-          {
-            name: "Data Pelanggan",
-            to: PELANGGAN_PATH,
-            isSelected: PELANGGAN_PATH === pathname,
-          },
-          {
-            name: "Data Gudang",
-            to: GUDANG_PATH,
-            isSelected: GUDANG_PATH === pathname,
-          },
-        ]}
-      />
+      {masterDataMenu}
+
       <div className={styles.devider}></div>
       <SideMenuItem
         name="Mutasi Masuk"

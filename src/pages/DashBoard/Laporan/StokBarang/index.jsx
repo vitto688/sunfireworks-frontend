@@ -295,9 +295,8 @@ const LaporanStokBarang = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
-          <div className={styles.tableHeaderItem}>Kategori</div>
-          <div className={styles.tableHeaderItem}>Supplier</div>
           <div className={styles.tableHeaderItem}>Packing</div>
+          <div className={styles.tableHeaderItem}>KP</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
@@ -320,11 +319,8 @@ const LaporanStokBarang = () => {
                 </div>
                 <div className={styles.tableRowItem}>{item.product_code}</div>
                 <div className={styles.tableRowItem}>{item.product_name}</div>
-                <div className={styles.tableRowItem}>
-                  {item.product_category}
-                </div>
-                <div className={styles.tableRowItem}>{item.supplier_name}</div>
                 <div className={styles.tableRowItem}>{item.packing}</div>
+                <div className={styles.tableRowItem}>{item.supplier_name}</div>
                 <div className={styles.tableRowItem}>{item.warehouse_name}</div>
                 <div className={styles.tableRowItem}>
                   {formatNumberWithDot(item.carton_quantity)}

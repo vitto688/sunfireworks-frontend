@@ -32,10 +32,13 @@ const SPKBarang = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
-  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
-
+  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState({
+    id: 0,
+  });
+  const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -49,9 +52,9 @@ const SPKBarang = () => {
     (page = 1) => {
       const params = {
         page,
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(query && { document_number: query }),
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id,
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -92,28 +95,37 @@ const SPKBarang = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Filter data when filters change
+  // Debounced search effect
   useEffect(() => {
-    // Skip if all filters are empty/default (to prevent initial double call)
-    if (!query && !startDate && !endDate && selectedWarehouseFilter === 0) {
+    if (!query) {
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     const delayedSearch = setTimeout(() => {
-      fetchSPKData(1); // Reset to page 1 when filters change
-    }, 500); // Debounce search
+      fetchSPKData(1);
+      setIsSearching(false);
+    }, 300);
 
-    return () => clearTimeout(delayedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, selectedWarehouseFilter, startDate, endDate]);
+    return () => {
+      clearTimeout(delayedSearch);
+      setIsSearching(false);
+    };
+  }, [query, fetchSPKData]);
+
+  // Filter changes effect (immediate)
+  useEffect(() => {
+    fetchSPKData(1);
+  }, [selectedWarehouseFilter, startDate, endDate, fetchSPKData]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
-        { label: "Semua Gudang", value: 0 },
-        ...warehouses.map((warehouse) => ({
-          label: warehouse.name,
-          value: warehouse.name, // Assuming warehouse.name is unique
+        { value: { id: 0, name: "Semua Gudang" }, label: "Semua Gudang" },
+        ...warehouses.map((item) => ({
+          value: { id: item.id, name: item.warehouse_name },
+          label: item.warehouse_name,
         })),
       ];
       setWarehouseFilterOptions(options);
@@ -123,16 +135,48 @@ const SPKBarang = () => {
   //#endregion
 
   //#region Handlers
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setQuery("");
+  };
+
+  const handleWarehouseFilterChange = (selectedOption) => {
+    setSelectedWarehouseFilter(selectedOption.value);
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleClearFilters = () => {
+    setQuery("");
+    setSelectedWarehouseFilter({ id: 0 });
+    setStartDate("");
+    setEndDate("");
+  };
 
   const handleAddClick = () => {
     navigate(TAMBAH_SPK_BARANG_PATH);
   };
 
-  const handleDelete = (item) => {
-    if (item && item.id) {
-      dispatch(deleteSPKRequest(item.id));
+  const handleDelete = () => {
+    if (selectedItemToDelete) {
+      dispatch(deleteSPKRequest(selectedItemToDelete.id));
+      setModalOpen(false);
+      setSelectedItemToDelete(null);
     }
-    setModalOpen(false);
+  };
+
+  const handleDeleteClick = (item) => {
+    setSelectedItemToDelete(item);
+    setModalOpen(true);
   };
 
   const handleItemClick = (value) => {
@@ -151,20 +195,72 @@ const SPKBarang = () => {
         />
       </div>
       <div className={styles.searchFilterSection}>
-        <SearchBar
-          type="text"
-          placeholder="Cari SPK Barang..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div style={{ position: "relative", flex: 1 }}>
+          <SearchBar
+            type="text"
+            placeholder={
+              isSearching ? "Mencari..." : "Cari berdasarkan No SPK..."
+            }
+            value={query}
+            onChange={handleSearchChange}
+          >
+            {query && (
+              <button
+                onClick={handleClearSearch}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </SearchBar>
+        </div>
         <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
-          <FilterDropdown
+          <DatePicker
+            label="Dari "
+            value={startDate}
+            onChange={handleStartDateChange}
+          />
+          <DatePicker
+            label="Sampai "
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
+          {/* <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
-            onChange={(val) => setSelectedWarehouseFilter(val.value)}
-          />
+            onChange={handleWarehouseFilterChange}
+          /> */}
+          {(query ||
+            selectedWarehouseFilter.id !== 0 ||
+            startDate ||
+            endDate) && (
+            <button
+              onClick={handleClearFilters}
+              style={{
+                padding: "8px 12px",
+                background: "#f5f5f5",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                color: "#666",
+              }}
+              title="Clear all filters"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.returPenjualanTable}>
@@ -174,7 +270,7 @@ const SPKBarang = () => {
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
           <div className={styles.tableHeaderItem}>No SPK</div>
           <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
-          <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
+          {/* <div className={styles.tableHeaderItem}>Gudang Tujuan</div> */}
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
@@ -203,7 +299,7 @@ const SPKBarang = () => {
                 <CustomDeleteButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    setModalOpen(item);
+                    handleDeleteClick(item);
                   }}
                 />
                 <div className={styles.tableRowItem}>
@@ -218,9 +314,9 @@ const SPKBarang = () => {
                 <div className={styles.tableRowItem}>
                   {item.customer_name || "-"}
                 </div>
-                <div className={styles.tableRowItem}>
+                {/* <div className={styles.tableRowItem}>
                   {item.warehouse_name || "-"}
-                </div>
+                </div> */}
                 <div className={styles.tableRowItem}>
                   {item.user_username || "-"}
                 </div>
@@ -259,10 +355,15 @@ const SPKBarang = () => {
       )}
 
       <ConfirmDeleteModal
-        label="Apakah anda yakin untuk menghapus SPK ini?"
-        open={!!modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={() => handleDelete(modalOpen)}
+        label={`Apakah anda yakin untuk menghapus SPK "${
+          selectedItemToDelete?.document_number || "ini"
+        }"?`}
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedItemToDelete(null);
+        }}
+        onConfirm={handleDelete}
       />
     </div>
   );

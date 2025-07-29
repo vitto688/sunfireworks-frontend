@@ -32,12 +32,17 @@ const SuratJalan = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
-  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
+  const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState({
+    id: 0,
+  });
   const [customerFilterOptions, setCustomerFilterOptions] = useState([]);
-  const [selectedCustomerFilter, setSelectedCustomerFilter] = useState(0);
-
+  const [selectedCustomerFilter, setSelectedCustomerFilter] = useState({
+    id: 0,
+  });
+  const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -51,12 +56,12 @@ const SuratJalan = () => {
     (page = 1) => {
       const params = {
         page,
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(query && { document_number: query }),
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id,
         }),
-        ...(selectedCustomerFilter !== 0 && {
-          customer: selectedCustomerFilter,
+        ...(selectedCustomerFilter.id !== 0 && {
+          customer: selectedCustomerFilter.id,
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -104,40 +109,44 @@ const SuratJalan = () => {
     setFilteredData(data || []);
   }, [data]);
 
-  // Filter data when filters change
+  // Debounced search effect
   useEffect(() => {
-    // Skip if all filters are empty/default (to prevent initial double call)
-    if (
-      !query &&
-      !startDate &&
-      !endDate &&
-      selectedWarehouseFilter === 0 &&
-      selectedCustomerFilter === 0
-    ) {
+    if (!query) {
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     const delayedSearch = setTimeout(() => {
-      fetchSuratJalanData(1); // Reset to page 1 when filters change
-    }, 500); // Debounce search
+      fetchSuratJalanData(1);
+      setIsSearching(false);
+    }, 300);
 
-    return () => clearTimeout(delayedSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      clearTimeout(delayedSearch);
+      setIsSearching(false);
+    };
+  }, [query, fetchSuratJalanData]);
+
+  // Filter changes effect (immediate)
+  useEffect(() => {
+    fetchSuratJalanData(1);
   }, [
-    query,
     selectedWarehouseFilter,
     selectedCustomerFilter,
     startDate,
     endDate,
+    fetchSuratJalanData,
   ]);
 
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
-        { label: "Semua Gudang", value: 0 },
+        { label: "Semua Gudang", value: 0, id: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name, // Assuming warehouse.name is unique
+          value: warehouse.id,
+          id: warehouse.id, // Menambahkan property id
         })),
       ];
       setWarehouseFilterOptions(options);
@@ -145,12 +154,13 @@ const SuratJalan = () => {
   }, [warehouses]);
 
   useEffect(() => {
-    if (customers && customers.length > 0) {
+    if (customers.length > 0) {
       const options = [
-        { label: "Semua Pelanggan", value: 0 },
+        { label: "Semua Pelanggan", value: 0, id: 0 },
         ...customers.map((customer) => ({
           label: customer.name,
-          value: customer.name, // Assuming customer.name is unique
+          value: customer.id,
+          id: customer.id, // Menambahkan property id
         })),
       ];
       setCustomerFilterOptions(options);
@@ -160,16 +170,53 @@ const SuratJalan = () => {
   //#endregion
 
   //#region Handlers
+  const handleSearchChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setQuery("");
+  };
+
+  const handleWarehouseFilterChange = (selectedOption) => {
+    setSelectedWarehouseFilter(selectedOption);
+  };
+
+  const handleCustomerFilterChange = (selectedOption) => {
+    setSelectedCustomerFilter(selectedOption);
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleClearFilters = () => {
+    setQuery("");
+    setSelectedWarehouseFilter({ id: 0 });
+    setSelectedCustomerFilter({ id: 0 });
+    setStartDate("");
+    setEndDate("");
+  };
 
   const handleAddClick = () => {
     navigate(TAMBAH_SURAT_JALAN_PATH);
   };
 
-  const handleDelete = (item) => {
-    if (item && item.id) {
-      dispatch(deleteSuratJalanRequest(item.id));
+  const handleDelete = () => {
+    if (selectedItemToDelete) {
+      dispatch(deleteSuratJalanRequest(selectedItemToDelete.id));
+      setModalOpen(false);
+      setSelectedItemToDelete(null);
     }
-    setModalOpen(false);
+  };
+
+  const handleDeleteClick = (item) => {
+    setSelectedItemToDelete(item);
+    setModalOpen(true);
   };
 
   const handleItemClick = (value) => {
@@ -188,25 +235,78 @@ const SuratJalan = () => {
         />
       </div>
       <div className={styles.searchFilterSection}>
-        <SearchBar
-          type="text"
-          placeholder="Cari Surat Jalan..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div style={{ position: "relative", flex: 1 }}>
+          <SearchBar
+            type="text"
+            placeholder={
+              isSearching ? "Mencari..." : "Cari berdasarkan No Surat Jalan..."
+            }
+            value={query}
+            onChange={handleSearchChange}
+          >
+            {query && (
+              <button
+                onClick={handleClearSearch}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  color: "#666",
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </SearchBar>
+        </div>
         <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
+          <DatePicker
+            label="Dari "
+            value={startDate}
+            onChange={handleStartDateChange}
+          />
+          <DatePicker
+            label="Sampai "
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
           <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
-            onChange={(val) => setSelectedWarehouseFilter(val.value)}
+            onChange={handleWarehouseFilterChange}
           />
           <FilterDropdown
             options={customerFilterOptions}
             placeholder="Filter Pelanggan"
-            onChange={(val) => setSelectedCustomerFilter(val.value)}
+            onChange={handleCustomerFilterChange}
           />
+          {(query ||
+            selectedWarehouseFilter.id !== 0 ||
+            selectedCustomerFilter.id !== 0 ||
+            startDate ||
+            endDate) && (
+            <button
+              onClick={handleClearFilters}
+              style={{
+                padding: "8px 12px",
+                background: "#f5f5f5",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                color: "#666",
+              }}
+              title="Clear all filters"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.returPenjualanTable}>
@@ -249,7 +349,7 @@ const SuratJalan = () => {
                 <CustomDeleteButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    setModalOpen(item);
+                    handleDeleteClick(item);
                   }}
                 />
                 <div className={styles.tableRowItem}>
@@ -313,10 +413,15 @@ const SuratJalan = () => {
       )}
 
       <ConfirmDeleteModal
-        label="Apakah anda yakin untuk menghapus Surat Jalan ini?"
-        open={!!modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={() => handleDelete(modalOpen)}
+        label={`Apakah anda yakin untuk menghapus Surat Jalan "${
+          selectedItemToDelete?.document_number || "ini"
+        }"?`}
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedItemToDelete(null);
+        }}
+        onConfirm={handleDelete}
       />
     </div>
   );

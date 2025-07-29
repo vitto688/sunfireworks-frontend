@@ -144,7 +144,22 @@ const UbahStok = () => {
           defaultValue={stok.product_name ?? ""}
           disabled={true}
         />
-
+        <InputField
+          label="Packing"
+          type="text"
+          id="packing"
+          name="packing"
+          defaultValue={stok.packing ?? ""}
+          disabled={true}
+        />
+        <InputField
+          label="KP"
+          type="text"
+          id="kp"
+          name="kp"
+          defaultValue={stok.supplier_name ?? ""}
+          disabled={true}
+        />
         <InputField
           label="Gudang"
           type="text"

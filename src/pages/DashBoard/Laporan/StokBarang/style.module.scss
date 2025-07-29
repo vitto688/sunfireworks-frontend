@@ -64,10 +64,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns: 60px 120px 250px 120px 120px 120px 120px 80px 80px;
+            grid-template-columns: 60px 120px 250px 120px 120px  120px 80px 80px;
             align-items: center;
             padding: 15px 10px;
-            min-width: 1170px; 
+            min-width: 1040px; 
             border-bottom: 1px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -84,7 +84,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            min-width: 1190px;
+            min-width: 1060px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -94,7 +94,7 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns: 60px 120px 250px 120px 120px 120px 120px 80px 80px;
+                grid-template-columns: 60px 120px 250px 120px 120px 120px 80px 80px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;

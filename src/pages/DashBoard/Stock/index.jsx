@@ -38,6 +38,7 @@ const Stock = () => {
   const { stocks, message, errorMessage, errorCode } = useSelector(
     (state) => state.stock
   );
+  const { user } = useSelector((state) => state.auth);
 
   const { warehouses, products } = useSelector((state) => state.master);
 
@@ -48,8 +49,10 @@ const Stock = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const filteredStocks = filteredData.filter((stock) =>
-      stock.product_name.toLowerCase().includes(query.toLowerCase())
+    const filteredStocks = filteredData.filter(
+      (stock) =>
+        stock.product_name.toLowerCase().includes(query.toLowerCase()) ||
+        stock.product_code.toLowerCase().includes(query.toLowerCase())
     );
     setStok(filteredStocks);
   }, [query, filteredData]);
@@ -123,7 +126,7 @@ const Stock = () => {
   // };
 
   const handleItemClick = (item) => {
-    navigate(UBAH_STOK_PATH, { state: item });
+    if (user?.role !== 3) navigate(UBAH_STOK_PATH, { state: item });
   };
   //#endregion
 
@@ -165,6 +168,8 @@ const Stock = () => {
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
+          <div className={styles.tableHeaderItem}>Packing</div>
+          <div className={styles.tableHeaderItem}>KP</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
@@ -183,9 +188,14 @@ const Stock = () => {
               <div className={styles.tableRowItem}>{stokItem.product_code}</div>
               {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
               <div className={styles.tableRowItem}>{stokItem.product_name}</div>
+              <div className={styles.tableRowItem}>{stokItem.packing}</div>
+              <div className={styles.tableRowItem}>
+                {stokItem.supplier_name}
+              </div>
               <div className={styles.tableRowItem}>
                 {stokItem.warehouse_name}
               </div>
+
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.carton_quantity)}
               </div>

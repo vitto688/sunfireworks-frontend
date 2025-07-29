@@ -46,6 +46,7 @@ const UbahSPKBarang = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
+  const [globalStock, setGlobalStock] = useState([]);
 
   const { stocks } = useSelector((state) => state.stock);
   const { loading, message, errorMessage, errorCode } = useSelector(
@@ -87,6 +88,28 @@ const UbahSPKBarang = () => {
     setTotalAll(totalCarton + totalPack);
   }, [stok]);
 
+  useEffect(() => {
+    // Initialize global stock when stocks change
+
+    if (stocks && stocks.length > 0) {
+      const gStock = {};
+      stocks.forEach((stock) => {
+        if (gStock[stock.product]) {
+          gStock[stock.product].carton_quantity += stock.carton_quantity;
+          gStock[stock.product].pack_quantity += stock.pack_quantity;
+        } else {
+          gStock[stock.product] = { ...stock };
+        }
+      });
+
+      console.log("Global Stock:", gStock, Object.values(gStock));
+      // Convert object to array for easier mapping
+
+      setGlobalStock(Object.values(gStock));
+    } else {
+      setGlobalStock([]);
+    }
+  }, [stocks]);
   //#endregion
 
   //#region Handlers
@@ -99,7 +122,6 @@ const UbahSPKBarang = () => {
 
     // Prepare data for API
     const spkData = {
-      warehouse: argument.warehouse,
       customer: argument.customer,
       notes: keterangan,
       items: stok.map((item) => ({
@@ -134,10 +156,7 @@ const UbahSPKBarang = () => {
     e.stopPropagation();
 
     setWarehouseStock(
-      stocks.find(
-        (s) =>
-          s.warehouse === argument?.warehouse && s.product === value?.product
-      ) || null
+      globalStock.find((s) => s.product === value?.product) || null
     );
     setEditModalOpen(value);
   };
@@ -220,14 +239,7 @@ const UbahSPKBarang = () => {
             defaultValue={argument?.customer_name ?? ""}
             disabled={true}
           />
-          <InputField
-            label="Gudang"
-            type="text"
-            id="gudang"
-            name="gudang"
-            defaultValue={argument?.warehouse_name ?? ""}
-            disabled={true}
-          />
+
           <InputField
             label="Keterangan"
             type="text"
@@ -296,22 +308,36 @@ const UbahSPKBarang = () => {
       </div>
 
       <AddStockModal
-        stocks={stocks.filter(
-          (stock) => stock.warehouse === argument?.warehouse
-        )}
+        stocks={globalStock}
+        disabledGudang={true}
+        enabledQuantities={true}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <AddStockModal
+        isEdit={true}
+        disabledGudang={true}
+        enabledQuantities={true}
+        stocks={globalStock}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModal
         stock={editModalOpen}
         cartonQuantity={warehouseStock?.carton_quantity ?? 0}
         packQuantity={warehouseStock?.pack_quantity ?? 0}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

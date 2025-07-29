@@ -306,11 +306,14 @@ const UbahSPB = () => {
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
-      <EditStockModal
-        stock={editModalOpen}
-        cartonQuantity={warehouseStock?.carton_quantity ?? 0}
-        packQuantity={warehouseStock?.pack_quantity ?? 0}
+      <AddStockModal
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === argument?.id)}
+        cartonQuantity={totalCarton}
         isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
       />

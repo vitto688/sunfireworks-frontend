@@ -117,14 +117,14 @@ const TambahSPKBarang = () => {
   //#region Handlers
   const handleSimpanClick = () => {
     // Validate required fields
-    if (!gudang || !customer || stok.length === 0) {
+    if (!customer || stok.length === 0) {
       console.error("Harap lengkapi semua field yang diperlukan");
       return;
     }
 
     // Prepare data for API
     const spkData = {
-      warehouse: gudang.id || gudang,
+      // warehouse: gudang.id || gudang,
       customer: customer.id,
       notes: keterangan,
       items: stok.map((item) => ({
@@ -308,19 +308,35 @@ const TambahSPKBarang = () => {
 
       <AddStockModal
         stocks={globalStock}
+        disabledGudang={true}
+        enabledQuantities={true}
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleSaveAddStok}
       />
 
-      <EditStockModal
+      <AddStockModal
+        isEdit={true}
+        disabledGudang={true}
+        enabledQuantities={true}
+        stocks={globalStock}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
+
+      {/* <EditStockModal
         stock={editModalOpen}
         cartonQuantity={warehouseStock?.carton_quantity ?? 0}
         packQuantity={warehouseStock?.pack_quantity ?? 0}
         isOpen={editModalOpen !== null}
         onClose={() => setEditModalOpen(null)}
         onSave={handleSaveEditStok}
-      />
+      /> */}
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

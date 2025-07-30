@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -32,81 +32,126 @@ const Stock = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState(0);
-  const [productFilterOptions, setProductFilterOptions] = useState([]);
-  const [selectedProductFilter, setSelectedProductFilter] = useState(0);
+  const [categoryFilterOptions, setCategoryFilterOptions] = useState([]);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(0);
+  const [supplierFilterOptions, setSupplierFilterOptions] = useState([]);
+  const [selectedSupplierFilter, setSelectedSupplierFilter] = useState(0);
 
   const { stocks, message, errorMessage, errorCode } = useSelector(
     (state) => state.stock
   );
   const { user } = useSelector((state) => state.auth);
 
-  const { warehouses, products } = useSelector((state) => state.master);
+  const { warehouses, categories, suppliers } = useSelector(
+    (state) => state.master
+  );
 
+  //#region Helper Functions
+  // Build filter options for dropdowns
+  const buildFilterOptions = (items, labelKey, valueKey, allLabel) => {
+    return [
+      { label: allLabel, value: 0 },
+      ...items.map((item) => ({
+        label: item[labelKey],
+        value: item[valueKey],
+      })),
+    ];
+  };
+  //#endregion
+
+  //#region Effects
   useEffect(() => {
     // Fetch stock data from API or state management
-    // For now, we are using dummy data
     dispatch(fetchStocksRequest());
   }, [dispatch]);
 
+  // Apply search filter to already filtered data
   useEffect(() => {
-    const filteredStocks = filteredData.filter(
+    if (!query.trim()) {
+      setStok(filteredData);
+      return;
+    }
+
+    const searchedStocks = filteredData.filter(
       (stock) =>
         stock.product_name.toLowerCase().includes(query.toLowerCase()) ||
-        stock.product_code.toLowerCase().includes(query.toLowerCase())
+        stock.product_code.toLowerCase().includes(query.toLowerCase()) ||
+        stock.supplier_name.toLowerCase().includes(query.toLowerCase())
     );
-    setStok(filteredStocks);
+    setStok(searchedStocks);
   }, [query, filteredData]);
 
-  // Filter stocks
+  // Build filter options when master data changes
   useEffect(() => {
     if (warehouses.length > 0) {
-      const options = [
-        { label: "Semua Gudang", value: 0 },
-        ...warehouses.map((warehouse) => ({
-          label: warehouse.name,
-          value: warehouse.id,
-        })),
-      ];
+      const options = buildFilterOptions(
+        warehouses,
+        "name",
+        "id",
+        "Semua Gudang"
+      );
       setWarehouseFilterOptions(options);
     }
   }, [warehouses]);
 
   useEffect(() => {
-    if (products.length > 0) {
-      const options = [
-        { label: "Semua Produk", value: 0 },
-        ...products.map((product) => ({
-          label: product.name,
-          value: product.name,
-        })),
-      ];
-      setProductFilterOptions(options);
+    if (categories.length > 0) {
+      const options = buildFilterOptions(
+        categories,
+        "name",
+        "name",
+        "Semua Kategori"
+      );
+      setCategoryFilterOptions(options);
     }
-  }, [products]);
+  }, [categories]);
 
   useEffect(() => {
-    if (selectedWarehouseFilter === 0 && selectedProductFilter === 0) {
-      setFilteredData(stocks);
-    } else if (selectedWarehouseFilter !== 0 && selectedProductFilter === 0) {
-      const filteredStocks = stocks.filter(
+    if (suppliers.length > 0) {
+      const options = buildFilterOptions(
+        suppliers,
+        "name",
+        "name",
+        "Semua Eksportir"
+      );
+      setSupplierFilterOptions(options);
+    }
+  }, [suppliers]);
+
+  // Filter stocks based on selected filters
+  useEffect(() => {
+    let filteredStocks = stocks;
+
+    // Apply warehouse filter
+    if (selectedWarehouseFilter !== 0) {
+      filteredStocks = filteredStocks.filter(
         (stock) => stock.warehouse === selectedWarehouseFilter
       );
-      setFilteredData(filteredStocks);
-    } else if (selectedWarehouseFilter === 0 && selectedProductFilter !== 0) {
-      const filteredStocks = stocks.filter(
-        (stock) => stock.product_name === selectedProductFilter
-      );
-      setFilteredData(filteredStocks);
-    } else {
-      const filteredStocks = stocks.filter(
-        (stock) =>
-          stock.warehouse === selectedWarehouseFilter &&
-          stock.product_name === selectedProductFilter
-      );
-      setFilteredData(filteredStocks);
     }
-  }, [selectedWarehouseFilter, selectedProductFilter, stocks]);
 
+    // Apply category filter
+    if (selectedCategoryFilter !== 0) {
+      filteredStocks = filteredStocks.filter(
+        (stock) => stock.product_category === selectedCategoryFilter
+      );
+    }
+
+    // Apply supplier filter
+    if (selectedSupplierFilter !== 0) {
+      filteredStocks = filteredStocks.filter(
+        (stock) => stock.supplier_name === selectedSupplierFilter
+      );
+    }
+
+    setFilteredData(filteredStocks);
+  }, [
+    selectedWarehouseFilter,
+    selectedCategoryFilter,
+    selectedSupplierFilter,
+    stocks,
+  ]);
+
+  // Handle success/error messages
   useEffect(() => {
     if (message !== null) {
       alert(message);
@@ -117,6 +162,7 @@ const Stock = () => {
     }
     dispatch(resetStockMessages());
   }, [message, errorMessage, errorCode, navigate, dispatch]);
+  //#endregion
 
   //#endregion
 
@@ -128,6 +174,23 @@ const Stock = () => {
   const handleItemClick = (item) => {
     if (user?.role !== 3) navigate(UBAH_STOK_PATH, { state: item });
   };
+
+  // Calculate totals for footer
+  const totals = useMemo(() => {
+    const totalCarton = stok.reduce(
+      (sum, item) => sum + (item.carton_quantity || 0),
+      0
+    );
+    const totalPack = stok.reduce(
+      (sum, item) => sum + (item.pack_quantity || 0),
+      0
+    );
+
+    return {
+      carton: totalCarton,
+      pack: totalPack,
+    };
+  }, [stok]);
   //#endregion
 
   return (
@@ -150,9 +213,14 @@ const Stock = () => {
         </SearchBar>
         <div className={styles.filterSection}>
           <FilterDropdown
-            options={productFilterOptions}
-            placeholder="Filter Produk"
-            onChange={(val) => setSelectedProductFilter(val.value)}
+            options={categoryFilterOptions}
+            placeholder="Filter Kategori"
+            onChange={(val) => setSelectedCategoryFilter(val.value)}
+          />
+          <FilterDropdown
+            options={supplierFilterOptions}
+            placeholder="Filter Eksportir"
+            onChange={(val) => setSelectedSupplierFilter(val.value)}
           />
           <FilterDropdown
             options={warehouseFilterOptions}
@@ -177,37 +245,62 @@ const Stock = () => {
           <div className={styles.tableHeaderItem}>Gudang</div> */}
         </div>
         <div className={styles.tableBody}>
-          {stok.map((stokItem, index) => (
-            <div
-              role="presentation"
-              key={stokItem.id}
-              className={styles.tableRow}
-              onClick={() => handleItemClick(stokItem)}
-            >
-              <div className={styles.tableRowItem}>{index + 1}</div>
-              <div className={styles.tableRowItem}>{stokItem.product_code}</div>
-              {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
-              <div className={styles.tableRowItem}>{stokItem.product_name}</div>
-              <div className={styles.tableRowItem}>{stokItem.packing}</div>
-              <div className={styles.tableRowItem}>
-                {stokItem.supplier_name}
-              </div>
-              <div className={styles.tableRowItem}>
-                {stokItem.warehouse_name}
-              </div>
+          {stok.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>Tidak ada data stok yang ditemukan</p>
+            </div>
+          ) : (
+            stok.map((stokItem, index) => (
+              <div
+                role="presentation"
+                key={stokItem.id}
+                className={styles.tableRow}
+                onClick={() => handleItemClick(stokItem)}
+              >
+                <div className={styles.tableRowItem}>{index + 1}</div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.product_code}
+                </div>
+                {/* <div className={styles.tableRowItem}>{stokItem.barcode}</div> */}
+                <div className={styles.tableRowItem}>
+                  {stokItem.product_name}
+                </div>
+                <div className={styles.tableRowItem}>{stokItem.packing}</div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.supplier_name}
+                </div>
+                <div className={styles.tableRowItem}>
+                  {stokItem.warehouse_name}
+                </div>
 
-              <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.carton_quantity)}
-              </div>
-              <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.pack_quantity)}
-              </div>
-              {/* <div className={styles.tableRowItem}>{stokItem.quantity}</div>
+                <div className={`${styles.tableRowItem} ${styles.quantity}`}>
+                  {formatNumberWithDot(stokItem.carton_quantity)}
+                </div>
+                <div className={`${styles.tableRowItem} ${styles.quantity}`}>
+                  {formatNumberWithDot(stokItem.pack_quantity)}
+                </div>
+                {/* <div className={styles.tableRowItem}>{stokItem.quantity}</div>
               <div className={styles.tableRowItem}>
                 {product.warehouse_name}
               </div> */}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Footer with totals */}
+        <div className={styles.tableFooter}>
+          <div className={styles.footerContent}>
+            <div className={`${styles.footerItem} ${styles.totalItems}`}>
+              <strong>Total Items: {stok.length}</strong>
             </div>
-          ))}
+            <div className={`${styles.footerItem} ${styles.totalKarton}`}>
+              <strong>{formatNumberWithDot(totals.carton)}</strong>
+            </div>
+            <div className={`${styles.footerItem} ${styles.totalPack}`}>
+              <strong>{formatNumberWithDot(totals.pack)}</strong>
+            </div>
+          </div>
         </div>
       </div>
     </div>

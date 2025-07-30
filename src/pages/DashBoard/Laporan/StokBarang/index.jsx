@@ -260,7 +260,7 @@ const LaporanStokBarang = () => {
   useEffect(() => {
     if (suppliers.length > 0) {
       const options = [
-        { label: "Semua Supplier", value: 0, id: 0 },
+        { label: "Semua Eksportir", value: 0, id: 0 },
         ...suppliers.map((supplier) => ({
           label: supplier.name,
           value: supplier.id,

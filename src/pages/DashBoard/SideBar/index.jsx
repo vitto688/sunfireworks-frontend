@@ -317,6 +317,8 @@ const SideBar = () => {
         isSelected={STOCK_PATH === pathname}
       />
 
+      {laporanDataMenu}
+
       <div className={styles.devider}></div>
 
       <SideMenuItem

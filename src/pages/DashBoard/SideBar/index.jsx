@@ -51,6 +51,7 @@ const SideBar = () => {
   const { pathname } = useLocation();
 
   const [masterDataMenu, setMasterDataMenu] = useState(null);
+  const [laporanDataMenu, setLaporanDataMenu] = useState(null);
   const [pengaturanSubMenus, setPengaturanSubMenus] = useState([]);
 
   const { expandedMenus } = useSelector((state) => state.menu);
@@ -59,29 +60,6 @@ const SideBar = () => {
   const firstPath = pathname.split("/")[1];
 
   useEffect(() => {
-    if (user?.role === null || user?.role === 1) {
-      setPengaturanSubMenus([
-        {
-          name: "Pengguna",
-          to: PENGGUNA_PATH,
-          isSelected: PENGGUNA_PATH === pathname,
-        },
-        {
-          name: "Ubah Password",
-          to: CHANGE_PASSWORD_PATH,
-          isSelected: CHANGE_PASSWORD_PATH === pathname,
-        },
-      ]);
-    } else {
-      setPengaturanSubMenus([
-        {
-          name: "Ubah Password",
-          to: CHANGE_PASSWORD_PATH,
-          isSelected: CHANGE_PASSWORD_PATH === pathname,
-        },
-      ]);
-    }
-
     if (user?.role !== 3) {
       setMasterDataMenu(
         <>
@@ -131,6 +109,75 @@ const SideBar = () => {
           />
         </>
       );
+
+      setLaporanDataMenu(
+        <>
+          <div className={styles.devider}></div>
+          <SideMenuItem
+            name="Laporan"
+            icon={<LaporanIcon className={styles.iconLaporan} />}
+            isSelected={false}
+            isExpanded={expandedMenus.includes("/laporan")}
+            onExpandCollapse={() => {
+              dispatch(expandMenu({ path: "/laporan" }));
+            }}
+            subMenus={[
+              {
+                name: "Stok Barang",
+                to: LAPORAN_STOK_BARANG_PATH,
+                isSelected: LAPORAN_STOK_BARANG_PATH === pathname,
+              },
+              {
+                name: "Mutasi Barang",
+                to: LAPORAN_MUTASI_BARANG_PATH,
+                isSelected: LAPORAN_MUTASI_BARANG_PATH === pathname,
+              },
+
+              {
+                name: "Retur Penjualan",
+                to: LAPORAN_RETUR_PENJUALAN_PATH,
+                isSelected: LAPORAN_RETUR_PENJUALAN_PATH === pathname,
+              },
+              {
+                name: "Retur Pembelian",
+                to: LAPORAN_RETUR_PEMBELIAN_PATH,
+                isSelected: LAPORAN_RETUR_PEMBELIAN_PATH === pathname,
+              },
+              {
+                name: "Penerimaan Barang",
+                to: LAPORAN_PENERIMAAN_BARANG_PATH,
+                isSelected: LAPORAN_PENERIMAAN_BARANG_PATH === pathname,
+              },
+              {
+                name: "Pengeluaran Barang",
+                to: LAPORAN_PENGELUARAN_BARANG_PATH,
+                isSelected: LAPORAN_PENGELUARAN_BARANG_PATH === pathname,
+              },
+            ]}
+          />
+        </>
+      );
+
+      setPengaturanSubMenus([
+        {
+          name: "Pengguna",
+          to: PENGGUNA_PATH,
+          isSelected: PENGGUNA_PATH === pathname,
+        },
+        {
+          name: "Ubah Password",
+          to: CHANGE_PASSWORD_PATH,
+          isSelected: CHANGE_PASSWORD_PATH === pathname,
+        },
+      ]);
+    } else {
+      setPengaturanSubMenus([
+        {
+          name: "Ubah Password",
+          to: CHANGE_PASSWORD_PATH,
+          isSelected: CHANGE_PASSWORD_PATH === pathname,
+        },
+      ]);
     }
   }, [user, pathname, dispatch, expandedMenus, firstPath]);
 
@@ -269,49 +316,7 @@ const SideBar = () => {
         }
         isSelected={STOCK_PATH === pathname}
       />
-      <div className={styles.devider}></div>
-      <SideMenuItem
-        name="Laporan"
-        icon={<LaporanIcon className={styles.iconLaporan} />}
-        isSelected={false}
-        isExpanded={expandedMenus.includes("/laporan")}
-        onExpandCollapse={() => {
-          dispatch(expandMenu({ path: "/laporan" }));
-        }}
-        subMenus={[
-          {
-            name: "Stok Barang",
-            to: LAPORAN_STOK_BARANG_PATH,
-            isSelected: LAPORAN_STOK_BARANG_PATH === pathname,
-          },
-          {
-            name: "Mutasi Barang",
-            to: LAPORAN_MUTASI_BARANG_PATH,
-            isSelected: LAPORAN_MUTASI_BARANG_PATH === pathname,
-          },
 
-          {
-            name: "Retur Penjualan",
-            to: LAPORAN_RETUR_PENJUALAN_PATH,
-            isSelected: LAPORAN_RETUR_PENJUALAN_PATH === pathname,
-          },
-          {
-            name: "Retur Pembelian",
-            to: LAPORAN_RETUR_PEMBELIAN_PATH,
-            isSelected: LAPORAN_RETUR_PEMBELIAN_PATH === pathname,
-          },
-          {
-            name: "Penerimaan Barang",
-            to: LAPORAN_PENERIMAAN_BARANG_PATH,
-            isSelected: LAPORAN_PENERIMAAN_BARANG_PATH === pathname,
-          },
-          {
-            name: "Pengeluaran Barang",
-            to: LAPORAN_PENGELUARAN_BARANG_PATH,
-            isSelected: LAPORAN_PENGELUARAN_BARANG_PATH === pathname,
-          },
-        ]}
-      />
       <div className={styles.devider}></div>
 
       <SideMenuItem

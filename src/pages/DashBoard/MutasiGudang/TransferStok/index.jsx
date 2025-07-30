@@ -57,7 +57,7 @@ const TransferStok = () => {
         page,
         ...(query && { document_number: query }),
         ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
+          source_warehouse: selectedWarehouseFilter.id,
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -240,7 +240,7 @@ const TransferStok = () => {
           />
           <FilterDropdown
             options={warehouseFilterOptions}
-            placeholder="Filter Gudang"
+            placeholder="Filter Gudang Asal"
             onChange={handleWarehouseFilterChange}
           />
           {(query ||

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from "xlsx";
 
@@ -20,6 +20,12 @@ import {
   setStockReportFilters,
   clearStockReportData,
 } from "../../../../redux/actions/stockReportActions";
+
+import {
+  fetchCategoriesRequest,
+  fetchSuppliersRequest,
+  fetchWarehousesRequest,
+} from "../../../../redux/actions/masterActions";
 
 // import styles
 import styles from "./style.module.scss";
@@ -50,6 +56,7 @@ const LaporanStokBarang = () => {
   //#region Hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -82,23 +89,48 @@ const LaporanStokBarang = () => {
   } = useSelector((state) => state.stockReport);
 
   //#region Helper Functions
+  // Update query string parameters
+  // const updateQueryString = useCallback(
+  //   (key, value) => {
+  //     const newSearchParams = new URLSearchParams(searchParams);
+  //     if (value && value !== 0 && value !== "") {
+  //       newSearchParams.set(key, value);
+  //     } else {
+  //       newSearchParams.delete(key);
+  //     }
+  //     setSearchParams(newSearchParams);
+  //   },
+  //   [searchParams, setSearchParams]
+  // );
+
+  // Get filter value from query string
+  const getFilterFromQuery = useCallback(
+    (key, defaultValue = 0) => {
+      const value = searchParams.get(key);
+      return value ? value : defaultValue;
+    },
+    [searchParams]
+  );
+
   const fetchStockData = useCallback(
     (page) => {
       const params = {
         page,
         ...(query && { search: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id,
         }),
-        ...(selectedCategoryFilter !== 0 && {
-          category: selectedCategoryFilter,
+        ...(selectedCategoryFilter.id !== 0 && {
+          category: selectedCategoryFilter.id,
         }),
-        ...(selectedSupplierFilter !== 0 && {
-          supplier: selectedSupplierFilter,
+        ...(selectedSupplierFilter.id !== 0 && {
+          supplier: selectedSupplierFilter.id,
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
       };
+
+      console.log("fetchStockData called with page:", page, params);
 
       dispatch(fetchStockReportRequest(params));
     },
@@ -120,14 +152,14 @@ const LaporanStokBarang = () => {
       const params = {
         page: newPage,
         ...(query && { search: query }),
-        ...(selectedWarehouseFilter !== 0 && {
-          warehouse: selectedWarehouseFilter,
+        ...(selectedWarehouseFilter.id !== 0 && {
+          warehouse: selectedWarehouseFilter.id,
         }),
-        ...(selectedCategoryFilter !== 0 && {
-          category: selectedCategoryFilter,
+        ...(selectedCategoryFilter.id !== 0 && {
+          category: selectedCategoryFilter.id,
         }),
-        ...(selectedSupplierFilter !== 0 && {
-          supplier: selectedSupplierFilter,
+        ...(selectedSupplierFilter.id !== 0 && {
+          supplier: selectedSupplierFilter.id,
         }),
         ...(startDate && { start_date: startDate }),
         ...(endDate && { end_date: endDate }),
@@ -139,18 +171,40 @@ const LaporanStokBarang = () => {
   //#endregion
 
   //#region Effects
-  useEffect(() => {
-    // Reset messages when component mounts
-    dispatch(resetStockReportMessages());
+  // Initialize filters from query string on component mount
+  // useEffect(() => {
+  //   const categoryParam = getFilterFromQuery("category");
+  //   const supplierParam = getFilterFromQuery("supplier");
+  //   const warehouseParam = getFilterFromQuery("warehouse");
 
-    // Load initial data
-    fetchStockData(1);
+  //   if (categoryParam && categoryParam !== 0) {
+  //     setSelectedCategoryFilter(categoryParam);
+  //   }
+  //   if (supplierParam && supplierParam !== 0) {
+  //     setSelectedSupplierFilter(supplierParam);
+  //   }
+  //   if (warehouseParam && warehouseParam !== 0) {
+  //     setSelectedWarehouseFilter(warehouseParam);
+  //   }
+  // }, [getFilterFromQuery]);
 
-    // Cleanup when component unmounts
-    return () => {
-      dispatch(clearStockReportData());
-    };
-  }, [dispatch, fetchStockData]);
+  // useEffect(() => {
+  //   // Reset messages when component mounts
+  //   dispatch(resetStockReportMessages());
+
+  //   // Fetch master data
+  //   dispatch(fetchCategoriesRequest());
+  //   dispatch(fetchSuppliersRequest());
+  //   dispatch(fetchWarehousesRequest());
+
+  //   // Load initial data
+  //   fetchStockData(1);
+
+  //   // Cleanup when component unmounts
+  //   return () => {
+  //     dispatch(clearStockReportData());
+  //   };
+  // }, [dispatch, fetchStockData]);
 
   useEffect(() => {
     // Handle success/error messages
@@ -178,10 +232,11 @@ const LaporanStokBarang = () => {
   useEffect(() => {
     if (warehouses.length > 0) {
       const options = [
-        { label: "Semua Gudang", value: 0 },
+        { label: "Semua Gudang", value: 0, id: 0 },
         ...warehouses.map((warehouse) => ({
           label: warehouse.name,
-          value: warehouse.name,
+          value: warehouse.id,
+          id: warehouse.id, // Menambahkan property id
         })),
       ];
       setWarehouseFilterOptions(options);
@@ -191,10 +246,11 @@ const LaporanStokBarang = () => {
   useEffect(() => {
     if (categories.length > 0) {
       const options = [
-        { label: "Semua Kategori", value: 0 },
+        { label: "Semua Kategori", value: 0, id: 0 },
         ...categories.map((category) => ({
           label: category.name,
-          value: category.name,
+          value: category.id,
+          id: category.id,
         })),
       ];
       setCategoryFilterOptions(options);
@@ -204,26 +260,116 @@ const LaporanStokBarang = () => {
   useEffect(() => {
     if (suppliers.length > 0) {
       const options = [
-        { label: "Semua Supplier", value: 0 },
+        { label: "Semua Supplier", value: 0, id: 0 },
         ...suppliers.map((supplier) => ({
           label: supplier.name,
-          value: supplier.name,
+          value: supplier.id,
+          id: supplier.id,
         })),
       ];
       setSupplierFilterOptions(options);
     }
   }, [suppliers]);
+
+  // Handle filter changes (warehouse, dates) with immediate effect
+  useEffect(() => {
+    fetchStockData(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    selectedWarehouseFilter,
+    selectedCategoryFilter,
+    selectedSupplierFilter,
+    startDate,
+    endDate,
+  ]);
+
+  // Effect to sync filter values from query string when options are loaded
+  useEffect(() => {
+    const categoryParam = getFilterFromQuery("category");
+    const supplierParam = getFilterFromQuery("supplier");
+    const warehouseParam = getFilterFromQuery("warehouse");
+
+    if (
+      categoryParam &&
+      categoryParam !== 0 &&
+      categoryFilterOptions.length > 0
+    ) {
+      const foundCategory = categoryFilterOptions.find(
+        (option) => option.value === categoryParam
+      );
+      if (foundCategory) {
+        setSelectedCategoryFilter(categoryParam);
+      }
+    }
+
+    if (
+      supplierParam &&
+      supplierParam !== 0 &&
+      supplierFilterOptions.length > 0
+    ) {
+      const foundSupplier = supplierFilterOptions.find(
+        (option) => option.value === supplierParam
+      );
+      if (foundSupplier) {
+        setSelectedSupplierFilter(supplierParam);
+      }
+    }
+
+    if (
+      warehouseParam &&
+      warehouseParam !== 0 &&
+      warehouseFilterOptions.length > 0
+    ) {
+      const foundWarehouse = warehouseFilterOptions.find(
+        (option) => option.value === warehouseParam
+      );
+      if (foundWarehouse) {
+        setSelectedWarehouseFilter(warehouseParam);
+      }
+    }
+  }, [
+    categoryFilterOptions,
+    supplierFilterOptions,
+    warehouseFilterOptions,
+    getFilterFromQuery,
+  ]);
   //#endregion
 
   //#region Handlers
+  // Filter change handlers
+  const handleCategoryFilterChange = (selectedOption) => {
+    setSelectedCategoryFilter(selectedOption);
+    // updateQueryString("category", selectedOption.value);
+    // // Trigger data fetch with new filter
+    // setTimeout(() => fetchStockData(1), 100);
+  };
+
+  const handleSupplierFilterChange = (selectedOption) => {
+    setSelectedSupplierFilter(selectedOption);
+    // updateQueryString("supplier", selectedOption.value);
+    // // Trigger data fetch with new filter
+    // setTimeout(() => fetchStockData(1), 100);
+  };
+
+  const handleWarehouseFilterChange = (selectedOption) => {
+    setSelectedWarehouseFilter(selectedOption);
+    // updateQueryString("warehouse", selectedOption.value);
+    // // Trigger data fetch with new filter
+    // setTimeout(() => fetchStockData(1), 100);
+  };
+
   const handleDownloadClick = () => {
     const params = {
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
         warehouse: selectedWarehouseFilter,
       }),
-      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(selectedCategoryFilter !== 0 && {
+        category: selectedCategoryFilter.id,
+      }),
+      ...(selectedSupplierFilter !== 0 && {
+        supplier: selectedSupplierFilter.id,
+      }),
       ...(startDate && { start_date: startDate }),
       ...(endDate && { end_date: endDate }),
     };
@@ -236,7 +382,7 @@ const LaporanStokBarang = () => {
     const filters = {
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
+        warehouse: selectedWarehouseFilter.id,
       }),
       ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
       ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
@@ -253,10 +399,14 @@ const LaporanStokBarang = () => {
     const filters = {
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
+        warehouse: selectedWarehouseFilter.id,
       }),
-      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(selectedCategoryFilter !== 0 && {
+        category: selectedCategoryFilter.id,
+      }),
+      ...(selectedSupplierFilter !== 0 && {
+        supplier: selectedSupplierFilter.id,
+      }),
       ...(startDate && { start_date: startDate }),
       ...(endDate && { end_date: endDate }),
     };
@@ -287,10 +437,14 @@ const LaporanStokBarang = () => {
     const filters = {
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
+        warehouse: selectedWarehouseFilter.id,
       }),
-      ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+      ...(selectedCategoryFilter !== 0 && {
+        category: selectedCategoryFilter.id,
+      }),
+      ...(selectedSupplierFilter !== 0 && {
+        supplier: selectedSupplierFilter.id,
+      }),
       ...(startDate && { start_date: startDate }),
       ...(endDate && { end_date: endDate }),
     };
@@ -340,33 +494,33 @@ const LaporanStokBarang = () => {
         /> */}
       </div>
       <div className={styles.searchFilterSection}>
-        {/* <div className={styles.searchSection}>
-          <SearchBar
+        <div className={styles.searchSection}>
+          {/* <SearchBar
             placeholder="Cari produk atau supplier..."
             value={query}
             onChange={setQuery}
-          />
+          /> */}
+        </div>
+        {/* <div className={styles.filterSection}>
+          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
+          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
         </div> */}
         <div className={styles.filterSection}>
-          {/* <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} /> */}
-        </div>
-        <div className={styles.filterSection}>
-          {/* <FilterDropdown
+          <FilterDropdown
             options={categoryFilterOptions}
             placeholder="Filter Kategori"
-            onChange={(val) => setSelectedCategoryFilter(val.value)}
+            onChange={handleCategoryFilterChange}
           />
           <FilterDropdown
             options={supplierFilterOptions}
-            placeholder="Filter Supplier"
-            onChange={(val) => setSelectedSupplierFilter(val.value)}
+            placeholder="Filter Eksportir"
+            onChange={handleSupplierFilterChange}
           />
           <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
-            onChange={(val) => setSelectedWarehouseFilter(val.value)}
-          /> */}
+            onChange={handleWarehouseFilterChange}
+          />
         </div>
       </div>
       <div className={styles.mutasiMasukTable}>

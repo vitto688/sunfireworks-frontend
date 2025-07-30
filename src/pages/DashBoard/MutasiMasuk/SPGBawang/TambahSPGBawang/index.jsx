@@ -37,7 +37,7 @@ const TambahSPGBawang = () => {
   const argument = location.state || {};
 
   const [keterangan, setKeterangan] = useState("");
-  const [gudang, setGudang] = useState("");
+  const [gudang, setGudang] = useState(null);
   const [noSJ, setNoSJ] = useState("");
   const [tanggal, setTanggal] = useState(() => {
     // Set default to today's date in YYYY-MM-DD format

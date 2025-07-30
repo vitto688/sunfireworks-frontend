@@ -36,14 +36,14 @@ import {
 } from "../actions/authActions";
 import { loadInitialMasterData } from "./masterSaga";
 import { fetchStocks } from "./stockSaga";
-import { fetchSPKSaga } from "./spkSaga";
+import { fetchAllSPKSaga } from "./spkSaga";
 
 function* loadInitialData() {
   yield all([
     fetchRoles(),
     loadInitialMasterData(),
     fetchStocks(),
-    fetchSPKSaga({ payload: { params: {} } }),
+    fetchAllSPKSaga({ payload: { params: { paginate: false } } }),
   ]);
 }
 

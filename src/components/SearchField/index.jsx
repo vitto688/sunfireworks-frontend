@@ -6,7 +6,15 @@ import styles from "./style.module.scss";
 // Import components
 import ItemSearchDialog from "../ItemSearchDialog";
 
-const SearchField = ({ title, label, name, data, onChange, defaultValue }) => {
+const SearchField = ({
+  title,
+  label,
+  name,
+  data,
+  onChange,
+  defaultValue,
+  disabled,
+}) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(defaultValue);
 
@@ -28,7 +36,9 @@ const SearchField = ({ title, label, name, data, onChange, defaultValue }) => {
           defaultValue={selected?.name ?? ""}
           disabled={true}
         />
-        <button onClick={() => setOpen(true)}>{title}</button>
+        <button onClick={() => setOpen(true)} disabled={disabled}>
+          {title}
+        </button>
       </div>
       <ItemSearchDialog
         title={title}

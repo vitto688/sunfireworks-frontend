@@ -10,6 +10,7 @@ import {
   updateSPKFailure,
   deleteSPKSuccess,
   deleteSPKFailure,
+  fetchAllSPKSuccess,
 } from "../actions/spkActions";
 
 import {
@@ -26,6 +27,16 @@ export function* fetchSPKSaga(action) {
     const { params } = action.payload;
     const response = yield call(fetchSPK, params);
     yield put(fetchSPKSuccess(response));
+  } catch (error) {
+    yield put(fetchSPKFailure(error));
+  }
+}
+
+export function* fetchAllSPKSaga(action) {
+  try {
+    const { params } = action.payload;
+    const response = yield call(fetchSPK, params);
+    yield put(fetchAllSPKSuccess(response));
   } catch (error) {
     yield put(fetchSPKFailure(error));
   }

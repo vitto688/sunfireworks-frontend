@@ -20,6 +20,7 @@ const AddStockModal = ({
   isEdit = false,
   disabledGudang = false,
   enabledQuantities = false,
+  disabledSearch = false,
   stocks,
   isOpen,
   onClose,
@@ -91,6 +92,7 @@ const AddStockModal = ({
             type="text"
             id="stok"
             name="stok"
+            disabled={disabledSearch}
             data={stocks.map((stock) => ({
               id: stock.id,
               code: stock.product_code,
@@ -116,6 +118,7 @@ const AddStockModal = ({
                 : null
             }
             onChange={(selectedStock) => {
+              if (disabledSearch) return;
               const selected = stocks.find((s) => s.id === selectedStock.id);
               setStock(selected);
               setCartonLeft(selected?.carton_quantity ?? 0);

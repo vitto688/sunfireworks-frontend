@@ -16,14 +16,14 @@ import styles from "./style.module.scss";
 // Import components
 import CustomButton from "../../../../../components/CustomButton";
 import InputField from "../../../../../components/InputField";
-import AddStockButton from "../../../../../components/AddStockButton";
 import AddStockModal from "../../../../../components/AddStockModal";
 import SearchField from "../../../../../components/SearchField";
 import CustomDeleteButton from "../../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../../components/ConfirmDeleteModal";
-import EditStockModal from "../../../../../components/EditStockModal";
 import EditButton from "../../../../../components/EditButton";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
+import DatePicker from "../../../../../components/DatePicker";
+import AddStockButton from "../../../../../components/AddStockButton";
 
 export const TAMBAH_SURAT_JALAN_PATH =
   "/mutasi-keluar/surat-jalan/tambah-surat-jalan";
@@ -36,21 +36,28 @@ const TambahSuratJalan = () => {
   const argument = location.state || {};
 
   const [keterangan, setKeterangan] = useState("");
+  const [gudang, setGudang] = useState(null);
   const [kendaraan, setKendaraan] = useState("");
   const [noKendaraan, setNoKendaraan] = useState("");
+  const [tanggal, setTanggal] = useState(() => {
+    // Set default to today's date in YYYY-MM-DD format
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
   const [stok, setStok] = useState([]);
-  // const [warehouseStock, setWarehouseStock] = useState(null);
+  const [warehouseStock, setWarehouseStock] = useState(null);
   const [spk, setSpk] = useState(null);
   const [totalCarton, setTotalCarton] = useState(0);
   const [totalPack, setTotalPack] = useState(0);
   const [totalAll, setTotalAll] = useState(0);
 
-  // const [isModalOpen, setModalOpen] = useState(false);
-  // const [editModalOpen, setEditModalOpen] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(null);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
 
-  // const { stocks } = useSelector((state) => state.stock);
-  const { data: spkData } = useSelector((state) => state.spk);
+  const { allData: spkData } = useSelector((state) => state.spk);
+  const { stocks } = useSelector((state) => state.stock);
+  const { warehouses } = useSelector((state) => state.master);
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.suratJalan
   );
@@ -102,12 +109,13 @@ const TambahSuratJalan = () => {
     // Prepare data for API
     const suratJalanData = {
       spk: spk.id,
-      warehouse: spk.warehouse,
+      warehouse: gudang.id,
       is_customer: true,
       customer: spk.customer,
       vehicle_type: kendaraan,
       vehicle_number: noKendaraan,
       notes: keterangan,
+      transaction_date: tanggal,
       items: stok.map((item) => ({
         product: item.product || item.id,
         carton_quantity: item.carton_quantity || 0,
@@ -121,6 +129,68 @@ const TambahSuratJalan = () => {
   const handleBatalClick = () => {
     // Logic to cancel the update and navigate back
     navigate(-1);
+  };
+
+  const handleTambahStok = () => {
+    // Logic to add stock, e.g., open a modal or navigate to another page
+
+    if (!gudang) {
+      alert("Harap pilih gudang terlebih dahulu");
+      return;
+    }
+
+    setModalOpen(true);
+
+    // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
+  };
+
+  const handleEdit = (e, value) => {
+    e.stopPropagation();
+
+    if (!gudang) {
+      alert("Harap pilih gudang terlebih dahulu");
+      return;
+    }
+
+    setWarehouseStock(
+      stocks.find(
+        (s) => s.warehouse === gudang?.id && s.product === value?.product
+      ) || null
+    );
+
+    setEditModalOpen(value);
+  };
+
+  const handleSaveAddStok = (data) => {
+    // Update stok state with new data
+    setStok([...stok, data]);
+    setModalOpen(false);
+    // Kirim ke backend di sini...
+  };
+
+  const handleSaveEditStok = (data) => {
+    // Update stok state with new data
+    console.log("data", data);
+
+    if (
+      data.carton_quantity > data.unfulfilled_carton_quantity ||
+      data.pack_quantity < data.unfulfilled_pack_quantity
+    ) {
+      alert(
+        "Jumlah karton dan pack tidak boleh melebihi jumlah yang belum terpenuhi"
+      );
+      return;
+    }
+
+    data.unfulfilled_carton_quantity -= data.carton_quantity;
+    data.unfulfilled_pack_quantity -= data.pack_quantity;
+    setStok((prevStok) =>
+      prevStok.map((item) =>
+        item.product_code === data.product_code ? data : item
+      )
+    );
+    setEditModalOpen(null);
+    // Kirim ke backend di sini...
   };
 
   const handleDeleteStok = (stokItem) => {
@@ -173,7 +243,22 @@ const TambahSuratJalan = () => {
             onChange={(surat) => {
               const selectedSpk = spkData.find((s) => s.id === surat.id);
               setSpk(selectedSpk || null);
-              if (selectedSpk) setStok([...selectedSpk.items]);
+              if (selectedSpk) {
+                selectedSpk.items = selectedSpk.items.filter(
+                  (item) =>
+                    item.unfulfilled_carton_quantity > 0 ||
+                    item.unfulfilled_pack_quantity > 0
+                );
+
+                console.log("selectedSpk.items", selectedSpk.items);
+                setStok([
+                  ...selectedSpk.items.map((item) => ({
+                    ...item,
+                    carton_quantity: 0,
+                    pack_quantity: 0,
+                  })),
+                ]);
+              }
             }}
           />
 
@@ -186,17 +271,28 @@ const TambahSuratJalan = () => {
             disabled={true}
           />
 
-          <InputField
-            label="Gudang Tujuan"
+          <SearchField
+            title="Cari Gudang"
+            label="Gudang"
             type="text"
             id="gudangTujuan"
             name="gudangTujuan"
-            defaultValue={spk?.warehouse_name ?? ""}
-            disabled={true}
+            data={warehouses.map((warehouse) => ({
+              id: warehouse.id,
+              name: warehouse.name,
+            }))}
+            onChange={(warehouse) => setGudang(warehouse)}
           />
         </div>
 
         <div className={styles.row}>
+          <DatePicker
+            isInput={true}
+            label="Tanggal Transaksi"
+            value={tanggal}
+            onChange={setTanggal}
+            required
+          />
           <InputField
             label="Kendaraan"
             type="text"
@@ -228,6 +324,7 @@ const TambahSuratJalan = () => {
         <label className={styles.label} htmlFor="produk">
           Produk
         </label>
+        {/* <AddStockButton onClick={() => handleTambahStok()} /> */}
       </div>
       <div className={styles.divider} />
       <div className={styles.stocksTable}>
@@ -240,6 +337,8 @@ const TambahSuratJalan = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
+          <div className={styles.tableHeaderItem}>Sisa Packing</div>
+          <div className={styles.tableHeaderItem}>Sisa Karton</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -263,7 +362,15 @@ const TambahSuratJalan = () => {
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
-              <div />
+              <div className={styles.tableRowItem}>
+                {formatNumberWithDot(stokItem.unfulfilled_carton_quantity)}
+              </div>
+              <div className={styles.tableRowItem}>
+                {formatNumberWithDot(stokItem.unfulfilled_pack_quantity)}
+              </div>
+              <div>
+                <EditButton onClick={(e) => handleEdit(e, stokItem)} />
+              </div>
             </div>
           ))}
         </div>
@@ -276,6 +383,26 @@ const TambahSuratJalan = () => {
           <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
         </div>
       </div>
+
+      <AddStockModal
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSaveAddStok}
+      />
+
+      <AddStockModal
+        disabledSearch={true}
+        isEdit={true}
+        stocks={stocks.filter((stock) => stock.warehouse === gudang?.id)}
+        cartonQuantity={totalCarton}
+        isOpen={editModalOpen !== null}
+        defaultStock={editModalOpen}
+        defaultCarton={warehouseStock?.carton_quantity ?? 0}
+        defaultPack={warehouseStock?.pack_quantity ?? 0}
+        onClose={() => setEditModalOpen(null)}
+        onSave={handleSaveEditStok}
+      />
 
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

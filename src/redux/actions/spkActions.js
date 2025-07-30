@@ -12,6 +12,11 @@ export const fetchSPKSuccess = (data) => ({
   payload: { data },
 });
 
+export const fetchAllSPKSuccess = (data) => ({
+  type: "FETCH_ALL_SPK_SUCCESS",
+  payload: { data },
+});
+
 export const fetchSPKFailure = (error) => ({
   type: "FETCH_SPK_FAILURE",
   payload: { error },

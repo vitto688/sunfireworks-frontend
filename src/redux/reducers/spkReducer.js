@@ -1,6 +1,7 @@
 // Simple SPK Reducer
 const initialSPKState = {
   data: [],
+  allData: [],
   currentItem: null,
   loading: false,
   message: null,
@@ -41,6 +42,12 @@ const spkReducer = (state = initialSPKState, action) => {
           next: action.payload.data.next || null,
           previous: action.payload.data.previous || null,
         },
+      };
+    case "FETCH_ALL_SPK_SUCCESS":
+      return {
+        ...state,
+        allData: action.payload.data || [],
+        loading: false,
       };
     case "FETCH_SPK_FAILURE":
       return {
@@ -85,6 +92,7 @@ const spkReducer = (state = initialSPKState, action) => {
       return {
         ...state,
         data: [...state.data, action.payload.data],
+        allData: [...state.allData, action.payload.data],
         loading: false,
         message: "SPK berhasil ditambahkan",
       };
@@ -108,6 +116,9 @@ const spkReducer = (state = initialSPKState, action) => {
       return {
         ...state,
         data: state.data.map((item) =>
+          item.id === action.payload.data.id ? action.payload.data : item
+        ),
+        allData: state.allData.map((item) =>
           item.id === action.payload.data.id ? action.payload.data : item
         ),
         currentItem: action.payload.data,
@@ -134,6 +145,7 @@ const spkReducer = (state = initialSPKState, action) => {
       return {
         ...state,
         data: state.data.filter((item) => item.id !== action.payload.id),
+        allData: state.allData.filter((item) => item.id !== action.payload.id),
         loading: false,
         message: "SPK berhasil dihapus",
       };

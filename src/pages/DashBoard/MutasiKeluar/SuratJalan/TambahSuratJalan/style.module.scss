@@ -83,10 +83,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
+            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 100px 100px 150px;
             align-items: center;
             padding: 5px 10px 15px 10px;
-            width:1140px;
+            width:1360px;
             border-bottom: 2px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -105,7 +105,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            width:1160px;
+            width:1380px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -115,7 +115,7 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
+                grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 100px 100px 150px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
@@ -130,8 +130,8 @@
 
         .tableFooter{
             display: grid;
-            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 150px;
-            width:1140px;
+            grid-template-columns:60px 60px 110px 300px 90px 90px 100px 100px 100px 100px 150px;
+            width:1360px;
             padding: 20px 10px;
             border-top: 1px solid #eaeaea;
             background-color: #f9f9f9;

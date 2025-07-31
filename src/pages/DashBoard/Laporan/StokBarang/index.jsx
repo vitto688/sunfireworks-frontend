@@ -130,8 +130,6 @@ const LaporanStokBarang = () => {
         ...(endDate && { end_date: endDate }),
       };
 
-      console.log("fetchStockData called with page:", page, params);
-
       dispatch(fetchStockReportRequest(params));
     },
     [
@@ -146,8 +144,6 @@ const LaporanStokBarang = () => {
   );
 
   const handlePageChange = (newPage) => {
-    console.log("handlePageChange called");
-
     if (newPage >= 1 && newPage <= totalPages) {
       const params = {
         page: newPage,
@@ -210,7 +206,6 @@ const LaporanStokBarang = () => {
     // Handle success/error messages
     if (message !== null) {
       // You can show a toast notification here
-      console.log("Success:", message);
       dispatch(resetStockReportMessages());
     }
 
@@ -418,13 +413,11 @@ const LaporanStokBarang = () => {
         filters,
         XLSX
       );
-      console.log(`Excel file exported: ${filename}`);
     } catch (error) {
       console.error("Error exporting Excel:", error);
       // Fallback to CSV export
       try {
         const filename = exportStokBarangToExcel(stockReport, filters);
-        console.log(`CSV file exported: ${filename}`);
       } catch (csvError) {
         console.error("Error exporting CSV:", csvError);
         alert("Gagal mengexport data. Silakan coba lagi.");
@@ -451,7 +444,6 @@ const LaporanStokBarang = () => {
 
     try {
       const filename = exportStokBarangToExcel(stockReport, filters);
-      console.log(`CSV file exported: ${filename}`);
     } catch (error) {
       console.error("Error exporting CSV:", error);
       alert("Gagal mengexport data CSV. Silakan coba lagi.");
@@ -464,7 +456,6 @@ const LaporanStokBarang = () => {
 
   const handleItemClick = (value) => {
     // navigate to details page if needed
-    console.log("Item clicked:", value);
   };
   //#endregion
 

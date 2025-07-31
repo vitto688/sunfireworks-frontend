@@ -19,12 +19,14 @@ import {
   updateSuratJalan,
   deleteSuratJalan,
 } from "../../api/suratJalan";
+import { fetchAllSPKSaga } from "./spkSaga";
 
 // Fetch Surat Jalan Saga
 function* fetchSuratJalanSaga(action) {
   try {
     const { params } = action.payload;
     const response = yield call(fetchSuratJalan, params);
+    yield call(fetchAllSPKSaga, { payload: { params: { paginate: false } } });
     yield put(fetchSuratJalanSuccess(response));
   } catch (error) {
     yield put(fetchSuratJalanFailure(error));
@@ -47,6 +49,7 @@ function* addSuratJalanSaga(action) {
   try {
     const { data } = action.payload;
     const response = yield call(addSuratJalan, data);
+    yield call(fetchAllSPKSaga, { payload: { params: { paginate: false } } });
     yield put(addSuratJalanSuccess(response));
   } catch (error) {
     yield put(addSuratJalanFailure(error));
@@ -58,6 +61,7 @@ function* updateSuratJalanSaga(action) {
   try {
     const { id, data } = action.payload;
     const response = yield call(updateSuratJalan, id, data);
+    yield call(fetchAllSPKSaga, { payload: { params: { paginate: false } } });
     yield put(updateSuratJalanSuccess(response));
   } catch (error) {
     yield put(updateSuratJalanFailure(error));
@@ -69,6 +73,7 @@ function* deleteSuratJalanSaga(action) {
   try {
     const { id } = action.payload;
     yield call(deleteSuratJalan, id);
+    yield call(fetchAllSPKSaga, { payload: { params: { paginate: false } } });
     yield put(deleteSuratJalanSuccess(id));
   } catch (error) {
     yield put(deleteSuratJalanFailure(error));

@@ -3,7 +3,6 @@ import axios from "./axios";
 // Fetch retur penjualan report with pagination and filters
 export const fetchReturPenjualanReport = async (params = {}) => {
   try {
-    console.log("Fetching retur penjualan report with params:", params);
     const response = await axios.get("/report/retur-penjualan/", { params });
     return response.data;
   } catch (error) {

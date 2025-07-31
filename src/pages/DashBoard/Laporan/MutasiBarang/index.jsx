@@ -165,7 +165,6 @@ const LaporanMutasiBarang = () => {
     // Handle success/error messages
     if (message !== null) {
       // You can show a toast notification here
-      console.log("Success:", message);
       dispatch(resetMutasiBarangReportMessages());
     }
 
@@ -253,21 +252,17 @@ const LaporanMutasiBarang = () => {
         filters,
         XLSX
       );
-      console.log(`Excel file exported: ${filename}`);
 
       // You can add a toast notification here
       // showSuccessToast(`File ${filename} berhasil didownload`);
     } catch (error) {
-      console.error("Error exporting Excel:", error);
       // Fallback to CSV export
       try {
         const filename = exportMutasiBarangToExcel(mutasiBarangReport, filters);
-        console.log(`CSV file exported: ${filename}`);
 
         // You can add a toast notification here
         // showSuccessToast(`File CSV ${filename} berhasil didownload`);
       } catch (csvError) {
-        console.error("Error exporting CSV:", csvError);
         alert("Gagal mengexport data. Silakan coba lagi.");
       }
     }
@@ -287,7 +282,6 @@ const LaporanMutasiBarang = () => {
 
     try {
       const filename = exportMutasiBarangToExcel(mutasiBarangReport, filters);
-      console.log(`CSV file exported: ${filename}`);
 
       // You can add a toast notification here
       // showSuccessToast(`File CSV ${filename} berhasil didownload`);
@@ -303,7 +297,6 @@ const LaporanMutasiBarang = () => {
 
   const handleItemClick = (value) => {
     // navigate to details page if needed
-    console.log("Item clicked:", value);
   };
   //#endregion
 

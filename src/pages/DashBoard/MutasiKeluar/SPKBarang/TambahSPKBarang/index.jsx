@@ -104,7 +104,6 @@ const TambahSPKBarang = () => {
         }
       });
 
-      console.log("Global Stock:", gStock, Object.values(gStock));
       // Convert object to array for easier mapping
 
       setGlobalStock(Object.values(gStock));

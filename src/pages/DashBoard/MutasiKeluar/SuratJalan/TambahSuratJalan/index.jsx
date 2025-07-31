@@ -101,7 +101,14 @@ const TambahSuratJalan = () => {
   //#region Handlers
   const handleSimpanClick = () => {
     // Validate required fields
-    if (!spk || stok.length === 0) {
+    if (
+      !spk ||
+      !gudang ||
+      !tanggal ||
+      !kendaraan ||
+      !noKendaraan ||
+      stok.length === 0
+    ) {
       alert("Harap lengkapi semua field yang diperlukan");
       return;
     }
@@ -170,7 +177,6 @@ const TambahSuratJalan = () => {
 
   const handleSaveEditStok = (data) => {
     // Update stok state with new data
-    console.log("data", data);
 
     if (
       data.carton_quantity > data.unfulfilled_carton_quantity ||
@@ -250,7 +256,6 @@ const TambahSuratJalan = () => {
                     item.unfulfilled_pack_quantity > 0
                 );
 
-                console.log("selectedSpk.items", selectedSpk.items);
                 setStok([
                   ...selectedSpk.items.map((item) => ({
                     ...item,

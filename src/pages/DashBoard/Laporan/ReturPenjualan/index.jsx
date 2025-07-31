@@ -139,7 +139,6 @@ const LaporanReturPenjualan = () => {
     // Handle success/error messages
     if (message !== null) {
       // You can show a toast notification here
-      console.log("Success:", message);
       dispatch(resetReturPenjualanReportMessages());
     }
 
@@ -229,7 +228,6 @@ const LaporanReturPenjualan = () => {
         filters,
         XLSX
       );
-      console.log(`Excel file exported: ${filename}`);
     } catch (error) {
       console.error("Error exporting Excel:", error);
       // Fallback to CSV export
@@ -238,7 +236,6 @@ const LaporanReturPenjualan = () => {
           returPenjualanReport,
           filters
         );
-        console.log(`CSV file exported: ${filename}`);
       } catch (csvError) {
         console.error("Error exporting CSV:", csvError);
         alert("Gagal mengexport data. Silakan coba lagi.");
@@ -263,7 +260,6 @@ const LaporanReturPenjualan = () => {
         returPenjualanReport,
         filters
       );
-      console.log(`CSV file exported: ${filename}`);
     } catch (error) {
       console.error("Error exporting CSV:", error);
       alert("Gagal mengexport data CSV. Silakan coba lagi.");
@@ -276,7 +272,6 @@ const LaporanReturPenjualan = () => {
 
   const handleItemClick = (value) => {
     // navigate to details page if needed
-    console.log("Item clicked:", value);
   };
   //#endregion
 

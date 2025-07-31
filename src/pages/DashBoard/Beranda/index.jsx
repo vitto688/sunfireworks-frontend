@@ -87,23 +87,6 @@ const Beranda = () => {
         0
       ) || 0;
 
-    console.log(
-      "data",
-      mutasiCount,
-      penerimaanCount,
-      pengeluaranCount,
-      returPembelianCount,
-      returPenjualanCount
-    );
-    console.log(
-      "raw",
-      mutasiBarangReportNP,
-      penerimaanBarangNPReport,
-      pengeluaranBarangReportNP,
-      returPembelianReportNP,
-      returPenjualanReportNP
-    );
-
     const total =
       mutasiCount +
       penerimaanCount +
@@ -154,8 +137,6 @@ const Beranda = () => {
         value: returPenjualanCount,
       },
     ].filter((item) => item.percentage > 0); // Only show items with data
-
-    console.log(chartData);
 
     // Ensure percentages add up to 100%
     const totalPercentage = chartData.reduce(

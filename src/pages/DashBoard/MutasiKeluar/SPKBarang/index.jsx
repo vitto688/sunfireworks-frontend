@@ -38,6 +38,8 @@ const SPKBarang = () => {
   const [selectedWarehouseFilter, setSelectedWarehouseFilter] = useState({
     id: 0,
   });
+  const [statusFilterOptions, setStatusFilterOptions] = useState([]);
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -48,6 +50,21 @@ const SPKBarang = () => {
   );
 
   //#region Helper Functions
+  const getStatusDisplay = (item) => {
+    // You can adjust this logic based on your actual status field
+    // For now, I'm using a simple logic - you might have item.status field
+
+    const completedItems = item.items.filter(
+      (i) =>
+        i.unfulfilled_carton_quantity === 0 && i.unfulfilled_pack_quantity === 0
+    );
+    const isCompleted = completedItems.length === item.items.length;
+    return {
+      text: isCompleted ? "Selesai" : "Belum Selesai",
+      className: isCompleted ? styles.statusCompleted : styles.statusPending,
+    };
+  };
+
   const fetchSPKData = useCallback(
     (page = 1) => {
       const params = {
@@ -132,6 +149,16 @@ const SPKBarang = () => {
     }
   }, [warehouses]);
 
+  // Set up status filter options
+  useEffect(() => {
+    const statusOptions = [
+      { label: "Semua Status", value: 0 },
+      { label: "Belum Selesai", value: "pending" },
+      { label: "Selesai", value: "completed" },
+    ];
+    setStatusFilterOptions(statusOptions);
+  }, []);
+
   //#endregion
 
   //#region Handlers
@@ -147,6 +174,10 @@ const SPKBarang = () => {
     setSelectedWarehouseFilter(selectedOption.value);
   };
 
+  const handleStatusFilterChange = (selectedOption) => {
+    setSelectedStatusFilter(selectedOption.value);
+  };
+
   const handleStartDateChange = (date) => {
     setStartDate(date);
   };
@@ -158,6 +189,7 @@ const SPKBarang = () => {
   const handleClearFilters = () => {
     setQuery("");
     setSelectedWarehouseFilter({ id: 0 });
+    setSelectedStatusFilter(0);
     setStartDate("");
     setEndDate("");
   };
@@ -237,12 +269,21 @@ const SPKBarang = () => {
             onChange={handleEndDateChange}
           />
           {/* <FilterDropdown
+            options={statusFilterOptions}
+            placeholder="Filter Status"
+            value={statusFilterOptions.find(
+              (option) => option.value === selectedStatusFilter
+            )}
+            onChange={handleStatusFilterChange}
+          /> */}
+          {/* <FilterDropdown
             options={warehouseFilterOptions}
             placeholder="Filter Gudang"
             onChange={handleWarehouseFilterChange}
           /> */}
           {(query ||
             selectedWarehouseFilter.id !== 0 ||
+            selectedStatusFilter !== 0 ||
             startDate ||
             endDate) && (
             <button
@@ -270,6 +311,7 @@ const SPKBarang = () => {
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
           <div className={styles.tableHeaderItem}>No SPK</div>
           <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
+          <div className={styles.tableHeaderItem}>Status</div>
           {/* <div className={styles.tableHeaderItem}>Gudang Tujuan</div> */}
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>Keterangan</div>
@@ -313,6 +355,11 @@ const SPKBarang = () => {
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.customer_name || "-"}
+                </div>
+                <div className={styles.tableRowItem}>
+                  <span className={getStatusDisplay(item).className}>
+                    {getStatusDisplay(item).text}
+                  </span>
                 </div>
                 {/* <div className={styles.tableRowItem}>
                   {item.warehouse_name || "-"}

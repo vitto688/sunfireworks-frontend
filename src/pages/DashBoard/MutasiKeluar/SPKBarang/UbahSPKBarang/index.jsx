@@ -111,6 +111,21 @@ const UbahSPKBarang = () => {
   }, [stocks]);
   //#endregion
 
+  //#region Helper Functions
+  const getStatusDisplay = () => {
+    // You can adjust this logic based on your actual status field
+    // For now, I'm using a simple logic - you might have argument.status field
+
+    return {
+      text: argument?.status,
+      className:
+        argument?.status === "Selesai"
+          ? styles.statusCompleted
+          : styles.statusPending,
+    };
+  };
+  //#endregion
+
   //#region Handlers
   const handleSimpanClick = () => {
     // Validate required fields
@@ -238,7 +253,6 @@ const UbahSPKBarang = () => {
             defaultValue={argument?.customer_name ?? ""}
             disabled={true}
           />
-
           <InputField
             label="Keterangan"
             type="text"
@@ -247,6 +261,15 @@ const UbahSPKBarang = () => {
             value={keterangan}
             onChange={(e) => setKeterangan(e.target.value)}
           />
+
+          <div className={styles.statusField}>
+            <label className={styles.statusLabel}>Status</label>
+            <div className={styles.statusIndicator}>
+              <span className={getStatusDisplay().className}>
+                {getStatusDisplay().text}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div className={styles.rowBetween}>

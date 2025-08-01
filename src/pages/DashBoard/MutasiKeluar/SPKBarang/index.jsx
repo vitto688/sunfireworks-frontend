@@ -50,18 +50,19 @@ const SPKBarang = () => {
   );
 
   //#region Helper Functions
-  const getStatusDisplay = (item) => {
+  const getStatusDisplay = (status) => {
     // You can adjust this logic based on your actual status field
     // For now, I'm using a simple logic - you might have item.status field
 
-    const completedItems = item.items.filter(
-      (i) =>
-        i.unfulfilled_carton_quantity === 0 && i.unfulfilled_pack_quantity === 0
-    );
-    const isCompleted = completedItems.length === item.items.length;
+    // const completedItems = item.items.filter(
+    //   (i) =>
+    //     i.unfulfilled_carton_quantity === 0 && i.unfulfilled_pack_quantity === 0
+    // );
+
     return {
-      text: isCompleted ? "Selesai" : "Belum Selesai",
-      className: isCompleted ? styles.statusCompleted : styles.statusPending,
+      text: status,
+      className:
+        status === "Selesai" ? styles.statusCompleted : styles.statusPending,
     };
   };
 
@@ -357,8 +358,8 @@ const SPKBarang = () => {
                   {item.customer_name || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
-                  <span className={getStatusDisplay(item).className}>
-                    {getStatusDisplay(item).text}
+                  <span className={getStatusDisplay(item.status).className}>
+                    {getStatusDisplay(item.status).text}
                   </span>
                 </div>
                 {/* <div className={styles.tableRowItem}>

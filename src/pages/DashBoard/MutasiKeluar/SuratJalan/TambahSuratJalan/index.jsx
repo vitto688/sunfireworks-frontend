@@ -239,12 +239,14 @@ const TambahSuratJalan = () => {
               name: surat.document_number,
               gudang: surat.warehouse_name,
               pelanggan: surat.customer_name,
+              status: surat.status,
             }))}
             defaultValue={{
               id: spk?.id,
               name: spk?.document_number,
               gudang: spk?.warehouse_name,
               pelanggan: spk?.customer_name,
+              status: spk?.status,
             }}
             onChange={(surat) => {
               const selectedSpk = spkData.find((s) => s.id === surat.id);

@@ -28,6 +28,20 @@ const spkReducer = (state = initialSPKState, action) => {
         errorMessage: null,
       };
     case "FETCH_SPK_SUCCESS":
+      action.payload.data.results.forEach((item) => {
+        let isNotCompleted = false;
+        item.items.forEach((subItem) => {
+          if (
+            subItem.unfulfilled_carton_quantity > 0 ||
+            subItem.fulfilled_carton_quantity > 0
+          ) {
+            isNotCompleted = true;
+          }
+        });
+
+        item.status = isNotCompleted ? "Belum Selesai" : "Selesai";
+      });
+
       return {
         ...state,
         // data: (action.payload.data.results || []).sort(
@@ -44,6 +58,20 @@ const spkReducer = (state = initialSPKState, action) => {
         },
       };
     case "FETCH_ALL_SPK_SUCCESS":
+      action.payload.data.forEach((item) => {
+        let isNotCompleted = false;
+        item.items.forEach((subItem) => {
+          if (
+            subItem.unfulfilled_carton_quantity > 0 ||
+            subItem.fulfilled_carton_quantity > 0
+          ) {
+            isNotCompleted = true;
+          }
+        });
+
+        item.status = isNotCompleted ? "Belum Selesai" : "Selesai";
+      });
+
       return {
         ...state,
         allData: action.payload.data || [],

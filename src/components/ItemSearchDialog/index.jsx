@@ -13,9 +13,23 @@ const ItemSearchDialog = ({
   isOpen,
   onClose,
   onSelect,
+  // showStatus = false, // New prop to control status display
 }) => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState([]);
+
+  // Helper function to get status display
+  const getStatusDisplay = (item) => {
+    if (!item.status) return null;
+
+    return {
+      text: item.status,
+      className:
+        item.status === "Selesai"
+          ? styles.statusCompleted
+          : styles.statusPending,
+    };
+  };
 
   useEffect(() => {
     const results = data.filter(
@@ -63,6 +77,13 @@ const ItemSearchDialog = ({
                 <div className={styles.productHeader}>
                   <div className={styles.productCode}>{product.code}</div>
                   <div className={styles.productName}>{product.name}</div>
+                  {product.status && getStatusDisplay(product) && (
+                    <div className={styles.statusContainer}>
+                      <span className={getStatusDisplay(product).className}>
+                        {getStatusDisplay(product).text}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className={styles.productDetails}>

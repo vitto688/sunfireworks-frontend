@@ -64,7 +64,7 @@ const Login = () => {
           height: "120px",
         }}
       />
-      <h1 className={styles.title}>Simple Data</h1>
+      <h1 className={styles.title}>SF Warehouse</h1>
       <p className={styles.subTitle}>Masuk Dengan Akun Anda</p>
 
       <form onSubmit={handleSubmit} className={styles.formInputSection}>

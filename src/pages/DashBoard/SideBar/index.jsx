@@ -191,7 +191,7 @@ const SideBar = () => {
               height: "36px",
             }}
           />
-          <h2>Simple Data</h2>
+          <h2>SF WAREHOUSE</h2>
         </div>
         <h4>Selamat datang, {(user?.username ?? "").toUpperCase()}</h4>
       </div>

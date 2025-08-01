@@ -180,7 +180,7 @@ const TambahSuratJalan = () => {
 
     if (
       data.carton_quantity > data.unfulfilled_carton_quantity ||
-      data.pack_quantity < data.unfulfilled_pack_quantity
+      data.pack_quantity > data.unfulfilled_pack_quantity
     ) {
       alert(
         "Jumlah karton dan pack tidak boleh melebihi jumlah yang belum terpenuhi"
@@ -248,6 +248,7 @@ const TambahSuratJalan = () => {
             }}
             onChange={(surat) => {
               const selectedSpk = spkData.find((s) => s.id === surat.id);
+              console.log("surat", surat, "selectedSpk", selectedSpk);
               setSpk(selectedSpk || null);
               if (selectedSpk) {
                 selectedSpk.items = selectedSpk.items.filter(
@@ -342,8 +343,8 @@ const TambahSuratJalan = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Sisa Packing</div>
           <div className={styles.tableHeaderItem}>Sisa Karton</div>
+          <div className={styles.tableHeaderItem}>Sisa Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (

@@ -348,8 +348,8 @@ const UbahSuratJalan = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Sisa Packing</div>
           <div className={styles.tableHeaderItem}>Sisa Karton</div>
+          <div className={styles.tableHeaderItem}>Sisa Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (

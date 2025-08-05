@@ -21,9 +21,8 @@ export const printSPK = (data) => {
         }</title>
         <style>
           @page {
-            margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Back to correct portrait size for continuous form */
-            /* Epson LX-310 ESC/P settings */
+            margin: 15mm;
+            size: A4;
             marks: none;
             orphans: 1;
             widows: 1;
@@ -35,11 +34,10 @@ export const printSPK = (data) => {
             @bottom-right { content: ""; }
           }
           
-          /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
-              margin: 0 !important; /* Custom margin control */
+              size: A4 !important;
+              margin: 15mm !important;
             }
             
             * {
@@ -51,28 +49,19 @@ export const printSPK = (data) => {
               margin: 0 !important;
               padding: 0 !important;
               width: 100% !important;
-              /* Force content to start from absolute top */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
               display: block !important;
             }
             
-            /* Ensure proper page breaks for continuous form */
-            .page-break {
-              page-break-before: always;
-            }
-            
-            /* Optimize for dot matrix printing */
             table {
               page-break-inside: avoid;
-              /* Force table alignment to top */
               vertical-align: top !important;
               position: relative !important;
               margin-top: 0 !important;
             }
             
-            /* Fix overlapping rows in print */
             tbody tr {
               min-height: 25px !important;
               height: auto !important;
@@ -83,53 +72,46 @@ export const printSPK = (data) => {
               height: auto !important;
               padding: 6px 4px !important;
               line-height: 1.4 !important;
-              /* Force top alignment in print */
               vertical-align: top !important;
             }
             
             th {
               min-height: 25px !important;
               height: 25px !important;
-              padding: 4px 2px !important; /* Consistent header padding */
-              /* Force top alignment in print */
-              vertical-align: middle !important; /* Center align in print */
-              font-size: 10px !important; /* Consistent header font size */
-              font-weight: 600 !important; /* Consistent bold weight */
-              text-align: center !important; /* Center align text */
+              padding: 4px 2px !important;
+              vertical-align: middle !important;
+              font-size: 11px !important;
+              font-weight: 600 !important;
+              text-align: center !important;
             }
             
-            /* Specific fix for product code column */
             .col-kode {
-              font-size: 8px !important;
+              font-size: 9px !important;
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
-              line-height: 1.1 !important;
+              line-height: 1.2 !important;
             }
             
-            /* Specific fix for barcode column */
             .col-barcode {
-              font-size: 8px !important;
+              font-size: 9px !important;
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
-              line-height: 1.1 !important;
+              line-height: 1.2 !important;
             }
           }
           
           body {
-            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
-            margin: 5mm 8mm; /* Custom margins for content positioning */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
             padding: 0;
-            width: calc(100% - 16mm); /* Adjust width based on custom margins */
-            max-width: 8.3in; /* Reduced max-width significantly */
-            font-size: 12px; /* Adjusted for LX-310 readability */
-            line-height: 1.3; /* Tighter line spacing for dot matrix */
+            width: 100%;
+            max-width: 100%;
+            font-size: 12px;
+            line-height: 1.4;
             color: black;
             font-weight: 400;
-            /* ESC/P compatible character spacing */
-            letter-spacing: 0.5px;
-            /* Force content to start from top */
             display: block;
             position: relative;
             top: 0;
@@ -137,212 +119,206 @@ export const printSPK = (data) => {
           }
           .header {
             text-align: center;
-            margin-top: 0; /* Start from very top */
-            margin-bottom: 25px; /* Reduced for continuous form */
-            border-bottom: 0.1px solid black; /* Solid border for header */
-            padding-top: 0; /* No top padding */
-            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid black;
+            padding-top: 0;
+            padding-bottom: 10px;
           }
           .header h1 {
-            font-size: 14px; /* Slightly smaller for LX-310 */
-            font-weight: 600; /* Bolder for dot matrix readability */
+            font-size: 16px;
+            font-weight: 600;
             margin: 0;
-            letter-spacing: 2px; /* Adjusted for ESC/P */
+            letter-spacing: 1px;
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 25px; /* Reduced spacing */
-            gap: 30px; /* Reduced gap */
+            margin-bottom: 30px;
+            gap: 40px;
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
-            gap: 12px; /* Reduced gap */
+            gap: 15px;
             align-items: center;
-            margin-bottom: 6px; /* Tighter spacing */
+            margin-bottom: 8px;
           }
           .infoRow .label {
-            font-weight: 600; /* Bolder for dot matrix */
-            min-width: 85px; /* Slightly reduced */
-            font-size: 11px; /* Adjusted for LX-310 */
+            font-weight: 600;
+            min-width: 100px;
+            font-size: 12px;
           }
           .infoRow .value {
             font-weight: 400;
-            font-size: 11px;
+            font-size: 12px;
           }
           table {
             width: 100%;
-            border-collapse: collapse; /* Changed to collapse for cleaner borders */
-            border-spacing: 0; /* No spacing between cells */
-            margin: 0 auto 20px auto; /* Center table */
-            border: 0.1px solid black; /* Solid border for table */
-            font-size: 11px; /* Optimized for LX-310 */
-            /* ESC/P table spacing */
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin: 0 auto 25px auto;
+            border: 1px solid black;
+            font-size: 11px;
             table-layout: fixed;
-            /* Prevent table compression */
             min-height: auto;
-            /* Force table to top */
             vertical-align: top;
             position: relative;
           }
           th, td {
-            border: 0.1px solid black; /* Solid border for cells */
-            padding: 4px 2px; /* Reduced padding to save space */
+            border: 1px solid black;
+            padding: 5px 3px;
             text-align: center;
-            vertical-align: top; /* Keep top alignment */
-            font-size: 11px; /* Consistent with table size */
-            line-height: 1.3; /* Tighter line height for space saving */
-            /* Default text handling */
+            vertical-align: top;
+            font-size: 11px;
+            line-height: 1.4;
             word-break: keep-all;
             white-space: nowrap;
-            height: auto; /* Allow natural height */
-            min-height: 18px; /* Reduced minimum row height */
-            box-sizing: border-box; /* Include padding in width calculation */
+            height: auto;
+            min-height: 20px;
+            box-sizing: border-box;
           }
           th {
             background: white !important;
-            font-weight: 600; /* Consistent bold weight for headers */
-            font-size: 9px; /* Smaller font for headers to save space */
-            height: 22px; /* Reduced height for headers */
+            font-weight: 600;
+            font-size: 11px;
+            height: 25px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            line-height: 1.1; /* Tighter line height for headers */
-            text-align: center; /* Center align all headers */
-            vertical-align: middle; /* Center vertically in header cells */
-            padding: 3px 1px; /* Reduced padding for headers */
+            line-height: 1.3;
+            text-align: center;
+            vertical-align: middle;
+            padding: 4px 2px;
           }
-          /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
-            width: 25px; 
-            font-size: 9px;
+            width: 35px; 
+            font-size: 10px;
           }
           .col-kode { 
-            width: 65px; 
-            font-size: 8px; /* Smaller for code readability */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
+            width: 80px; 
+            font-size: 9px;
+            padding: 4px 2px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-barcode { 
-            width: 50px; 
-            font-size: 8px;
-            padding: 4px 1px; /* Consistent with kode column */
-            word-break: break-all; /* Allow breaking if needed */
-            white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1;
+            width: 70px; 
+            font-size: 9px;
+            padding: 4px 2px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 180px; 
-            padding-left: 3px;
+            width: 200px; 
+            padding-left: 4px;
             font-weight: 400;
-            font-size: 9px; /* Smaller for better fit */
-            text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            font-size: 10px;
+            text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-kp { 
-            width: 25px; 
-            font-size: 8px;
+            width: 35px; 
+            font-size: 9px;
           }
           .col-packing { 
-            width: 55px; 
-            font-size: 8px;
-            /* Prevent wrapping */
+            width: 70px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 35px; 
-            font-size: 9px; /* Smaller for numbers */
+            width: 45px; 
+            font-size: 10px;
           }
           .col-pack { 
-            width: 35px; 
-            font-size: 9px;
+            width: 45px; 
+            font-size: 10px;
           }
           
-          /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 25px; /* Minimum row height */
+            min-height: 28px;
           }
           
           tbody td {
             height: auto;
-            min-height: 20px; /* Ensure minimum cell height */
-            vertical-align: top; /* Align content to top */
+            min-height: 22px;
+            vertical-align: top;
           }
           .subheader th {
             background: white !important;
-            font-size: 9px; /* Consistent with main headers */
-            height: 22px; /* Reduced height for better spacing */
-            font-weight: 600; /* Consistent bold weight */
+            font-size: 11px;
+            height: 25px;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 3px 1px; /* Consistent with main headers */
-            line-height: 1.1;
-            text-align: center; /* Center align subheaders */
-            vertical-align: middle; /* Center vertically */
+            padding: 4px 2px;
+            line-height: 1.3;
+            text-align: center;
+            vertical-align: middle;
           }
           .total-row {
             background: white !important;
-            font-weight: 600; /* Bolder total row for emphasis */
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            border-top: 0.2px solid black; /* Solid border for total row */
+            border-top: 1px solid black;
           }
           .total-row .total-label {
             text-align: right !important;
             font-size: 11px;
-            font-weight: 600; /* Bold total label */
-            padding-right: 10px; /* Reduced padding */
+            font-weight: 600;
+            padding-right: 10px;
           }
           .total-row td {
-            font-weight: 600; /* Bold total values */
+            font-weight: 600;
             font-size: 11px;
           }
           .footer {
-            padding: 15px;
+            padding: 20px 0;
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 35px;
           }
           .notesSection {
-            margin-bottom: 50px;
+            margin-bottom: 60px;
+            flex: 1;
           }
           .notesLabel {
             font-size: 12px;
-            font-weight: 400;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 12px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.5;
           }
           .signatureSection {
             display: flex;
             flex-direction: column;
-            align-items: centers;
+            align-items: center;
+            min-width: 200px;
           }
           .signatureLeft, .signatureRight {
             text-align: center;
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 500;
           }
           .signatureRight {
-            margin-top: 50px;
+            margin-top: 60px;
           }
         </style>
       </head>
@@ -354,13 +330,13 @@ export const printSPK = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">TANGGAL&nbsp;:</span>
               <span class="value">${new Date(
                 data.created_at
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPK :</span>
+              <span class="label">NO SPK&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.spk_number || data.id
               }</span>
@@ -372,11 +348,11 @@ export const printSPK = (data) => {
               <span class="value">${data.customer_name || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">UP. :</span>
+              <span class="label">UP. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.customer_upline || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">Alamat :</span>
+              <span class="label">Alamat &nbsp;:</span>
               <span class="value">${data.customer_address || "-"}</span>
             </div>
           </div>

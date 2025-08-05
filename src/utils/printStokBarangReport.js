@@ -323,8 +323,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
         <title>LAPORAN STOK BARANG</title>
         <style>
           @page {
-            margin: 15mm;
-            size: A4;
+            margin: 10mm;
+            size: 9.5in 5.5in;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -333,22 +333,23 @@ export const printStokBarangReport = (reportData, filters = {}) => {
             @bottom-right { content: ""; }
           }
           body {
-            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
             font-size: 11px;
             line-height: 1.3;
             color: black;
+            font-weight: 400;
           }
           .header {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid black;
+            border-bottom: 0.5px solid black;
             padding-bottom: 10px;
           }
           .header h1 {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 400;
             margin: 0;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -366,7 +367,7 @@ export const printStokBarangReport = (reportData, filters = {}) => {
             margin: 3px 0;
           }
           .reportInfo .label {
-            font-weight: bold;
+            font-weight: 400;
             display: inline-block;
             width: 120px;
           }
@@ -377,14 +378,14 @@ export const printStokBarangReport = (reportData, filters = {}) => {
             margin-bottom: 20px;
           }
           th, td {
-            border: 1px solid black;
+            border: 0.25px solid black;
             padding: 4px 3px;
             text-align: center;
             vertical-align: middle;
           }
           th {
             background: #f0f0f0 !important;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
@@ -434,14 +435,14 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           }
           .total-row {
             background: #e0e0e0 !important;
-            font-weight: bold;
+            font-weight: 400;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row .total-label {
             text-align: center !important;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 400;
           }
           .footer {
             margin-top: 30px;

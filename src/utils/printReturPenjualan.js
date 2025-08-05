@@ -19,8 +19,12 @@ export const printReturPenjualan = (data) => {
         }</title>
         <style>
           @page {
-            margin: 10mm;
-            size: 9.5in 5.5in;
+            margin: 0; /* Custom margin - set to zero for manual control */
+            size: 9.5in 11in; /* Portrait size for continuous form */
+            /* Epson LX-310 ESC/P settings */
+            marks: none;
+            orphans: 1;
+            widows: 1;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -28,14 +32,88 @@ export const printReturPenjualan = (data) => {
             @bottom-center { content: ""; }
             @bottom-right { content: ""; }
           }
+          
+          /* Epson LX-310 optimized settings */
+          @media print {
+            @page {
+              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              margin: 0 !important; /* Custom margin control */
+            }
+            
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
+            body {
+              margin: 5mm; /* Equal margins on all sides */
+              padding: 0 !important;
+              width: 100% !important;
+              /* Force content to start from absolute top */
+              position: relative !important;
+              top: 0 !important;
+              vertical-align: top !important;
+              display: block !important;
+            }
+            
+            /* Ensure proper page breaks for continuous form */
+            .page-break {
+              page-break-before: always;
+            }
+            
+            /* Optimize for dot matrix printing */
+            table {
+              page-break-inside: avoid;
+              /* Force table alignment to top */
+              vertical-align: top !important;
+              position: relative !important;
+              margin-top: 0 !important;
+            }
+            
+            /* Fix overlapping rows in print */
+            tbody tr {
+              min-height: 25px !important;
+              height: auto !important;
+            }
+            
+            tbody td {
+              min-height: 20px !important;
+              height: auto !important;
+              padding: 6px 4px !important;
+              line-height: 1.4 !important;
+              /* Force top alignment in print */
+              vertical-align: top !important;
+            }
+            
+            th {
+              min-height: 25px !important;
+              height: 25px !important;
+              padding: 4px 2px !important; /* Consistent header padding */
+              /* Force top alignment in print */
+              vertical-align: middle !important; /* Center align in print */
+              font-size: 10px !important; /* Consistent header font size */
+              font-weight: 500 !important; /* Consistent bold weight */
+              text-align: center !important; /* Center align text */
+            }
+         
+          }
           body {
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
+            margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
             padding: 0;
-            font-size: 13px;
-            line-height: 1.4;
+            width: calc(100% - 10mm); /* Adjust width based on equal margins */
+            max-width: 8.1in; /* Reduced max-width significantly */
+            font-size: 12px; /* Adjusted for LX-310 readability */
+            line-height: 1.3; /* Tighter line spacing for dot matrix */
             color: black;
             font-weight: 400;
+            /* ESC/P compatible character spacing */
+            letter-spacing: 0.5px;
+            /* Force content to start from top */
+            display: block;
+            position: relative;
+            top: 0;
+            vertical-align: top;
           }
           .header {
             text-align: center;
@@ -61,21 +139,22 @@ export const printReturPenjualan = (data) => {
           }
           .infoRow {
             display: flex;
-            gap: 15px;
+            gap: 8px; /* Reduced gap for tighter alignment */
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400;
-            min-width: 90px;
-            font-size: 12px;
+            font-weight: 600; /* Bolder for dot matrix */
+            min-width: 100px; /* Increased width for better alignment */
+            font-size: 11px; /* Adjusted for LX-310 */
+            text-align: left; /* Ensure left alignment */
           }
           .infoRow .value {
             font-weight: 400;
-            font-size: 12px;
+            font-size: 11px;
           }
           .infoRow .sj {
-            margin-left: 3px;
+            margin-left: 0px; /* Reset margin since we're using consistent label width */
           }
           table {
             width: 100%;
@@ -203,7 +282,7 @@ export const printReturPenjualan = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">TANGGAL &nbsp;&nbsp;:</span>
               <span class="value">${new Date(
                 data.transaction_date
               ).toLocaleDateString("id-ID")}</span>
@@ -217,7 +296,7 @@ export const printReturPenjualan = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ :</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value sj">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">

@@ -19,8 +19,12 @@ export const printSTB = (data) => {
         }</title>
         <style>
           @page {
-            margin: 10mm;
-            size: 9.5in 5.5in;
+            margin: 0; /* Custom margin - set to zero for manual control */
+            size: 9.5in 11in; /* Portrait size for continuous form */
+            /* Epson LX-310 ESC/P settings */
+            marks: none;
+            orphans: 1;
+            widows: 1;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -28,14 +32,74 @@ export const printSTB = (data) => {
             @bottom-center { content: ""; }
             @bottom-right { content: ""; }
           }
+          
+          /* Epson LX-310 optimized settings */
+          @media print {
+            @page {
+              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              margin: 0 !important; /* Custom margin control */
+            }
+            
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
+            body {
+              margin: 5mm; /* Equal margins on all sides */
+              padding: 0 !important;
+              width: 100% !important;
+              position: relative !important;
+              top: 0 !important;
+              vertical-align: top !important;
+              display: block !important;
+            }
+            
+            table {
+              page-break-inside: avoid;
+              vertical-align: top !important;
+              position: relative !important;
+              margin-top: 0 !important;
+            }
+            
+            tbody tr {
+              min-height: 25px !important;
+              height: auto !important;
+            }
+            
+            tbody td {
+              min-height: 20px !important;
+              height: auto !important;
+              padding: 6px 4px !important;
+              line-height: 1.4 !important;
+              vertical-align: top !important;
+            }
+            
+            th {
+              min-height: 25px !important;
+              height: 25px !important;
+              padding: 4px 2px !important;
+              vertical-align: middle !important;
+              font-size: 10px !important;
+              font-weight: 500 !important;
+              text-align: center !important;
+            }
+          }
           body {
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
+            margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
             padding: 0;
-            font-size: 13px;
-            line-height: 1.4;
+            width: calc(100% - 10mm); /* Adjust width based on equal margins */
+            max-width: 8.1in; /* Reduced max-width significantly */
+            font-size: 12px; /* Adjusted for LX-310 readability */
+            line-height: 1.3; /* Tighter line spacing for dot matrix */
             color: black;
             font-weight: 400;
+            letter-spacing: 0.5px;
+            display: block;
+            position: relative;
+            top: 0;
+            vertical-align: top;
           }
           .header {
             text-align: center;
@@ -208,7 +272,7 @@ export const printSTB = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">TANGGAL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${new Date(
                 data.tanggal ||
                   data.transaction_date ||
@@ -226,7 +290,7 @@ export const printSTB = (data) => {
               }</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO STB :</span>
+              <span class="label">NO STB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.stb_number || data.id
               }</span>
@@ -234,10 +298,8 @@ export const printSTB = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ :</span>
-              <span class="value sj">${
-                data.no_sj || data.sj_number || "-"
-              }</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="value">${data.no_sj || data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
               <span class="label">GUDANG TUJUAN :</span>

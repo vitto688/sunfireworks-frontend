@@ -107,6 +107,7 @@ export const printSPB = (data) => {
             line-height: 1.3; /* Tighter line spacing for dot matrix */
             color: black;
             font-weight: 400;
+            font-weight: 400;
             /* ESC/P compatible character spacing */
             letter-spacing: 0.5px;
             /* Force content to start from top */
@@ -340,7 +341,7 @@ export const printSPB = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPB :</span>
+              <span class="label">NO SPB &nbsp;:</span>
               <span class="value">${
                 data.document_number || data.spb_number || data.id
               }</span>
@@ -348,7 +349,7 @@ export const printSPB = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
+              <span class="label">GUDANG TUJUAN &nbsp;:</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
             <div class="infoRow">

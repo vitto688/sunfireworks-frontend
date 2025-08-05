@@ -20,7 +20,7 @@ export const printSPGImport = (data) => {
         <style>
           @page {
             margin: 10mm;
-            size: 9.5in 5.5in;
+            size: A4 landscape;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -29,197 +29,188 @@ export const printSPGImport = (data) => {
             @bottom-right { content: ""; }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 11px;
-            line-height: 1.3;
+            font-size: 12px;
+            line-height: 1.4;
             color: black;
             font-weight: 400;
+            width: calc(100% - 20mm);
           }
           .header {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 0.5px solid black;
-            padding-bottom: 8px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
           }
           .header h1 {
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 16px;
+            font-weight: 600;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 30px;
+            margin-bottom: 25px;
+            gap: 40px;
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
           }
           .infoRow .label {
-            font-weight: 400;
-            min-width: 100px;
-            font-size: 10px;
+            font-weight: 600;
+            min-width: 120px;
+            font-size: 11px;
           }
           .infoRow .value {
             font-weight: 400;
-            font-size: 10px;
+            font-size: 11px;
           }
           table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            border: 0.25px solid black;
-            font-size: 9px;
+            margin-bottom: 25px;
+            border: 1px solid black;
+            font-size: 8px;
+            table-layout: fixed;
           }
           th, td {
-            border: 0.25px solid black;
-            padding: 3px 2px;
+            border: 1px solid black;
+            padding: 2px 1px;
             text-align: center;
             vertical-align: middle;
-            font-size: 9px;
+            font-size: 8px;
             line-height: 1.2;
+            word-wrap: break-word;
+            overflow: hidden;
           }
           th {
-            background: white !important;
-            font-weight: 400;
-            font-size: 9px;
+            background: #f5f5f5 !important;
+            font-weight: 600;
+            font-size: 8px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .col-no { 
-            width: 25px; 
-            min-width: 25px;
+            width: 3%;
           }
           .col-kode { 
-            width: 60px; 
-            min-width: 60px;
-            font-size: 8px;
+            width: 8%;
+            font-size: 7px;
           }
           .col-nama { 
-            width: 120px; 
-            min-width: 120px;
-            padding-left: 4px;
-            font-size: 8px;
+            width: 15%;
+            padding-left: 2px;
+            font-size: 7px;
+            text-align: left;
           }
           .col-packing { 
-            width: 50px; 
-            min-width: 50px;
-            font-size: 8px;
+            width: 6%;
+            font-size: 7px;
           }
           .col-carton { 
-            width: 45px; 
-            min-width: 45px;
+            width: 5%;
           }
           .col-pack { 
-            width: 45px; 
-            min-width: 45px;
+            width: 5%;
           }
           .col-ukuran-dus { 
-            width: 60px; 
-            min-width: 60px;
-            font-size: 8px;
+            width: 8%;
+            font-size: 7px;
           }
           .col-inn { 
-            width: 40px; 
-            min-width: 40px;
+            width: 4%;
           }
           .col-out { 
-            width: 40px; 
-            min-width: 40px;
+            width: 4%;
           }
           .col-pjg { 
-            width: 35px; 
-            min-width: 35px;
+            width: 4%;
           }
           .col-kg-dus { 
-            width: 45px; 
-            min-width: 45px;
-            font-size: 8px;
+            width: 6%;
+            font-size: 7px;
           }
           .col-ukuran-gudang { 
-            width: 70px; 
-            min-width: 70px;
-            font-size: 8px;
+            width: 10%;
+            font-size: 7px;
           }
           .col-kg-gudang { 
-            width: 55px; 
-            min-width: 55px;
-            font-size: 8px;
+            width: 7%;
+            font-size: 7px;
           }
           .col-kode-produksi { 
-            width: 70px; 
-            min-width: 70px;
-            font-size: 8px;
+            width: 15%;
+            font-size: 7px;
           }
           .subheader th {
-            background: white !important;
-            font-size: 9px;
+            background: #f5f5f5 !important;
+            font-size: 8px;
             height: 20px;
-            font-weight: 400;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row {
-            background: white !important;
-            font-weight: 400;
+            background: #f9f9f9 !important;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 9px;
-            font-weight: 400;
-            padding-right: 10px;
+            font-size: 8px;
+            font-weight: 600;
+            padding-right: 5px;
           }
           .total-row td {
-            font-weight: 400;
-            font-size: 9px;
+            font-weight: 600;
+            font-size: 8px;
           }
           .footer {
-            padding: 10px;
+            padding: 15px 0;
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 30px;
           }
           .notesSection {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             flex: 1;
           }
           .notesLabel {
-            font-size: 10px;
-            font-weight: 400;
-            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 10px;
-            line-height: 1.4;
+            font-size: 11px;
+            line-height: 1.5;
           }
           .signatureSection {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 150px;
+            min-width: 180px;
           }
           .signatureLeft, .signatureRight {
             text-align: center;
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 10px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 500;
           }
           .signatureRight {
-            margin-top: 40px;
+            margin-top: 50px;
           }
         </style>
       </head>

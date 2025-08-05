@@ -19,8 +19,8 @@ export const printSPGKawat = (data) => {
         }</title>
         <style>
           @page {
-            margin: 10mm;
-            size: 9.5in 5.5in;
+            margin: 0;
+            size: 9.5in 11in;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -28,51 +28,59 @@ export const printSPGKawat = (data) => {
             @bottom-center { content: ""; }
             @bottom-right { content: ""; }
           }
+          @media print {
+            * {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+          }
           body {
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
+            margin: 10mm 5mm 5mm 5mm;
             padding: 0;
-            font-size: 13px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.3;
             color: black;
             font-weight: 400;
+            max-width: 8.1in;
           }
           .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 0.5px solid black;
-            padding-bottom: 10px;
+            margin-bottom: 25px;
+            border-bottom: 0.1px solid black;
+            padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 16px;
-            font-weight: 400;
+            font-size: 14px;
+            font-weight: 600;
             margin: 0;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
-            gap: 40px;
+            margin-bottom: 25px;
+            gap: 30px;
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
-            gap: 15px;
+            gap: 8px;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
           }
           .infoRow .label {
-            font-weight: 400;
-            min-width: 90px;
-            font-size: 12px;
+            font-weight: 600;
+            min-width: 100px;
+            font-size: 11px;
           }
           .infoRow .value {
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 500;
+            font-size: 11px;
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -80,116 +88,121 @@ export const printSPGKawat = (data) => {
           table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
-            border: 0.25px solid black;
-            font-size: 12px;
+            margin-bottom: 20px;
+            border: 0.1px solid black;
+            font-size: 11px;
+            table-layout: fixed;
           }
           th, td {
-            border: 0.25px solid black;
-            padding: 6px 4px;
+            border: 0.1px solid black;
+            padding: 4px 3px;
             text-align: center;
             vertical-align: middle;
-            font-size: 12px;
-            line-height: 1.3;
+            font-size: 11px;
+            line-height: 1.2;
           }
           th {
             background: white !important;
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 500;
+            font-size: 11px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .col-no { 
-            width: 35px; 
-            min-width: 35px;
+            width: 40px; 
+            min-width: 40px;
           }
           .col-kode { 
-            width: 85px; 
-            min-width: 85px;
-            font-size: 11px;
+            width: 90px; 
+            min-width: 90px;
+            font-size: 10px;
           }
           .col-barcode { 
-            width: 85px; 
-            min-width: 85px;
-            font-size: 11px;
+            width: 90px; 
+            min-width: 90px;
+            font-size: 10px;
           }
           .col-nama { 
-            width: 200px; 
-            min-width: 200px;
-            padding-left: 6px;
-            font-size: 11px;
+            width: 220px; 
+            min-width: 220px;
+            padding-left: 4px;
+            font-size: 10px;
+            text-align: left;
           }
           .col-kp { 
-            width: 35px; 
-            min-width: 35px;
+            width: 40px; 
+            min-width: 40px;
           }
           .col-packing { 
-            width: 70px; 
-            min-width: 70px;
-            font-size: 11px;
+            width: 80px; 
+            min-width: 80px;
+            font-size: 10px;
           }
           .col-carton { 
-            width: 60px; 
-            min-width: 60px;
+            width: 70px; 
+            min-width: 70px;
           }
           .col-pack { 
-            width: 60px; 
-            min-width: 60px;
+            width: 70px; 
+            min-width: 70px;
           }
           .subheader th {
             background: white !important;
-            font-size: 12px;
+            font-size: 11px;
             height: 25px;
-            font-weight: 400;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            border: 0.1px solid black;
           }
           .total-row {
             background: white !important;
-            font-weight: 400;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400;
-            padding-right: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            padding-right: 10px;
           }
           .total-row td {
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 500;
+            font-size: 11px;
           }
           .footer {
-            padding: 15px;
+            padding: 15px 0;
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 25px;
           }
           .notesSection {
-            margin-bottom: 50px;
+            margin-bottom: 35px;
+            flex: 1;
           }
           .notesLabel {
             font-size: 12px;
-            font-weight: 400;
+            font-weight: 600;
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.5;
           }
           .signatureSection {
             display: flex;
             flex-direction: column;
-            align-items: centers;
+            align-items: center;
+            min-width: 180px;
           }
           .signatureLeft, .signatureRight {
             text-align: center;
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 500;
           }
           .signatureRight {
             margin-top: 50px;
@@ -210,7 +223,7 @@ export const printSPGKawat = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG :</span>
+              <span class="label">NO SPG &nbsp;:</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -218,8 +231,8 @@ export const printSPGKawat = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ :</span>
-              <span class="value sj">${data.sj_number || "-"}</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
               <span class="label">GUDANG TUJUAN :</span>

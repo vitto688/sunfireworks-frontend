@@ -315,7 +315,7 @@ export const printReturPembelianReport = (reportData, filters = {}) => {
         <style>
           @page {
             margin: 15mm;
-            size: A4 landscape;
+            size: A4;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }

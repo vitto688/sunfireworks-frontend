@@ -9,6 +9,8 @@ export const printSPK = (data) => {
     data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
 
   // Create complete HTML document
+
+  // size: 9.5in 11in; (continuous form paper)
   const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -19,8 +21,12 @@ export const printSPK = (data) => {
         }</title>
         <style>
           @page {
-            margin: 10mm;
-            size: 9.5in 5.5in;
+            margin: 0; /* Custom margin - set to zero for manual control */
+            size: 9.5in 11in; /* Back to correct portrait size for continuous form */
+            /* Epson LX-310 ESC/P settings */
+            marks: none;
+            orphans: 1;
+            widows: 1;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -28,134 +34,281 @@ export const printSPK = (data) => {
             @bottom-center { content: ""; }
             @bottom-right { content: ""; }
           }
+          
+          /* Epson LX-310 optimized settings */
+          @media print {
+            @page {
+              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              margin: 0 !important; /* Custom margin control */
+            }
+            
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
+            body {
+              margin: 0 !important;
+              padding: 0 !important;
+              width: 100% !important;
+              /* Force content to start from absolute top */
+              position: relative !important;
+              top: 0 !important;
+              vertical-align: top !important;
+              display: block !important;
+            }
+            
+            /* Ensure proper page breaks for continuous form */
+            .page-break {
+              page-break-before: always;
+            }
+            
+            /* Optimize for dot matrix printing */
+            table {
+              page-break-inside: avoid;
+              /* Force table alignment to top */
+              vertical-align: top !important;
+              position: relative !important;
+              margin-top: 0 !important;
+            }
+            
+            /* Fix overlapping rows in print */
+            tbody tr {
+              min-height: 25px !important;
+              height: auto !important;
+            }
+            
+            tbody td {
+              min-height: 20px !important;
+              height: auto !important;
+              padding: 6px 4px !important;
+              line-height: 1.4 !important;
+              /* Force top alignment in print */
+              vertical-align: top !important;
+            }
+            
+            th {
+              min-height: 25px !important;
+              height: 25px !important;
+              padding: 4px 2px !important; /* Consistent header padding */
+              /* Force top alignment in print */
+              vertical-align: middle !important; /* Center align in print */
+              font-size: 10px !important; /* Consistent header font size */
+              font-weight: 600 !important; /* Consistent bold weight */
+              text-align: center !important; /* Center align text */
+            }
+            
+            /* Specific fix for product code column */
+            .col-kode {
+              font-size: 8px !important;
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.1 !important;
+            }
+            
+            /* Specific fix for barcode column */
+            .col-barcode {
+              font-size: 8px !important;
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.1 !important;
+            }
+          }
+          
           body {
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
+            margin: 5mm 8mm; /* Custom margins for content positioning */
             padding: 0;
-            font-size: 13px;
-            line-height: 1.4;
+            width: calc(100% - 16mm); /* Adjust width based on custom margins */
+            max-width: 8.3in; /* Reduced max-width significantly */
+            font-size: 12px; /* Adjusted for LX-310 readability */
+            line-height: 1.3; /* Tighter line spacing for dot matrix */
             color: black;
             font-weight: 400;
+            /* ESC/P compatible character spacing */
+            letter-spacing: 0.5px;
+            /* Force content to start from top */
+            display: block;
+            position: relative;
+            top: 0;
+            vertical-align: top;
           }
           .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 0.5px solid black;
-            padding-bottom: 10px;
+            margin-top: 0; /* Start from very top */
+            margin-bottom: 25px; /* Reduced for continuous form */
+            border-bottom: 0.1px solid black; /* Solid border for header */
+            padding-top: 0; /* No top padding */
+            padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 16px;
-            font-weight: 400;
+            font-size: 14px; /* Slightly smaller for LX-310 */
+            font-weight: 600; /* Bolder for dot matrix readability */
             margin: 0;
-            letter-spacing: 3px;
+            letter-spacing: 2px; /* Adjusted for ESC/P */
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
-            gap: 40px;
+            margin-bottom: 25px; /* Reduced spacing */
+            gap: 30px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
-            gap: 15px;
+            gap: 12px; /* Reduced gap */
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400;
-            min-width: 90px;
-            font-size: 12px;
+            font-weight: 600; /* Bolder for dot matrix */
+            min-width: 85px; /* Slightly reduced */
+            font-size: 11px; /* Adjusted for LX-310 */
           }
           .infoRow .value {
             font-weight: 400;
-            font-size: 12px;
+            font-size: 11px;
           }
           table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-            border: 0.25px solid black;
-            font-size: 12px;
+            border-collapse: collapse; /* Changed to collapse for cleaner borders */
+            border-spacing: 0; /* No spacing between cells */
+            margin: 0 auto 20px auto; /* Center table */
+            border: 0.1px solid black; /* Solid border for table */
+            font-size: 11px; /* Optimized for LX-310 */
+            /* ESC/P table spacing */
+            table-layout: fixed;
+            /* Prevent table compression */
+            min-height: auto;
+            /* Force table to top */
+            vertical-align: top;
+            position: relative;
           }
           th, td {
-            border: 0.25px solid black;
-            padding: 6px 4px;
+            border: 0.1px solid black; /* Solid border for cells */
+            padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
-            vertical-align: middle;
-            font-size: 12px;
-            line-height: 1.3;
+            vertical-align: top; /* Keep top alignment */
+            font-size: 11px; /* Consistent with table size */
+            line-height: 1.3; /* Tighter line height for space saving */
+            /* Default text handling */
+            word-break: keep-all;
+            white-space: nowrap;
+            height: auto; /* Allow natural height */
+            min-height: 18px; /* Reduced minimum row height */
+            box-sizing: border-box; /* Include padding in width calculation */
           }
           th {
             background: white !important;
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 600; /* Consistent bold weight for headers */
+            font-size: 9px; /* Smaller font for headers to save space */
+            height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            line-height: 1.1; /* Tighter line height for headers */
+            text-align: center; /* Center align all headers */
+            vertical-align: middle; /* Center vertically in header cells */
+            padding: 3px 1px; /* Reduced padding for headers */
           }
+          /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
-            width: 35px; 
-            min-width: 35px;
+            width: 25px; 
+            font-size: 9px;
           }
           .col-kode { 
-            width: 85px; 
-            min-width: 85px;
-            font-size: 10px;
+            width: 65px; 
+            font-size: 8px; /* Smaller for code readability */
+            padding: 4px 1px; /* Reduced horizontal padding for better fit */
+            word-break: break-all; /* Allow breaking long codes */
+            white-space: normal; /* Allow wrapping if needed */
+            line-height: 1.1; /* Tighter line spacing */
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-barcode { 
-            width: 85px; 
-            min-width: 85px;
-            font-size: 10px;
+            width: 50px; 
+            font-size: 8px;
+            padding: 4px 1px; /* Consistent with kode column */
+            word-break: break-all; /* Allow breaking if needed */
+            white-space: normal; /* Allow wrapping if needed */
+            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 200px; 
-            min-width: 200px;
-            padding-left: 6px;
-            font-size: 10px;
+            width: 180px; 
+            padding-left: 3px;
+            font-weight: 400;
+            font-size: 9px; /* Smaller for better fit */
+            text-align: left; /* Left align for product names */
+            /* Prevent text wrapping issues */
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-kp { 
-            width: 35px; 
-            min-width: 35px;
+            width: 25px; 
+            font-size: 8px;
           }
           .col-packing { 
-            width: 70px; 
-            min-width: 70px;
-            font-size: 10px;
+            width: 55px; 
+            font-size: 8px;
+            /* Prevent wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 60px; 
-            min-width: 60px;
+            width: 35px; 
+            font-size: 9px; /* Smaller for numbers */
           }
           .col-pack { 
-            width: 60px; 
-            min-width: 60px;
+            width: 35px; 
+            font-size: 9px;
+          }
+          
+          /* Data row specific styling to prevent overlapping */
+          tbody tr {
+            height: auto;
+            min-height: 25px; /* Minimum row height */
+          }
+          
+          tbody td {
+            height: auto;
+            min-height: 20px; /* Ensure minimum cell height */
+            vertical-align: top; /* Align content to top */
           }
           .subheader th {
             background: white !important;
-            font-size: 12px;
-            height: 25px;
-            font-weight: 400;
+            font-size: 9px; /* Consistent with main headers */
+            height: 22px; /* Reduced height for better spacing */
+            font-weight: 600; /* Consistent bold weight */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            padding: 3px 1px; /* Consistent with main headers */
+            line-height: 1.1;
+            text-align: center; /* Center align subheaders */
+            vertical-align: middle; /* Center vertically */
           }
           .total-row {
             background: white !important;
-            font-weight: 400;
+            font-weight: 600; /* Bolder total row for emphasis */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400;
-            padding-right: 15px;
+            font-size: 11px;
+            font-weight: 600; /* Bold total label */
+            padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 600; /* Bold total values */
+            font-size: 11px;
           }
           .footer {
             padding: 15px;

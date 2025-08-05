@@ -158,18 +158,28 @@ const SideBar = () => {
         </>
       );
 
-      setPengaturanSubMenus([
-        {
-          name: "Pengguna",
-          to: PENGGUNA_PATH,
-          isSelected: PENGGUNA_PATH === pathname,
-        },
-        {
-          name: "Ubah Password",
-          to: CHANGE_PASSWORD_PATH,
-          isSelected: CHANGE_PASSWORD_PATH === pathname,
-        },
-      ]);
+      if (user?.role === 1 || user?.role == null) {
+        setPengaturanSubMenus([
+          {
+            name: "Pengguna",
+            to: PENGGUNA_PATH,
+            isSelected: PENGGUNA_PATH === pathname,
+          },
+          {
+            name: "Ubah Password",
+            to: CHANGE_PASSWORD_PATH,
+            isSelected: CHANGE_PASSWORD_PATH === pathname,
+          },
+        ]);
+      } else {
+        setPengaturanSubMenus([
+          {
+            name: "Ubah Password",
+            to: CHANGE_PASSWORD_PATH,
+            isSelected: CHANGE_PASSWORD_PATH === pathname,
+          },
+        ]);
+      }
     } else {
       setPengaturanSubMenus([
         {

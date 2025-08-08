@@ -323,8 +323,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
         <title>LAPORAN STOK BARANG</title>
         <style>
           @page {
-            margin: 10mm;
-            size: 9.5in 5.5in;
+            margin: 15mm;
+            size: A4;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -332,129 +332,143 @@ export const printStokBarangReport = (reportData, filters = {}) => {
             @bottom-center { content: ""; }
             @bottom-right { content: ""; }
           }
+          
+          @media print {
+            @page {
+              size: A4 !important;
+              margin: 15mm !important;
+            }
+            
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+          }
+          
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 11px;
-            line-height: 1.3;
+            font-size: 12px;
+            line-height: 1.4;
             color: black;
             font-weight: 400;
           }
           .header {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 0.5px solid black;
-            padding-bottom: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid black;
+            padding-bottom: 12px;
           }
           .header h1 {
             font-size: 18px;
-            font-weight: 400;
+            font-weight: 600;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
           }
           .header h2 {
-            font-size: 12px;
-            margin: 5px 0;
-            color: #666;
+            font-size: 14px;
+            margin: 8px 0;
+            color: #333;
           }
           .reportInfo {
-            margin-bottom: 20px;
-            font-size: 11px;
+            margin-bottom: 25px;
+            font-size: 12px;
           }
           .reportInfo div {
-            margin: 3px 0;
+            margin: 5px 0;
           }
           .reportInfo .label {
-            font-weight: 400;
+            font-weight: 600;
             display: inline-block;
             width: 120px;
           }
           table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10px;
-            margin-bottom: 20px;
+            font-size: 11px;
+            margin-bottom: 25px;
           }
           th, td {
-            border: 0.25px solid black;
-            padding: 4px 3px;
+            border: 1px solid black;
+            padding: 6px 4px;
             text-align: center;
             vertical-align: middle;
           }
           th {
-            background: #f0f0f0 !important;
-            font-weight: 400;
+            background: white !important;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           .col-no { 
-            width: 30px; 
-            min-width: 30px;
+            width: 40px; 
+            min-width: 40px;
           }
           .col-kode { 
-            width: 80px; 
-            min-width: 80px;
-            font-size: 9px;
+            width: 100px; 
+            min-width: 100px;
+            font-size: 10px;
           }
           .col-nama { 
-            width: 180px; 
-            min-width: 180px;
+            width: 200px; 
+            min-width: 200px;
             text-align: left !important;
-            padding-left: 6px;
-            font-size: 9px;
+            padding-left: 8px;
+            font-size: 10px;
           }
           .col-kategori { 
-            width: 100px; 
-            min-width: 100px;
-            font-size: 9px;
+            width: 120px; 
+            min-width: 120px;
+            font-size: 10px;
           }
           .col-supplier { 
-            width: 100px; 
-            min-width: 100px;
-            font-size: 9px;
+            width: 120px; 
+            min-width: 120px;
+            font-size: 10px;
           }
           .col-packing { 
-            width: 80px; 
-            min-width: 80px;
-            font-size: 9px;
+            width: 90px; 
+            min-width: 90px;
+            font-size: 10px;
           }
           .col-gudang { 
-            width: 80px; 
-            min-width: 80px;
-            font-size: 9px;
+            width: 100px; 
+            min-width: 100px;
+            font-size: 10px;
           }
           .col-carton { 
-            width: 60px; 
-            min-width: 60px;
+            width: 70px; 
+            min-width: 70px;
           }
           .col-pack { 
-            width: 60px; 
-            min-width: 60px;
+            width: 70px; 
+            min-width: 70px;
           }
           .total-row {
-            background: #e0e0e0 !important;
-            font-weight: 400;
+            background: white !important;
+            font-weight: 600;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            border-top: 1px solid black;
           }
           .total-row .total-label {
             text-align: center !important;
             font-size: 11px;
-            font-weight: 400;
+            font-weight: 600;
           }
           .footer {
-            margin-top: 30px;
+            margin-top: 35px;
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 12px;
           }
           .printInfo {
-            font-size: 9px;
+            font-size: 10px;
             color: #666;
             text-align: right;
-            margin-top: 20px;
+            margin-top: 25px;
           }
           .signature {
             text-align: center;

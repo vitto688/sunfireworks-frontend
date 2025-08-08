@@ -36,7 +36,7 @@ export const printSPGKawat = (data) => {
             }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
             margin: 10mm 5mm 5mm 5mm;
             padding: 0;
             font-size: 12px;

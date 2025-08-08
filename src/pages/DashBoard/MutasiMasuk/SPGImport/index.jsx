@@ -281,6 +281,7 @@ const SPGImport = () => {
           <div className={styles.tableHeaderItem}>No</div>
           <div className={styles.tableHeaderItem}>Tanggal Transaksi</div>
           <div className={styles.tableHeaderItem}>No SPG</div>
+          <div className={styles.tableHeaderItem}>Keterangan</div>
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>No Kontainer</div>
@@ -312,6 +313,7 @@ const SPGImport = () => {
                 <div className={styles.tableRowItem}>
                   {item.document_number}
                 </div>
+                <div className={styles.tableRowItem}>{item.notes}</div>
                 <div className={styles.tableRowItem}>{item.warehouse_name}</div>
                 <div className={styles.tableRowItem}>{item.user_username}</div>
                 <div className={styles.tableRowItem}>

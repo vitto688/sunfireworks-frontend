@@ -86,7 +86,7 @@ export const printSPGBawang = (data) => {
             }
           }
           body {
-            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
+            font-family: 'DejaVu Sans Mono', 'Courier New', Courier, monospace; /* Monospace for dot matrix */
             margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */

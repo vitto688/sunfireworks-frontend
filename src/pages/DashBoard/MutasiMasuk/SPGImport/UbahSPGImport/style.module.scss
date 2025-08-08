@@ -34,15 +34,15 @@
         display: flex;
         flex-direction: column;
         padding: 5px 2px 20px 2px;
-        gap: 20px;
+        gap: 10px;
         min-width: 350px;
-        // overflow-x: scroll;
-        // scrollbar-width: none; /* Firefox */
-        // -ms-overflow-style: none; /* IE and Edge */
+        overflow-x: scroll;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
       
-        // &::-webkit-scrollbar {
-        //   display: none; /* Chrome, Safari */
-        // }
+        &::-webkit-scrollbar {
+          display: none; /* Chrome, Safari */
+        }
 
         .row{
             display: flex;

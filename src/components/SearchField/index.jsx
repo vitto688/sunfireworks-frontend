@@ -16,7 +16,7 @@ const SearchField = ({
   disabled,
 }) => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(defaultValue);
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     setSelected(defaultValue);

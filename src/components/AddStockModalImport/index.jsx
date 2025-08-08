@@ -25,8 +25,8 @@ const AddStockModalImport = ({
 }) => {
   const [carton, setCarton] = useState(0);
   const [pack, setPack] = useState(0);
-  const [cartonLeft, setCartonLeft] = useState(0);
-  const [packLeft, setPackLeft] = useState(0);
+  const [cartonLeft, setCartonLeft] = useState(defaultCarton);
+  const [packLeft, setPackLeft] = useState(defaultPack);
   const [packSize, setPackSize] = useState("");
   const [inn, setInn] = useState("");
   const [out, setOut] = useState("");
@@ -41,20 +41,42 @@ const AddStockModalImport = ({
   useEffect(() => {
     if (isOpen) {
       setStock(defaultStock);
-      setCarton(defaultStock?.carton_quantity ?? 0);
-      setPack(defaultStock?.pack_quantity ?? 0);
-      setCartonLeft(defaultCarton);
-      setPackLeft(defaultPack);
-      setPackSize(stock?.packaging_size ?? "");
-      setInn(stock?.inn ?? "");
-      setOut(stock?.out ?? "");
-      setPjg(stock?.pjg ?? "");
-      setPackWeight(stock?.packaging_weight ?? "");
-      setWarehouseSize(stock?.warehouse_size ?? "");
-      setWarehouseWeight(stock?.warehouse_weight ?? "");
-      setProductionCode(stock?.production_code ?? "");
     }
-  }, [isOpen, stock, defaultStock, defaultCarton, defaultPack]);
+  }, [isOpen, defaultStock]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // setStock(defaultStock);
+      setCarton(stock?.carton_quantity ?? defaultStock?.carton_quantity ?? 0);
+      setPack(stock?.pack_quantity ?? defaultStock?.pack_quantity ?? 0);
+      setCartonLeft(cartonLeft ?? defaultCarton);
+      setPackLeft(packLeft ?? defaultPack);
+      setPackSize(stock?.packaging_size ?? defaultStock?.packaging_size ?? "");
+      setInn(stock?.inn ?? defaultStock?.inn ?? "");
+      setOut(stock?.out ?? defaultStock?.out ?? "");
+      setPjg(stock?.pjg ?? defaultStock?.pjg ?? "");
+      setPackWeight(
+        stock?.packaging_weight ?? defaultStock?.packaging_weight ?? ""
+      );
+      setWarehouseSize(
+        stock?.warehouse_size ?? defaultStock?.warehouse_size ?? ""
+      );
+      setWarehouseWeight(
+        stock?.warehouse_weight ?? defaultStock?.warehouse_weight ?? ""
+      );
+      setProductionCode(
+        stock?.production_code ?? defaultStock?.production_code ?? ""
+      );
+    }
+  }, [
+    isOpen,
+    stock,
+    cartonLeft,
+    packLeft,
+    defaultStock,
+    defaultCarton,
+    defaultPack,
+  ]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -132,7 +154,7 @@ const AddStockModalImport = ({
               id: stock.id,
               code: stock.product_code,
               name: stock.product_name,
-              gudang: stock.warehouse_name,
+              // gudang: stock.warehouse_name,
               packQuantity: null,
               cartonQuantity: null,
               supplierName: stock.supplier_name,
@@ -140,14 +162,17 @@ const AddStockModalImport = ({
             defaultValue={
               defaultStock
                 ? {
-                    id: defaultStock.id,
-                    code: defaultStock.product_code,
-                    name: defaultStock.product_name,
-                    gudang: defaultStock.warehouse_name,
-                    packQuantity: defaultStock.pack_quantity,
-                    cartonQuantity: defaultStock.carton_quantity,
-                    packing: defaultStock.packing,
-                    supplierName: defaultStock.supplier_name,
+                    id: stock?.id ?? defaultStock.id,
+                    code: stock?.product_code ?? defaultStock.product_code,
+                    name: stock?.product_name ?? defaultStock.product_name,
+                    // gudang: stock?.warehouse_name ?? defaultStock.warehouse_name,
+                    packQuantity:
+                      stock?.pack_quantity ?? defaultStock.pack_quantity,
+                    cartonQuantity:
+                      stock?.carton_quantity ?? defaultStock.carton_quantity,
+                    packing: stock?.packing ?? defaultStock.packing,
+                    supplierName:
+                      stock?.supplier_name ?? defaultStock.supplier_name,
                   }
                 : null
             }

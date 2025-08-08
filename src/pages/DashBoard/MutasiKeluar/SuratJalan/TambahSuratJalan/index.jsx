@@ -188,8 +188,10 @@ const TambahSuratJalan = () => {
       return;
     }
 
-    data.unfulfilled_carton_quantity -= data.carton_quantity;
-    data.unfulfilled_pack_quantity -= data.pack_quantity;
+    data.new_unfulfilled_carton_quantity =
+      data.unfulfilled_carton_quantity - data.carton_quantity;
+    data.new_unfulfilled_pack_quantity =
+      data.unfulfilled_pack_quantity - data.pack_quantity;
     setStok((prevStok) =>
       prevStok.map((item) =>
         item.product_code === data.product_code ? data : item
@@ -264,6 +266,10 @@ const TambahSuratJalan = () => {
                     ...item,
                     carton_quantity: 0,
                     pack_quantity: 0,
+                    new_unfulfilled_carton_quantity:
+                      item.unfulfilled_carton_quantity,
+                    new_unfulfilled_pack_quantity:
+                      item.unfulfilled_pack_quantity,
                   })),
                 ]);
               }
@@ -345,8 +351,8 @@ const TambahSuratJalan = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Sisa Karton</div>
-          <div className={styles.tableHeaderItem}>Sisa Pack</div>
+          <div className={styles.tableHeaderItem}>SPK Karton</div>
+          <div className={styles.tableHeaderItem}>SPK Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -371,10 +377,10 @@ const TambahSuratJalan = () => {
                 {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.unfulfilled_carton_quantity)}
+                {formatNumberWithDot(stokItem.new_unfulfilled_carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.unfulfilled_pack_quantity)}
+                {formatNumberWithDot(stokItem.new_unfulfilled_pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -388,7 +394,7 @@ const TambahSuratJalan = () => {
             {formatNumberWithDot(totalCarton)}
           </div>
           <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
-          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
+          {/* <div className={styles.all}>{formatNumberWithDot(totalAll)}</div> */}
         </div>
       </div>
 

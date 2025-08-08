@@ -444,7 +444,7 @@ const UbahSPGImport = () => {
             {formatNumberWithDot(totalCarton)}
           </div>
           <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
-          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
+          {/* <div className={styles.all}>{formatNumberWithDot(totalAll)}</div> */}
         </div>
       </div>
 

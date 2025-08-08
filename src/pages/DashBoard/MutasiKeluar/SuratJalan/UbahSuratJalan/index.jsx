@@ -77,14 +77,19 @@ const UbahSuratJalan = () => {
             pack_quantity: item.pack_quantity || 0,
           };
 
+          const spkItem = foundSpk.items.find(
+            (i) => i.product === item.product
+          );
+
           return {
             ...item,
             unfulfilled_carton_quantity:
-              foundSpk.items.find((i) => i.product === item.product)
-                ?.unfulfilled_carton_quantity || 0,
-            unfulfilled_pack_quantity:
-              foundSpk.items.find((i) => i.product === item.product)
-                ?.unfulfilled_pack_quantity || 0,
+              spkItem?.unfulfilled_carton_quantity || 0,
+            new_unfulfilled_carton_quantity:
+              spkItem?.unfulfilled_carton_quantity || 0,
+            unfulfilled_pack_quantity: spkItem?.unfulfilled_pack_quantity || 0,
+            new_unfulfilled_pack_quantity:
+              spkItem?.unfulfilled_pack_quantity || 0,
           };
         });
 
@@ -208,17 +213,23 @@ const UbahSuratJalan = () => {
       }
 
       if (oldPackQuantity > newPackQuantity) {
-        data.unfulfilled_carton_quantity +=
-          oldCartonQuantity - newCartonQuantity;
+        data.new_unfulfilled_carton_quantity =
+          data.unfulfilled_carton_quantity +
+          oldCartonQuantity -
+          newCartonQuantity;
       } else {
-        data.unfulfilled_carton_quantity -=
-          newCartonQuantity - oldCartonQuantity;
+        data.new_unfulfilled_carton_quantity =
+          data.unfulfilled_carton_quantity +
+          newCartonQuantity -
+          oldCartonQuantity;
       }
 
       if (oldCartonQuantity > newCartonQuantity) {
-        data.unfulfilled_pack_quantity += oldPackQuantity - newPackQuantity;
+        data.new_unfulfilled_pack_quantity =
+          data.unfulfilled_pack_quantity + oldPackQuantity - newPackQuantity;
       } else {
-        data.unfulfilled_pack_quantity -= newPackQuantity - oldPackQuantity;
+        data.new_unfulfilled_pack_quantity =
+          data.unfulfilled_pack_quantity + newPackQuantity - oldPackQuantity;
       }
     }
 
@@ -348,8 +359,8 @@ const UbahSuratJalan = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
-          <div className={styles.tableHeaderItem}>Sisa Karton</div>
-          <div className={styles.tableHeaderItem}>Sisa Pack</div>
+          <div className={styles.tableHeaderItem}>SPK Karton</div>
+          <div className={styles.tableHeaderItem}>SPK Pack</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -374,10 +385,10 @@ const UbahSuratJalan = () => {
                 {formatNumberWithDot(stokItem.pack_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.unfulfilled_carton_quantity)}
+                {formatNumberWithDot(stokItem.new_unfulfilled_carton_quantity)}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.unfulfilled_pack_quantity)}
+                {formatNumberWithDot(stokItem.new_unfulfilled_pack_quantity)}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />
@@ -391,7 +402,7 @@ const UbahSuratJalan = () => {
             {formatNumberWithDot(totalCarton)}
           </div>
           <div className={styles.pack}>{formatNumberWithDot(totalPack)}</div>
-          <div className={styles.all}>{formatNumberWithDot(totalAll)}</div>
+          {/* <div className={styles.all}>{formatNumberWithDot(totalAll)}</div> */}
         </div>
       </div>
 

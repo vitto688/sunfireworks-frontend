@@ -303,7 +303,7 @@ const TransferStok = () => {
                   {((pagination?.current_page || 1) - 1) * 10 + index + 1}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {formatDate(item.created_at || item.tanggal_transaksi)}
+                  {formatDate(item.transaction_date || item.tanggal_transaksi)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number || item.no_faktur}

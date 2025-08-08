@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx";
 
 // Import Redux actions
 import {
@@ -23,7 +24,11 @@ import EditButton from "../../../../../components/EditButton";
 import EditStockModal from "../../../../../components/EditStockModal";
 
 // Import utility functions
-import { printSPK } from "../../../../../utils/printSPKUtils";
+import {
+  printSPK,
+  exportSPKToExcel,
+  exportSPKToExcelAdvanced,
+} from "../../../../../utils/printSPKUtils";
 import { formatDate } from "../../../../../utils/dateUtils";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 
@@ -161,6 +166,23 @@ const UbahSPKBarang = () => {
     });
   };
 
+  const handleExportExcelClick = () => {
+    try {
+      const spkData = {
+        ...argument,
+        notes: keterangan,
+        items: stok,
+      };
+
+      // Use XLSX library that has been imported
+      const filename = exportSPKToExcelAdvanced(spkData, {}, XLSX);
+      console.log(`SPK exported successfully as: ${filename}`);
+    } catch (error) {
+      console.error("Error exporting SPK:", error);
+      alert("Terjadi kesalahan saat mengexport SPK");
+    }
+  };
+
   const handleTambahStok = () => {
     // Logic to add stock, e.g., open a modal or navigate to another page
     setModalOpen(true);
@@ -201,6 +223,12 @@ const UbahSPKBarang = () => {
   return (
     <div className={styles.ubahSection}>
       <div className={styles.actionsSection}>
+        <CustomButton
+          label="Export Excel"
+          variant="outline"
+          onClick={handleExportExcelClick}
+          disabled={loading}
+        />
         <CustomButton
           label="Print SPK"
           variant="outline"

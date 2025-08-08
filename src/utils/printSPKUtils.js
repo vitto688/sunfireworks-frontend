@@ -1,4 +1,298 @@
-import { formatNumberWithDot } from "./numberUtils";
+import { formatNumberWithDot, formatDate } from "./numberUtils";
+
+// Function to generate Excel file from SPK data
+export const exportSPKToExcel = (data, filters = {}) => {
+  // Calculate totals
+  const totalCarton =
+    data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+    0;
+  const totalPack =
+    data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+
+  // Create filter info string
+  const createFilterInfo = () => {
+    let filterText = [];
+    if (filters.start_date && filters.end_date) {
+      filterText.push(
+        `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+          filters.end_date
+        )}`
+      );
+    }
+    if (filters.customer && filters.customer !== 0) {
+      filterText.push(`Customer: ${filters.customer}`);
+    }
+    if (filters.warehouse && filters.warehouse !== 0) {
+      filterText.push(`Gudang: ${filters.warehouse}`);
+    }
+    if (filters.search) {
+      filterText.push(`Pencarian: ${filters.search}`);
+    }
+    return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+  };
+
+  // Create CSV content (Excel-compatible)
+  const csvContent = [];
+
+  // Header information
+  csvContent.push(["SURAT PERINTAH KERJA (SPK)"]);
+  csvContent.push(["SUN FIREWORKS"]);
+  csvContent.push([""]);
+  csvContent.push([
+    "No. SPK:",
+    data.document_number || data.spk_number || data.id,
+  ]);
+  csvContent.push(["Tanggal:", formatDate(data.created_at)]);
+  csvContent.push(["Customer:", data.customer_name || "-"]);
+  csvContent.push(["UP:", data.customer_upline || "-"]);
+  csvContent.push(["Alamat:", data.customer_address || "-"]);
+  csvContent.push([""]);
+  csvContent.push(["Filter:", createFilterInfo()]);
+  csvContent.push(["Total Item:", `${data.items?.length || 0} item`]);
+  csvContent.push(["Tanggal Export:", formatDate(new Date())]);
+  csvContent.push([""]);
+
+  // Table headers
+  csvContent.push([
+    "NO",
+    "KODE PRODUK",
+    "BARCODE",
+    "NAMA PRODUK",
+    "KP",
+    "PACKING",
+    "CARTON",
+    "PACK",
+  ]);
+
+  // Table data
+  if (data.items?.length > 0) {
+    data.items.forEach((item, index) => {
+      csvContent.push([
+        index + 1,
+        item.product_code || "-",
+        "-",
+        item.product_name || "-",
+        item.supplier_name || "-",
+        item.packing || "-",
+        item.carton_quantity || 0,
+        item.pack_quantity || 0,
+      ]);
+    });
+
+    // Total row
+    csvContent.push(["", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+  } else {
+    csvContent.push([
+      "",
+      "",
+      "",
+      "Tidak ada item SPK yang ditemukan",
+      "",
+      "",
+      "",
+      "",
+    ]);
+  }
+
+  // Notes section
+  csvContent.push([""]);
+  csvContent.push(["CATATAN:"]);
+  csvContent.push([data.notes || "-"]);
+
+  // Convert to CSV string
+  const csvString = csvContent
+    .map((row) =>
+      row
+        .map((cell) => {
+          const cellString = String(cell || "");
+          if (
+            cellString.includes(",") ||
+            cellString.includes('"') ||
+            cellString.includes("\n")
+          ) {
+            return `"${cellString.replace(/"/g, '""')}"`;
+          }
+          return cellString;
+        })
+        .join(",")
+    )
+    .join("\n");
+
+  // Add BOM for proper UTF-8 encoding in Excel
+  const BOM = "\uFEFF";
+  const finalCsvContent = BOM + csvString;
+
+  // Create and download file
+  const blob = new Blob([finalCsvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+
+  // Generate filename with current date
+  const currentDate = new Date().toISOString().split("T")[0];
+  const spkNumber = data.document_number || data.spk_number || data.id;
+  const filename = `SPK_${spkNumber}_${currentDate}.csv`;
+  link.setAttribute("download", filename);
+
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Clean up
+  URL.revokeObjectURL(url);
+
+  return filename;
+};
+
+// Enhanced Excel export using XLSX library
+export const exportSPKToExcelAdvanced = (data, filters = {}, XLSX = null) => {
+  try {
+    // Check if XLSX library is available
+    if (!XLSX && typeof window.XLSX === "undefined") {
+      console.warn("XLSX library not found. Falling back to CSV export.");
+      return exportSPKToExcel(data, filters);
+    }
+
+    // Use provided XLSX or fallback to window.XLSX
+    const xlsxLib = XLSX || window.XLSX;
+
+    // Calculate totals
+    const totalCarton =
+      data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
+      0;
+    const totalPack =
+      data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) ||
+      0;
+
+    // Create filter info string
+    const createFilterInfo = () => {
+      let filterText = [];
+      if (filters.start_date && filters.end_date) {
+        filterText.push(
+          `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+            filters.end_date
+          )}`
+        );
+      }
+      if (filters.customer && filters.customer !== 0) {
+        filterText.push(`Customer: ${filters.customer}`);
+      }
+      if (filters.warehouse && filters.warehouse !== 0) {
+        filterText.push(`Gudang: ${filters.warehouse}`);
+      }
+      if (filters.search) {
+        filterText.push(`Pencarian: ${filters.search}`);
+      }
+      return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+    };
+
+    // Create workbook and worksheet
+    const wb = xlsxLib.utils.book_new();
+    const wsData = [];
+
+    // Header information
+    wsData.push(["SURAT PERINTAH KERJA (SPK)"]);
+    wsData.push(["SUN FIREWORKS"]);
+    wsData.push([""]);
+    wsData.push([
+      "No. SPK:",
+      data.document_number || data.spk_number || data.id,
+    ]);
+    wsData.push(["Tanggal:", formatDate(data.created_at)]);
+    wsData.push(["Customer:", data.customer_name || "-"]);
+    wsData.push(["UP:", data.customer_upline || "-"]);
+    wsData.push(["Alamat:", data.customer_address || "-"]);
+    wsData.push([""]);
+    wsData.push(["Filter:", createFilterInfo()]);
+    wsData.push(["Total Item:", `${data.items?.length || 0} item`]);
+    wsData.push(["Tanggal Export:", formatDate(new Date())]);
+    wsData.push([""]);
+
+    // Table headers
+    wsData.push([
+      "NO",
+      "KODE PRODUK",
+      "BARCODE",
+      "NAMA PRODUK",
+      "KP",
+      "PACKING",
+      "CARTON",
+      "PACK",
+    ]);
+
+    // Table data
+    if (data.items?.length > 0) {
+      data.items.forEach((item, index) => {
+        wsData.push([
+          index + 1,
+          item.product_code || "-",
+          "-",
+          item.product_name || "-",
+          item.supplier_name || "-",
+          item.packing || "-",
+          item.carton_quantity || 0,
+          item.pack_quantity || 0,
+        ]);
+      });
+
+      // Total row
+      wsData.push(["", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+    } else {
+      wsData.push([
+        "",
+        "",
+        "",
+        "Tidak ada item SPK yang ditemukan",
+        "",
+        "",
+        "",
+        "",
+      ]);
+    }
+
+    // Notes section
+    wsData.push([""]);
+    wsData.push(["CATATAN:"]);
+    wsData.push([data.notes || "-"]);
+
+    // Create worksheet
+    const ws = xlsxLib.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 5 }, // NO
+      { wch: 15 }, // KODE PRODUK
+      { wch: 12 }, // BARCODE
+      { wch: 30 }, // NAMA PRODUK
+      { wch: 8 }, // KP
+      { wch: 12 }, // PACKING
+      { wch: 8 }, // CARTON
+      { wch: 8 }, // PACK
+    ];
+    ws["!cols"] = colWidths;
+
+    // Add worksheet to workbook
+    xlsxLib.utils.book_append_sheet(wb, ws, "SPK");
+
+    // Generate filename with current date
+    const currentDate = new Date().toISOString().split("T")[0];
+    const spkNumber = data.document_number || data.spk_number || data.id;
+    const filename = `SPK_${spkNumber}_${currentDate}.xlsx`;
+
+    // Write and download file
+    xlsxLib.writeFile(wb, filename);
+
+    return filename;
+  } catch (error) {
+    console.error("Error creating Excel file:", error);
+    // Fallback to CSV export
+    return exportSPKToExcel(data, filters);
+  }
+};
 
 export const printSPK = (data) => {
   // Calculate totals

@@ -2,11 +2,11 @@ import React from "react";
 import { FaEdit } from "react-icons/fa";
 import styles from "./style.module.scss";
 
-const EditButton = ({ onClick }) => {
+const EditButton = ({ label = "Ubah", onClick }) => {
   return (
     <button className={styles.editButton} onClick={onClick}>
       <FaEdit className={styles.icon} />
-      Ubah
+      {label}
     </button>
   );
 };

@@ -213,7 +213,10 @@ const Produk = () => {
               <div className={styles.tableRowItem}>{product.supplier_name}</div>
               <div className={styles.tableRowItem}>{product.category_name}</div>
               <div>
-                <EditButton onClick={(e) => handleEdit(e, product)} />
+                <EditButton
+                  label="Lihat"
+                  onClick={(e) => handleEdit(e, product)}
+                />
               </div>
 
               {/* <div className={styles.tableRowItem}>{product.quantity}</div>

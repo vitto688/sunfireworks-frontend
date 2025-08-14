@@ -24,6 +24,7 @@ import EditButton from "../../../../../components/EditButton";
 import { formatNumberWithDot } from "../../../../../utils/numberUtils";
 import DatePicker from "../../../../../components/DatePicker";
 import AddStockButton from "../../../../../components/AddStockButton";
+import SelectField from "../../../../../components/SelectField";
 
 export const TAMBAH_SURAT_JALAN_PATH =
   "/mutasi-keluar/surat-jalan/tambah-surat-jalan";
@@ -39,6 +40,7 @@ const TambahSuratJalan = () => {
   const [gudang, setGudang] = useState(null);
   const [kendaraan, setKendaraan] = useState("");
   const [noKendaraan, setNoKendaraan] = useState("");
+  const [sjType, setSjType] = useState("");
   const [tanggal, setTanggal] = useState(() => {
     // Set default to today's date in YYYY-MM-DD format
     const today = new Date();
@@ -61,6 +63,17 @@ const TambahSuratJalan = () => {
   const { loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.suratJalan
   );
+  //#endregion
+
+  //#region Data Constants
+  const sjTypeOptions = [
+    { id: "KA", name: "KA" },
+    { id: "KA-SJ", name: "KA-SJ" },
+    { id: "SO/B", name: "SO/B" },
+    { id: "SO/K", name: "SO/K" },
+    { id: "P-B", name: "P-B" },
+    { id: "P-K", name: "P-K" },
+  ];
   //#endregion
 
   //#region Effects
@@ -107,6 +120,7 @@ const TambahSuratJalan = () => {
       !tanggal ||
       !kendaraan ||
       !noKendaraan ||
+      !sjType ||
       stok.length === 0
     ) {
       alert("Harap lengkapi semua field yang diperlukan");
@@ -123,6 +137,7 @@ const TambahSuratJalan = () => {
       vehicle_number: noKendaraan,
       notes: keterangan,
       transaction_date: tanggal,
+      sj_type: sjType,
       items: stok.map((item) => ({
         product: item.product || item.id,
         carton_quantity: item.carton_quantity || 0,
@@ -236,13 +251,15 @@ const TambahSuratJalan = () => {
             type="text"
             id="spk"
             name="spk"
-            data={spkData.map((surat) => ({
-              id: surat.id,
-              name: surat.document_number,
-              gudang: surat.warehouse_name,
-              pelanggan: surat.customer_name,
-              status: surat.status,
-            }))}
+            data={spkData
+              .map((surat) => ({
+                id: surat.id,
+                name: surat.document_number,
+                gudang: surat.warehouse_name,
+                pelanggan: surat.customer_name,
+                status: surat.status,
+              }))
+              .filter((item) => item.status.toLowerCase() !== "selesai")}
             defaultValue={{
               id: spk?.id,
               name: spk?.document_number,
@@ -296,6 +313,16 @@ const TambahSuratJalan = () => {
               name: warehouse.name,
             }))}
             onChange={(warehouse) => setGudang(warehouse)}
+          />
+
+          <SelectField
+            label="Tipe SJ"
+            id="sjType"
+            name="sjType"
+            value={sjType}
+            options={sjTypeOptions}
+            onChange={(e) => setSjType(e.target.value)}
+            required
           />
         </div>
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import React, { useState, useEffect } from "react";
 
 // Import styles
@@ -50,7 +52,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
         disabled={true}
         defaultValue={formatNumberWithDot(stok.pack_quantity ?? 0)}
       />
-      <label className={styles.label} htmlFor="ubahStokDiGudang">
+      {/* <label className={styles.label} htmlFor="ubahStokDiGudang">
         {"Ubah Stok ===>"}
       </label>
       <InputField
@@ -78,7 +80,7 @@ const StokItem = ({ code, stok, handleCartonChange, handlePackChange }) => {
             handlePackChange(e, stok);
           }
         }}
-      />
+      /> */}
     </div>
   );
 };

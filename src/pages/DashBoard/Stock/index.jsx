@@ -16,7 +16,7 @@ import {
 import SearchBar from "../../../components/SearchBar";
 // import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
 import FilterDropdown from "../../../components/FilterDropdown";
-import { UBAH_STOK_PATH } from "./UbahStok";
+// import { UBAH_STOK_PATH } from "./UbahStok";
 import { formatNumberWithDot } from "../../../utils/numberUtils";
 
 // Define the path for the Penyesuaian Stok page
@@ -40,7 +40,7 @@ const Stock = () => {
   const { stocks, message, errorMessage, errorCode } = useSelector(
     (state) => state.stock
   );
-  const { user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.auth);
 
   const { warehouses, categories, suppliers } = useSelector(
     (state) => state.master
@@ -172,7 +172,7 @@ const Stock = () => {
   // };
 
   const handleItemClick = (item) => {
-    if (user?.role !== 3) navigate(UBAH_STOK_PATH, { state: item });
+    // if (user?.role !== 3) navigate(UBAH_STOK_PATH, { state: item });
   };
 
   // Calculate totals for footer

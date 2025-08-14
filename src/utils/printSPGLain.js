@@ -48,7 +48,7 @@ export const printSPGLain = (data) => {
             body {
               margin: 5mm; /* Equal margins on all sides */
               padding: 0 !important;
-              width: 100% !important;
+              // width: 100% !important;
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -73,6 +73,8 @@ export const printSPGLain = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
+              font-size: 11px !important;
+              font-weight: 300 !important;
             }
             
             th {
@@ -81,17 +83,17 @@ export const printSPGLain = (data) => {
               padding: 4px 2px !important;
               vertical-align: middle !important;
               font-size: 10px !important;
-              font-weight: 500 !important;
+              font-weight: 600 !important;
               text-align: center !important;
             }
           }
           body {
-            font-family: 'Liberation Mono', 'Consolas', 'Courier New', Courier, monospace;
+            font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
             margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
             max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Adjusted for LX-310 readability */
+            font-size: 13px; /* Adjusted for LX-310 readability */
             line-height: 1.3; /* Tighter line spacing for dot matrix */
             color: black;
             font-weight: 400;
@@ -136,11 +138,11 @@ export const printSPGLain = (data) => {
           .infoRow .label {
             font-weight: 700; /* Bolder for better dot matrix visibility */
             min-width: 85px; /* Slightly reduced */
-            font-size: 10px; /* Optimized for clarity */
+            font-size: 11px; /* Optimized for clarity */
           }
           .infoRow .value {
             font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 10px; /* Consistent with label */
+            font-size: 11px; /* Consistent with label */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -151,7 +153,7 @@ export const printSPGLain = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 10px; /* Optimized for LX-310 clarity */
+            font-size: 11px; /* Optimized for LX-310 clarity */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -162,7 +164,7 @@ export const printSPGLain = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 10px; /* Optimized for clarity */
+            font-size: 11px; /* Optimized for clarity */
             line-height: 1.2; /* Optimized line height for dot matrix */
             word-break: keep-all;
             white-space: nowrap;
@@ -173,7 +175,7 @@ export const printSPGLain = (data) => {
           th {
             background: white !important;
             font-weight: 600; /* Consistent bold weight for headers */
-            font-size: 10px; /* Optimized for clarity */
+            font-size: 11px; /* Optimized for clarity */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -185,11 +187,11 @@ export const printSPGLain = (data) => {
           /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
             width: 35px; 
-            font-size: 10px;
+            font-size: 11px;
           }
           .col-kode { 
             width: 110px; 
-            font-size: 9px; /* Smaller for better code readability */
+            font-size: 11px; /* Smaller for better code readability */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -199,7 +201,7 @@ export const printSPGLain = (data) => {
           }
           .col-barcode { 
             width: 60px; 
-            font-size: 9px;
+            font-size: 11px;
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -208,33 +210,35 @@ export const printSPGLain = (data) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 250px; 
+            width: 290px; 
             padding-left: 3px;
             font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 9px; /* Optimized for clarity */
+            font-size: 11px; /* Optimized for clarity */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-kp { 
-            width: 25px; 
-            font-size: 9px;
+            width: 35px; 
+            font-size: 11px;
           }
           .col-packing { 
-            width: 55px; 
-            font-size: 9px;
+            width: 65px; 
+            font-size: 11px;
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-size: 10px; /* Slightly larger for numbers */
+            font-weight: 400;
+            font-size: 11px; /* Slightly larger for numbers */
           }
           .col-pack { 
             width: 35px; 
-            font-size: 10px;
+            font-weight: 400;
+            font-size: 11px;
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -250,7 +254,7 @@ export const printSPGLain = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 11px; /* Consistent with main headers */
+            font-size: 12px; /* Consistent with main headers */
             height: 22px; /* Reduced height for better spacing */
             font-weight: 500; /* Consistent bold weight */
             -webkit-print-color-adjust: exact;
@@ -269,13 +273,13 @@ export const printSPGLain = (data) => {
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500; /* Bold total label */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
             font-weight: 500; /* Bold total values */
-            font-size: 11px;
+            font-size: 12px;
           }
           .footer {
             padding: 15px;

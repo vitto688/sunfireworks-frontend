@@ -98,7 +98,7 @@ export const printSPB = (data) => {
          
           }
           body {
-            font-family: 'Courier New', Courier, monospace; /* Monospace for dot matrix */
+            font-family: 'DejaVu Sans Mono', 'Courier New', Courier, monospace; /* Monospace for dot matrix */
             margin: 10mm 5mm 5mm 5mm; /* Equal margins on all sides */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */

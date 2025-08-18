@@ -138,6 +138,13 @@ import EditRole, { EDIT_ROLE_PATH } from "./Pengguna/EditRole";
 import ChangePassword, { CHANGE_PASSWORD_PATH } from "./ChangePassword";
 import Stock, { STOCK_PATH } from "./Stock";
 import UbahStok, { UBAH_STOK_PATH } from "./Stock/UbahStok";
+import StokOpname, { STOCK_ADJUSTMENT_PATH } from "./StokOpname";
+import TambahStokOpname, {
+  TAMBAH_STOCK_ADJUSTMENT_PATH,
+} from "./StokOpname/TambahStokOpname";
+import UbahStokOpname, {
+  UBAH_STOCK_ADJUSTMENT_PATH,
+} from "./StokOpname/UbahStokOpname";
 import UbahStokProduk, {
   UBAH_STOK_PRODUK_PATH,
 } from "./MasterData/Produk/UbahStokProduk";
@@ -287,6 +294,15 @@ const Dashboard = () => {
             <Route path={UBAH_SPB_PATH} element={<UbahSPB />} />
             <Route path={STOCK_PATH} element={<Stock />} />
             <Route path={UBAH_STOK_PATH} element={<UbahStok />} />
+            <Route path={STOCK_ADJUSTMENT_PATH} element={<StokOpname />} />
+            <Route
+              path={TAMBAH_STOCK_ADJUSTMENT_PATH}
+              element={<TambahStokOpname />}
+            />
+            <Route
+              path={UBAH_STOCK_ADJUSTMENT_PATH}
+              element={<UbahStokOpname />}
+            />
             <Route
               path={LAPORAN_RETUR_PENJUALAN_PATH}
               element={<LaporanReturPenjualan />}

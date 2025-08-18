@@ -39,6 +39,7 @@ import { SPK_BARANG_PATH } from "../MutasiKeluar/SPKBarang";
 import { PENGGUNA_PATH } from "../Pengguna";
 import { CHANGE_PASSWORD_PATH } from "../ChangePassword";
 import { STOCK_PATH } from "../Stock";
+import { STOCK_ADJUSTMENT_PATH } from "../StokOpname";
 import { LAPORAN_RETUR_PENJUALAN_PATH } from "../Laporan/ReturPenjualan";
 import { LAPORAN_STOK_BARANG_PATH } from "../Laporan/StokBarang";
 import { LAPORAN_MUTASI_BARANG_PATH } from "../Laporan/MutasiBarang";
@@ -325,6 +326,19 @@ const SideBar = () => {
           />
         }
         isSelected={STOCK_PATH === pathname}
+      />
+
+      <SideMenuItem
+        name="Stok Opname"
+        to={STOCK_ADJUSTMENT_PATH}
+        icon={
+          <PenyesuaianStockDataIcon
+            className={`${styles.icon} ${
+              STOCK_ADJUSTMENT_PATH === pathname && styles.selected
+            }`}
+          />
+        }
+        isSelected={STOCK_ADJUSTMENT_PATH === pathname}
       />
 
       {laporanDataMenu}

@@ -181,10 +181,6 @@ export const printSuratJalan = (data) => {
             padding-left: 6px;
             font-size: 10px;
           }
-          .col-kp { 
-            width: 35px; 
-            min-width: 35px;
-          }
           .col-packing { 
             width: 70px; 
             min-width: 70px;
@@ -316,7 +312,6 @@ export const printSuratJalan = (data) => {
               <th rowspan="2" class="col-kode">KODE PRODUK</th>
               <th rowspan="2" class="col-barcode">BARCODE</th>
               <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
               <th rowspan="2" class="col-packing">PACKING</th>
               <th colspan="2">JUMLAH</th>
             </tr>
@@ -335,7 +330,6 @@ export const printSuratJalan = (data) => {
                 <td class="col-kode">${item.product_code || "-"}</td>
                 <td class="col-barcode">-</td>
                 <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">${item.supplier_name || "-"}</td>
                 <td class="col-packing">${item.packing || "-"}</td>
                 <td class="col-carton">${formatNumberWithDot(
                   item.carton_quantity || 0
@@ -349,7 +343,7 @@ export const printSuratJalan = (data) => {
                 .join("") || ""
             }
             <tr class="total-row">
-              <td colspan="6" class="total-label">TOTAL</td>
+              <td colspan="5" class="total-label">TOTAL</td>
               <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
               <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
             </tr>

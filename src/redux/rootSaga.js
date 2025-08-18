@@ -3,6 +3,7 @@ import authSaga from "./sagas/authSaga";
 import masterSaga from "./sagas/masterSaga";
 import menuSaga from "./sagas/menuSaga";
 import stockSaga from "./sagas/stockSaga";
+import stockAdjustmentSaga from "./sagas/stockAdjustmentSaga";
 import mutasiMasukSaga from "./sagas/mutasiMasukSaga";
 import spgSaga from "./sagas/spgSaga";
 import stokTransferSaga from "./sagas/stokTransferSaga";
@@ -25,6 +26,7 @@ export default function* rootSaga() {
     masterSaga(),
     menuSaga(),
     stockSaga(),
+    stockAdjustmentSaga(),
     mutasiMasukSaga(),
     // Unified SPG Saga
     spgSaga(),

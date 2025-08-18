@@ -88,7 +88,7 @@ export const printSPGLain = (data) => {
             }
           }
           body {
-            font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+            font-family: 'Liberation Mono', 'Consolas', 'Courier New', Courier, monospace;
             margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */

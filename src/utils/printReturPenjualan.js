@@ -91,7 +91,7 @@ export const printReturPenjualan = (data) => {
               padding: 4px 2px !important; /* Consistent header padding */
               /* Force top alignment in print */
               vertical-align: middle !important; /* Center align in print */
-              font-size: 10px !important; /* Consistent header font size */
+              font-size: 12px !important; /* Consistent header font size */
               font-weight: 500 !important; /* Consistent bold weight */
               text-align: center !important; /* Center align text */
             }
@@ -184,18 +184,18 @@ export const printReturPenjualan = (data) => {
           .col-kode { 
             width: 85px; 
             min-width: 85px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-barcode { 
             width: 85px; 
             min-width: 85px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-nama { 
             width: 200px; 
             min-width: 200px;
             padding-left: 6px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-kp { 
             width: 35px; 
@@ -204,7 +204,7 @@ export const printReturPenjualan = (data) => {
           .col-packing { 
             width: 70px; 
             min-width: 70px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-carton { 
             width: 60px; 

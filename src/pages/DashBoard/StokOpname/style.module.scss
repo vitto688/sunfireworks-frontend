@@ -1,276 +1,212 @@
 @import 'src/mixins.scss';
 
-.stockAdjustmentSection {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: white;
-  border-radius: 15px;
-  overflow: hidden;
-
-  .actionsSection {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 16px 16px 0 16px;
-  }
-
-  .searchFilterSection {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 16px 0 16px;
-    gap: 20px;
-    flex-wrap: wrap;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
-    }
-
-    .filterSection {
-      padding-bottom: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-      flex-wrap: wrap;
-
-      @media (max-width: 768px) {
-        justify-content: stretch;
-        
-        > * {
-          flex: 1;
-          min-width: 150px;
-        }
-      }
-    }
-  }
-
-  .stockAdjustmentTable {
-    flex: 1;
+.stokOpnameSection {
+    position: relative;
     display: flex;
     flex-direction: column;
-    margin: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
+    height: 100%;
+    background-color: white;
+    border-radius: 15px;
     overflow: hidden;
 
-    .tableHeader {
-      display: flex;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
-      font-weight: 600;
-      font-size: 14px;
-      color: #333;
-
-      .tableHeaderItem {
-        padding: 16px 12px;
-        display: flex;
-        align-items: center;
-        border-right: 1px solid #e0e0e0;
-
-        &:first-child {
-          flex: 0 0 60px;
-          justify-content: center;
+    // Loading indicator styles
+    .loadingIndicator {
+        padding: 16px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-left: 4px solid #007bff;
+        margin: 16px;
+        border-radius: 4px;
+        
+        p {
+            margin: 0;
+            color: #007bff;
+            font-weight: 500;
         }
-
-        &:nth-child(2) {
-          flex: 0 0 120px;
-        }
-
-        &:nth-child(3) {
-          flex: 0 0 150px;
-        }
-
-        &:nth-child(4) {
-          flex: 2;
-        }
-
-        &:nth-child(5) {
-          flex: 0 0 120px;
-          justify-content: center;
-        }
-
-        &:last-child {
-          flex: 0 0 120px;
-          justify-content: center;
-          border-right: none;
-        }
-      }
     }
 
-    .tableBody {
-      flex: 1;
-      overflow-y: auto;
-      background: white;
+    // Success message styles
+    .successMessage {
+        padding: 16px;
+        text-align: center;
+        background-color: #d4edda;
+        border-left: 4px solid #28a745;
+        margin: 16px;
+        border-radius: 4px;
+        
+        p {
+            margin: 0;
+            color: #155724;
+            font-weight: 500;
+        }
+    }
 
-      .tableRow {
+    // Error message styles
+    .errorMessage {
+        padding: 16px;
+        text-align: center;
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        margin: 16px;
+        border-radius: 4px;
+        
+        p {
+            margin: 0;
+            color: #721c24;
+            font-weight: 500;
+        }
+    }
+
+    // Pagination info styles
+    .paginationInfo {
+        padding: 16px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-top: 1px solid #eaeaea;
+        
+        p {
+            margin: 0;
+            color: $greyColor600;
+            font-size: 14px;
+            
+            span {
+                font-weight: 500;
+            }
+        }
+    }
+
+    .actionsSection{
         display: flex;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background-color 0.2s;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 16px 16px 0 16px;
+    }
 
-        &:hover {
-          background-color: #f8f9fa;
+    .searchFilterSection{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 16px 0 16px;
+        gap: 10px;
+
+        .filterSection{
+            padding-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
         }
+    }
 
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .tableRowItem {
-          padding: 16px 12px;
-          display: flex;
-          align-items: center;
-          border-right: 1px solid #f0f0f0;
-          font-size: 14px;
-          color: #333;
-
-          &:first-child {
-            flex: 0 0 60px;
-            justify-content: center;
-            font-weight: 600;
-          }
-
-          &:nth-child(2) {
-            flex: 0 0 120px;
-          }
-
-          &:nth-child(3) {
-            flex: 0 0 150px;
-          }
-
-          &:nth-child(4) {
-            flex: 2;
-          }
-
-          &:nth-child(5) {
-            flex: 0 0 120px;
-            justify-content: center;
-          }
-
-          &:last-child {
-            flex: 0 0 120px;
-            justify-content: center;
-            border-right: none;
-          }
-        }
-      }
-
-      .emptyState {
+    .stokOpnameTable{
+        position: relative;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 20px;
-        color: #666;
-
-        p {
-          margin: 0;
-          font-size: 16px;
+        height: 100%;
+        gap: 10px;
+        padding: 16px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 1px 2px 8px -5px rgba(0, 0, 0, 0.2);
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      
+        &::-webkit-scrollbar {
+          display: none; /* Chrome, Safari */
         }
-      }
-    }
 
-    .actionButtons {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-    }
-  }
+        .tableHeader{
+            display: grid;
+            grid-template-columns: 60px 60px 200px 200px 150px 150px 150px 150px;
+            align-items: center;
+            padding: 15px 10px;
+            min-width: 1180px; 
+            border-bottom: 1px solid #eaeaea;
+            color: $greyColor600;
+            gap: 10px;
 
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    gap: 8px;
-    border-top: 1px solid #e0e0e0;
-    background: #f8f9fa;
+            .tableHeaderItem{
+                font-size: 16px;
+                font-weight: bold;
+            }
 
-    .pageButton {
-      background: white;
-      border: 1px solid #d0d7de;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 14px;
-      color: #1f2328;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #f3f4f6;
-        border-color: #d0d7de;
-      }
-
-      &.active {
-        background: #0969da;
-        color: white;
-        border-color: #0969da;
-      }
-
-      &:disabled {
-        background: #f3f4f6;
-        color: #8c959f;
-        cursor: not-allowed;
-        border-color: #d0d7de;
-      }
-    }
-  }
-
-  @media (max-width: 1024px) {
-    .stockAdjustmentTable {
-      .tableHeader,
-      .tableBody .tableRow {
-        .tableHeaderItem,
-        .tableRowItem {
-          &:nth-child(4) {
-            flex: 1.5;
-          }
         }
-      }
-    }
-  }
 
-  @media (max-width: 768px) {
-    .stockAdjustmentTable {
-      margin: 8px;
+        .tableBody{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: scroll;
+            min-width: 1200px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+          
+            &::-webkit-scrollbar {
+              display: none; /* Chrome, Safari */
+            }
 
-      .tableHeader,
-      .tableBody .tableRow {
-        .tableHeaderItem,
-        .tableRowItem {
-          padding: 12px 8px;
-          font-size: 13px;
+            .noDataMessage {
+                padding: 40px 20px;
+                text-align: center;
+                color: $greyColor600;
+                
+                p {
+                    margin: 0;
+                    font-size: 16px;
+                    font-style: italic;
+                }
+            }
 
-          &:first-child {
-            flex: 0 0 50px;
-          }
+            .tableRow{
+                display: grid;
+                grid-template-columns: 60px 60px 200px 200px 150px 150px 150px 150px;
+                padding: 20px 10px;
+                border-bottom: 1px solid #eaeaea;
+                gap: 10px;
+                cursor: pointer;
+               
+                .tableRowItem{
+                    font-size: 14px;
 
-          &:nth-child(2) {
-            flex: 0 0 100px;
-          }
+                }
+            }
 
-          &:nth-child(3) {
-            flex: 0 0 120px;
-          }
+            .loadingMessage {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 40px;
+                font-size: 16px;
+                color: $greyColor600;
+            }
 
-          &:nth-child(4) {
-            flex: 1;
-          }
-
-          &:nth-child(5) {
-            flex: 0 0 100px;
-          }
-
-          &:last-child {
-            flex: 0 0 100px;
-          }
+            .emptyStateContainer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 60px 20px;
+                
+                .emptyStateContent {
+                    text-align: center;
+                    
+                    .emptyStateTitle {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: $greyColor600;
+                        margin-bottom: 8px;
+                    }
+                    
+                    .emptyStateSubtitle {
+                        font-size: 14px;
+                        color: #9ca3af;
+                        margin: 0;
+                    }
+                }
+            }
         }
-      }
+       
     }
-  }
+    
 }

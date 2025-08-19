@@ -73,7 +73,7 @@ export const printSPGLain = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 11px !important;
+              font-size: 12px !important;
               font-weight: 300 !important;
             }
             
@@ -82,7 +82,7 @@ export const printSPGLain = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 10px !important;
+              font-size: 12px !important;
               font-weight: 600 !important;
               text-align: center !important;
             }
@@ -187,11 +187,11 @@ export const printSPGLain = (data) => {
           /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
             width: 35px; 
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-kode { 
             width: 110px; 
-            font-size: 11px; /* Smaller for better code readability */
+            font-size: 12px; /* Smaller for better code readability */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -201,7 +201,7 @@ export const printSPGLain = (data) => {
           }
           .col-barcode { 
             width: 60px; 
-            font-size: 11px;
+            font-size: 12px;
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -213,7 +213,7 @@ export const printSPGLain = (data) => {
             width: 290px; 
             padding-left: 3px;
             font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 11px; /* Optimized for clarity */
+            font-size: 12px; /* Optimized for clarity */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
@@ -221,11 +221,11 @@ export const printSPGLain = (data) => {
           }
           .col-kp { 
             width: 35px; 
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 65px; 
-            font-size: 11px;
+            font-size: 12px;
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
@@ -233,12 +233,12 @@ export const printSPGLain = (data) => {
           .col-carton { 
             width: 35px; 
             font-weight: 400;
-            font-size: 11px; /* Slightly larger for numbers */
+            font-size: 12px; /* Slightly larger for numbers */
           }
           .col-pack { 
             width: 35px; 
             font-weight: 400;
-            font-size: 11px;
+            font-size: 12px;
           }
           
           /* Data row specific styling to prevent overlapping */

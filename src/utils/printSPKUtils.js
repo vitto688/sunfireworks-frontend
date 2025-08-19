@@ -374,13 +374,13 @@ export const printSPK = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 11px !important;
+              font-size: 12px !important;
               font-weight: 600 !important;
               text-align: center !important;
             }
             
             .col-kode {
-              font-size: 9px !important;
+              font-size: 12px !important;
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
@@ -388,7 +388,7 @@ export const printSPK = (data) => {
             }
             
             .col-barcode {
-              font-size: 9px !important;
+              font-size: 12px !important;
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
@@ -456,7 +456,7 @@ export const printSPK = (data) => {
             border-spacing: 0;
             margin: 0 auto 25px auto;
             border: 1px solid black;
-            font-size: 11px;
+            font-size: 12px;
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -467,13 +467,9 @@ export const printSPK = (data) => {
             padding: 5px 3px;
             text-align: center;
             vertical-align: top;
-            font-size: 11px;
-            line-height: 1.4;
-            word-break: keep-all;
-            white-space: nowrap;
-            height: auto;
-            min-height: 20px;
-            box-sizing: border-box;
+            font-size: 12px;
+            word-wrap: break-word;
+            position: relative;
           }
           th {
             background: white !important;
@@ -489,11 +485,11 @@ export const printSPK = (data) => {
           }
           .col-no { 
             width: 35px; 
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-kode { 
             width: 80px; 
-            font-size: 9px;
+            font-size: 12px;
             padding: 4px 2px;
             word-break: break-all;
             white-space: normal;
@@ -503,7 +499,7 @@ export const printSPK = (data) => {
           }
           .col-barcode { 
             width: 70px; 
-            font-size: 9px;
+            font-size: 12px;
             padding: 4px 2px;
             word-break: break-all;
             white-space: normal;
@@ -515,28 +511,28 @@ export const printSPK = (data) => {
             width: 200px; 
             padding-left: 4px;
             font-weight: 400;
-            font-size: 10px;
+            font-size: 12px;
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-kp { 
             width: 35px; 
-            font-size: 9px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 70px; 
-            font-size: 9px;
+            font-size: 12px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 45px; 
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-pack { 
             width: 45px; 
-            font-size: 10px;
+            font-size: 12px;
           }
           
           tbody tr {

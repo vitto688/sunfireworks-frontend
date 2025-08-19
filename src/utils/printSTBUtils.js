@@ -80,7 +80,7 @@ export const printSTB = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 10px !important;
+              font-size: 12px !important;
               font-weight: 500 !important;
               text-align: center !important;
             }
@@ -170,24 +170,24 @@ export const printSTB = (data) => {
           .col-kode { 
             width: 85px; 
             min-width: 85px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-nama { 
             width: 200px; 
             min-width: 200px;
             text-align: left !important;
             padding-left: 6px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-kp { 
             width: 35px; 
             min-width: 35px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 70px; 
             min-width: 70px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-carton { 
             width: 60px; 
@@ -202,7 +202,7 @@ export const printSTB = (data) => {
             min-width: 100px;
             text-align: left !important;
             padding-left: 6px;
-            font-size: 11px;
+            font-size: 12px;
           }
           .subheader th {
             background: white !important;

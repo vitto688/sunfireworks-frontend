@@ -80,7 +80,7 @@ export const printSuratJalan = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 10px !important;
+              font-size: 12px !important;
               font-weight: 500 !important;
               text-align: center !important;
             }
@@ -168,23 +168,23 @@ export const printSuratJalan = (data) => {
           .col-kode { 
             width: 85px; 
             min-width: 85px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-barcode { 
             width: 85px; 
             min-width: 85px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-nama { 
             width: 200px; 
             min-width: 200px;
             padding-left: 6px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 70px; 
             min-width: 70px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-carton { 
             width: 60px; 

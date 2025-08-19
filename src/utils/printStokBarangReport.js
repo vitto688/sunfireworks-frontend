@@ -387,7 +387,7 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 12px;
             margin-bottom: 25px;
           }
           th, td {
@@ -409,34 +409,34 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           .col-kode { 
             width: 100px; 
             min-width: 100px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-nama { 
             width: 200px; 
             min-width: 200px;
             text-align: left !important;
             padding-left: 8px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-kategori { 
             width: 120px; 
             min-width: 120px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-supplier { 
             width: 120px; 
             min-width: 120px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 90px; 
             min-width: 90px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-gudang { 
             width: 100px; 
             min-width: 100px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-carton { 
             width: 70px; 

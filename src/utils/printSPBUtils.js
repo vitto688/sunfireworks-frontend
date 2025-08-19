@@ -91,7 +91,7 @@ export const printSPB = (data) => {
               padding: 4px 2px !important; /* Consistent header padding */
               /* Force top alignment in print */
               vertical-align: middle !important; /* Center align in print */
-              font-size: 10px !important; /* Consistent header font size */
+              font-size: 12px !important; /* Consistent header font size */
               font-weight: 500 !important; /* Consistent bold weight */
               text-align: center !important; /* Center align text */
             }
@@ -161,7 +161,7 @@ export const printSPB = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 11px; /* Optimized for LX-310 */
+            font-size: 12px; /* Optimized for LX-310 */
             /* ESC/P table spacing */
             table-layout: fixed;
             /* Prevent table compression */
@@ -175,7 +175,7 @@ export const printSPB = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 11px; /* Consistent with table size */
+            font-size: 12px; /* Consistent with table size */
             line-height: 1.3; /* Tighter line height for space saving */
             /* Default text handling */
             word-break: keep-all;
@@ -187,7 +187,7 @@ export const printSPB = (data) => {
           th {
             background: white !important;
             font-weight: 500; /* Consistent bold weight for headers */
-            font-size: 11px; /* Smaller font for headers to save space */
+            font-size: 12px; /* Smaller font for headers to save space */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -199,11 +199,11 @@ export const printSPB = (data) => {
           /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
             width: 35px; 
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-kode { 
             width: 110px; 
-            font-size: 11px; /* Smaller for code readability */
+            font-size: 12px; /* Smaller for code readability */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -213,7 +213,7 @@ export const printSPB = (data) => {
           }
           .col-barcode { 
             width: 60px; 
-            font-size: 11px;
+            font-size: 12px;
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -225,7 +225,7 @@ export const printSPB = (data) => {
             width: 250px; 
             padding-left: 3px;
             font-weight: 400;
-            font-size: 11px; /* Smaller for better fit */
+            font-size: 12px; /* Smaller for better fit */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
@@ -233,22 +233,22 @@ export const printSPB = (data) => {
           }
           .col-kp { 
             width: 25px; 
-            font-size: 11px;
+            font-size: 12px;
           }
           .col-packing { 
             width: 55px; 
-            font-size: 11px;
+            font-size: 12px;
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-size: 11px; /* Smaller for numbers */
+            font-size: 12px; /* Smaller for numbers */
           }
           .col-pack { 
             width: 35px; 
-            font-size: 11px;
+            font-size: 12px;
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -264,7 +264,7 @@ export const printSPB = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 11px; /* Consistent with main headers */
+            font-size: 12px; /* Consistent with main headers */
             height: 22px; /* Reduced height for better spacing */
             font-weight: 500; /* Consistent bold weight */
             -webkit-print-color-adjust: exact;
@@ -283,13 +283,13 @@ export const printSPB = (data) => {
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500; /* Bold total label */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
             font-weight: 500; /* Bold total values */
-            font-size: 11px;
+            font-size: 12px;
           }
           .footer {
             padding: 15px;

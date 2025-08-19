@@ -98,13 +98,13 @@ export const printSPGKawat = (data) => {
             padding: 4px 3px;
             text-align: center;
             vertical-align: middle;
-            font-size: 11px;
+            font-size: 12px;
             line-height: 1.2;
           }
           th {
             background: white !important;
             font-weight: 500;
-            font-size: 11px;
+            font-size: 12px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
@@ -115,18 +115,18 @@ export const printSPGKawat = (data) => {
           .col-kode { 
             width: 90px; 
             min-width: 90px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-barcode { 
             width: 90px; 
             min-width: 90px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-nama { 
             width: 220px; 
             min-width: 220px;
             padding-left: 4px;
-            font-size: 10px;
+            font-size: 12px;
             text-align: left;
           }
           .col-kp { 
@@ -136,7 +136,7 @@ export const printSPGKawat = (data) => {
           .col-packing { 
             width: 80px; 
             min-width: 80px;
-            font-size: 10px;
+            font-size: 12px;
           }
           .col-carton { 
             width: 70px; 

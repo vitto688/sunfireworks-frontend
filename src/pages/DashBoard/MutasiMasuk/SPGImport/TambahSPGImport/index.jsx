@@ -104,7 +104,6 @@ const TambahSPGImport = () => {
   const handleSimpanClick = () => {
     // Validate required fields
     if (
-      !noSJ ||
       !gudang ||
       !noKontainer ||
       !noKendaraan ||
@@ -119,7 +118,7 @@ const TambahSPGImport = () => {
     // Prepare data for API
     const spgData = {
       warehouse: gudang.id,
-      sj_number: "",
+      sj_number: "-",
       container_number: noKontainer,
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,

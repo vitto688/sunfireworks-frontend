@@ -306,7 +306,6 @@ const StokOpname = () => {
           <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Alasan</div>
           <div className={styles.tableHeaderItem}>Jumlah Item</div>
-          <div className={styles.tableHeaderItem}>Status</div>
         </div>
         <div className={styles.tableBody}>
           {data.length > 0 ? (
@@ -338,9 +337,6 @@ const StokOpname = () => {
                 <div className={styles.tableRowItem}>{item.reason || "-"}</div>
                 <div className={styles.tableRowItem}>
                   {item.items?.length || 0} item
-                </div>
-                <div className={styles.tableRowItem}>
-                  {item.status || "Draft"}
                 </div>
               </div>
             ))

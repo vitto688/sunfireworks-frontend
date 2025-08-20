@@ -52,6 +52,7 @@ const UbahSPGImport = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(null);
 
   const { stocks } = useSelector((state) => state.stock);
@@ -154,7 +155,6 @@ const UbahSPGImport = () => {
   const handleSimpanClick = () => {
     // Validate required fields
     if (
-      !noSJ ||
       !gudang ||
       !noKontainer ||
       !noKendaraan ||
@@ -169,7 +169,7 @@ const UbahSPGImport = () => {
     // Prepare data for API
     const spgData = {
       warehouse: gudang.id || gudang,
-      sj_number: "",
+      sj_number: "-",
       container_number: noKontainer,
       vehicle_number: noKendaraan,
       start_unload: mulaiBongkar,
@@ -219,8 +219,9 @@ const UbahSPGImport = () => {
     // navigate(`/mutasi-masuk/retur-penjualan/${argument.code}/tambah-stok`);
   };
 
-  const handleEdit = (e, value) => {
+  const handleEdit = (e, value, index) => {
     e.stopPropagation();
+    setEditIndex(index);
 
     setWarehouseStock(
       stocks.find(
@@ -240,10 +241,14 @@ const UbahSPGImport = () => {
 
   const handleSaveEditStok = (data) => {
     // Update stok state with new data
-    setStok((prevStok) =>
-      prevStok.map((item) => (item.id === data.id ? data : item))
-    );
+    console.log("data", data, stok);
+    setStok((prevState) => {
+      prevState[editIndex] = data;
+      return [...prevState];
+    });
+
     setEditModalOpen(null);
+    setEditIndex(null);
     // Kirim ke backend di sini...
   };
 
@@ -433,7 +438,7 @@ const UbahSPGImport = () => {
                 {stokItem.production_code}
               </div>
               <div>
-                <EditButton onClick={(e) => handleEdit(e, stokItem)} />
+                <EditButton onClick={(e) => handleEdit(e, stokItem, index)} />
               </div>
             </div>
           ))}
@@ -463,7 +468,10 @@ const UbahSPGImport = () => {
         defaultStock={editModalOpen}
         defaultCarton={warehouseStock?.carton_quantity ?? 0}
         defaultPack={warehouseStock?.pack_quantity ?? 0}
-        onClose={() => setEditModalOpen(null)}
+        onClose={() => {
+          setEditModalOpen(null);
+          setEditIndex(null);
+        }}
         onSave={handleSaveEditStok}
       />
 

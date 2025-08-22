@@ -22,3 +22,20 @@ export const exportStockReport = async (params = {}) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Fetch all stock report data for print/export (without pagination)
+export const fetchAllStockReportData = async (params = {}) => {
+  try {
+    // Remove page parameter and add paginate=false to get all data
+    const { page, ...otherParams } = params;
+    const response = await axios.get("/report/stock-info/", {
+      params: {
+        ...otherParams,
+        paginate: false, // Use paginate=false to get all data
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

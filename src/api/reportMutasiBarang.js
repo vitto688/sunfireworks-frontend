@@ -22,3 +22,18 @@ export const exportMutasiBarangReport = async (params = {}) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Fetch all mutasi barang report data (no pagination) for print/export
+export const fetchAllMutasiBarangReportData = async (params = {}) => {
+  try {
+    const response = await axios.get("/report/stock-transfer/", {
+      params: {
+        ...params,
+        paginate: false, // Fetch all data without pagination
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

@@ -22,3 +22,18 @@ export const exportPenerimaanBarangReport = async (params = {}) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Fetch all penerimaan barang report data (no pagination) for print/export
+export const fetchAllPenerimaanBarangReportData = async (params = {}) => {
+  try {
+    const response = await axios.get("/report/penerimaan-barang/", {
+      params: {
+        ...params,
+        paginate: false, // Fetch all data without pagination
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

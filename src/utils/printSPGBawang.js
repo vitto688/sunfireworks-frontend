@@ -86,22 +86,23 @@ export const printSPGBawang = (data) => {
             }
           }
           body {
-            font-family: 'DejaVu Sans Mono', 'Courier New', Courier, monospace; /* Monospace for dot matrix */
-            margin: 10mm 5mm 5mm 5mm; /* Top margin larger for header space */
+            font-family: 'Courier New', Courier, monospace;
+            margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
             max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Adjusted for LX-310 readability */
-            line-height: 1.3; /* Tighter line spacing for dot matrix */
+            font-size: 12px; /* Standard font size */
+            line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
             font-weight: 400;
-            /* ESC/P compatible character spacing */
-            letter-spacing: 0.5px;
-            /* Force content to start from top */
+            /* 10cpi character spacing */
+            letter-spacing: 0.2px;
+            /* Force content to start from top center */
             display: block;
             position: relative;
             top: 0;
             vertical-align: top;
+            text-align: left; /* Reset text alignment for content */
           }
           .header {
             text-align: center;
@@ -112,10 +113,10 @@ export const printSPGBawang = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 14px; /* Slightly smaller for LX-310 */
-            font-weight: 600; /* Bolder for dot matrix readability */
+            font-size: 12px; /* 10cpi compatible header size */
+            font-weight: 700; /* Bolder for better dot matrix visibility */
             margin: 0;
-            letter-spacing: 2px; /* Adjusted for ESC/P */
+            letter-spacing: 1.0px; /* 10cpi character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
@@ -134,13 +135,13 @@ export const printSPGBawang = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 600; /* Bolder for dot matrix */
+            font-weight: 700; /* Bolder for better dot matrix visibility */
             min-width: 85px; /* Slightly reduced */
-            font-size: 11px; /* Adjusted for LX-310 */
+            font-size: 12px; /* Standard font size */
           }
           .infoRow .value {
-            font-weight: 400;
-            font-size: 11px;
+            font-weight: 500; /* Slightly bolder for better visibility */
+            font-size: 12px; /* Standard font size */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -162,8 +163,8 @@ export const printSPGBawang = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Consistent with table size */
-            line-height: 1.3; /* Tighter line height for space saving */
+            font-size: 12px; /* Standard font size */
+            line-height: 1.2; /* Optimized line height for dot matrix */
             word-break: keep-all;
             white-space: nowrap;
             height: auto; /* Allow natural height */
@@ -172,8 +173,8 @@ export const printSPGBawang = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 500; /* Consistent bold weight for headers */
-            font-size: 12px; /* Smaller font for headers to save space */
+            font-weight: 600; /* Consistent bold weight for headers */
+            font-size: 12px; /* Standard font size */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -189,7 +190,7 @@ export const printSPGBawang = (data) => {
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Smaller for code readability */
+            font-size: 12px; /* Standard font size */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -208,21 +209,21 @@ export const printSPGBawang = (data) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 250px; 
+            width: 290px; 
             padding-left: 3px;
-            font-weight: 400;
-            font-size: 12px; /* Smaller for better fit */
+            font-weight: 500; /* Slightly bolder for better visibility */
+            font-size: 12px; /* Standard font size */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-kp { 
-            width: 25px; 
+            width: 35px; 
             font-size: 12px;
           }
           .col-packing { 
-            width: 55px; 
+            width: 65px; 
             font-size: 12px;
             /* Prevent wrapping */
             overflow: hidden;
@@ -230,10 +231,12 @@ export const printSPGBawang = (data) => {
           }
           .col-carton { 
             width: 35px; 
-            font-size: 12px; /* Smaller for numbers */
+            font-weight: 400;
+            font-size: 12px; /* Standard font size */
           }
           .col-pack { 
             width: 35px; 
+            font-weight: 400;
             font-size: 12px;
           }
           
@@ -250,7 +253,7 @@ export const printSPGBawang = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Consistent with main headers */
+            font-size: 12px; /* Standard font size for subheaders */
             height: 22px; /* Reduced height for better spacing */
             font-weight: 500; /* Consistent bold weight */
             -webkit-print-color-adjust: exact;
@@ -419,32 +422,203 @@ export const printSPGBawang = (data) => {
   const blob = new Blob([htmlContent], { type: "text/html" });
   const url = URL.createObjectURL(blob);
 
-  // Open in new window
-  const printWindow = window.open(url, "_blank");
+  // Create preview window first
+  const previewWindow = window.open(
+    "",
+    "_blank",
+    "width=1000,height=800,scrollbars=yes,resizable=yes"
+  );
 
-  if (printWindow) {
-    // Wait for content to load then focus and setup print
-    printWindow.onload = () => {
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url); // Clean up
-      }, 250);
-    };
+  if (previewWindow) {
+    // Add preview HTML with print button
+    const previewHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Preview - SPG BAWANG</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 10px 20px 20px 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+          }
+          .preview-container {
+            max-width: 1000px;
+            margin: 20px auto 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            top: 0;
+          }
+          .preview-header {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+          }
+          .preview-actions {
+            display: flex;
+            gap: 10px;
+          }
+          .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+          }
+          .btn-print {
+            background: #16a34a;
+            color: white;
+          }
+          .btn-print:hover {
+            background: #15803d;
+          }
+          .btn-close {
+            background: #dc2626;
+            color: white;
+          }
+          .btn-close:hover {
+            background: #b91c1c;
+          }
+          .preview-content {
+            padding: 20px;
+            background: white;
+          }
+          .document-frame {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+          }
+          iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+            display: block;
+          }
+          .preview-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #6b7280;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="preview-container">
+          <div class="preview-header">
+            <h1 class="preview-title">Preview - Surat Penerimaan Gudang (SPG) Bawang</h1>
+            <div class="preview-actions">
+              <button class="btn btn-print" onclick="printDocument()">
+                <span>🖨️</span> Print Document
+              </button>
+              <button class="btn btn-close" onclick="window.close()">
+                <span>✕</span> Close
+              </button>
+            </div>
+          </div>
+          <div class="preview-info">
+            <strong>Petunjuk:</strong> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
+          </div>
+          <div class="preview-content">
+            <div class="document-frame">
+              <iframe src="${url}" title="Document Preview"></iframe>
+            </div>
+          </div>
+        </div>
 
-    // Fallback if onload doesn't trigger
-    setTimeout(() => {
-      if (printWindow && !printWindow.closed) {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url);
-      }
-    }, 1000);
+        <script>
+          function printDocument() {
+            // Open print window with the document
+            const printWindow = window.open("${url}", "_blank");
+            
+            if (printWindow) {
+              // Wait for content to load then focus and setup print
+              printWindow.onload = () => {
+                printWindow.focus();
+                setTimeout(() => {
+                  printWindow.print();
+                  printWindow.close();
+                }, 250);
+              };
+
+              // Fallback if onload doesn't trigger
+              setTimeout(() => {
+                if (printWindow && !printWindow.closed) {
+                  printWindow.focus();
+                  printWindow.print();
+                  printWindow.close();
+                }
+              }, 1000);
+              
+              // Close preview window after initiating print
+              setTimeout(() => {
+                window.close();
+              }, 500);
+            } else {
+              alert('Pop-up diblokir! Silakan izinkan pop-up untuk website ini.');
+            }
+          }
+
+          // Clean up URL when preview window is closed
+          window.addEventListener('beforeunload', () => {
+            URL.revokeObjectURL("${url}");
+          });
+        </script>
+      </body>
+      </html>
+    `;
+
+    previewWindow.document.write(previewHtml);
+    previewWindow.document.close();
+    previewWindow.focus();
   } else {
-    // Fallback to regular print
-    URL.revokeObjectURL(url);
-    window.print();
+    // Fallback: if preview window blocked, directly open print window
+    const printWindow = window.open(url, "_blank");
+
+    if (printWindow) {
+      // Wait for content to load then focus and setup print
+      printWindow.onload = () => {
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url); // Clean up
+        }, 250);
+      };
+
+      // Fallback if onload doesn't trigger
+      setTimeout(() => {
+        if (printWindow && !printWindow.closed) {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url);
+        }
+      }, 1000);
+    } else {
+      // Fallback to regular print
+      URL.revokeObjectURL(url);
+      window.print();
+    }
   }
 };

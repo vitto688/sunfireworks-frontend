@@ -47,6 +47,9 @@ import {
   exportMutasiBarangToExcelAdvanced,
 } from "../../../../utils/printMutasiBarangReport";
 
+// Import API function for fetching all data
+import { fetchAllMutasiBarangReportData } from "../../../../api/reportMutasiBarang";
+
 // Import dummy data (fallback)
 import { laporanMutasiMasuk } from "../../../../dummy_data/laporan";
 
@@ -59,6 +62,8 @@ const LaporanMutasiBarang = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [printLoading, setPrintLoading] = useState(false);
+  const [localExportLoading, setLocalExportLoading] = useState(false);
 
   // Local filter states
   const [warehouseFilterOptions, setWarehouseFilterOptions] = useState([]);
@@ -217,25 +222,54 @@ const LaporanMutasiBarang = () => {
     dispatch(exportMutasiBarangReportRequest(params));
   };
 
-  const handlePrintClick = () => {
-    // Create filter object for print function
-    const filters = {
-      ...(query && { search: query }),
-      ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
-      }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
-      ...(startDate && { start_date: startDate }),
-      ...(endDate && { end_date: endDate }),
-    };
+  const handlePrintClick = async () => {
+    setPrintLoading(true);
 
-    // Use current data for print
-    printMutasiBarangReport(mutasiBarangReport, filters);
+    try {
+      // Create filter object for API call
+      const apiParams = {
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      // Fetch all data from API
+      const allData = await fetchAllMutasiBarangReportData(apiParams);
+
+      // Create filter object for print function
+      const filters = {
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      // Use fetched data for print
+      printMutasiBarangReport(allData, filters);
+    } catch (error) {
+      console.error("Error fetching data for print:", error);
+      alert("Gagal mengambil data untuk print. Silakan coba lagi.");
+    } finally {
+      setPrintLoading(false);
+    }
   };
 
-  const handleExportExcelClick = () => {
-    // Create filter object for export function
-    const filters = {
+  const handleExportExcelClick = async () => {
+    setLocalExportLoading(true);
+
+    // Create filter object for API call
+    const apiParams = {
       ...(query && { search: query }),
       ...(selectedWarehouseFilter !== 0 && {
         warehouse: selectedWarehouseFilter,
@@ -246,9 +280,25 @@ const LaporanMutasiBarang = () => {
     };
 
     try {
-      // Try advanced Excel export with XLSX library
+      // Fetch all data from API
+      const allData = await fetchAllMutasiBarangReportData(apiParams);
+
+      // Create filter object for export function
+      const filters = {
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      // Try advanced Excel export with XLSX library using fetched data
       const filename = exportMutasiBarangToExcelAdvanced(
-        mutasiBarangReport,
+        allData,
         filters,
         XLSX
       );
@@ -256,38 +306,76 @@ const LaporanMutasiBarang = () => {
       // You can add a toast notification here
       // showSuccessToast(`File ${filename} berhasil didownload`);
     } catch (error) {
+      console.error("Error exporting Excel:", error);
       // Fallback to CSV export
       try {
-        const filename = exportMutasiBarangToExcel(mutasiBarangReport, filters);
+        const allData = await fetchAllMutasiBarangReportData(apiParams);
+        const filters = {
+          ...(query && { search: query }),
+          ...(selectedWarehouseFilter !== 0 && {
+            warehouse: selectedWarehouseFilter,
+          }),
+          ...(selectedSupplierFilter !== 0 && {
+            supplier: selectedSupplierFilter,
+          }),
+          ...(startDate && { start_date: startDate }),
+          ...(endDate && { end_date: endDate }),
+        };
+        const filename = exportMutasiBarangToExcel(allData, filters);
 
         // You can add a toast notification here
         // showSuccessToast(`File CSV ${filename} berhasil didownload`);
       } catch (csvError) {
+        console.error("Error exporting CSV:", csvError);
         alert("Gagal mengexport data. Silakan coba lagi.");
       }
+    } finally {
+      setLocalExportLoading(false);
     }
   };
 
-  const handleExportCSVClick = () => {
-    // Create filter object for export function
-    const filters = {
-      ...(query && { search: query }),
-      ...(selectedWarehouseFilter !== 0 && {
-        warehouse: selectedWarehouseFilter,
-      }),
-      ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
-      ...(startDate && { start_date: startDate }),
-      ...(endDate && { end_date: endDate }),
-    };
+  const handleExportCSVClick = async () => {
+    setLocalExportLoading(true);
 
     try {
-      const filename = exportMutasiBarangToExcel(mutasiBarangReport, filters);
+      // Create filter object for API call
+      const apiParams = {
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      // Fetch all data from API
+      const allData = await fetchAllMutasiBarangReportData(apiParams);
+
+      // Create filter object for export function
+      const filters = {
+        ...(query && { search: query }),
+        ...(selectedWarehouseFilter !== 0 && {
+          warehouse: selectedWarehouseFilter,
+        }),
+        ...(selectedSupplierFilter !== 0 && {
+          supplier: selectedSupplierFilter,
+        }),
+        ...(startDate && { start_date: startDate }),
+        ...(endDate && { end_date: endDate }),
+      };
+
+      const filename = exportMutasiBarangToExcel(allData, filters);
 
       // You can add a toast notification here
       // showSuccessToast(`File CSV ${filename} berhasil didownload`);
     } catch (error) {
       console.error("Error exporting CSV:", error);
       alert("Gagal mengexport data CSV. Silakan coba lagi.");
+    } finally {
+      setLocalExportLoading(false);
     }
   };
 
@@ -302,17 +390,27 @@ const LaporanMutasiBarang = () => {
 
   return (
     <div className={styles.mainSection}>
-      {loading && <Loading />}
+      {(loading || printLoading || localExportLoading) && <Loading />}
       <div className={styles.actionsSection}>
         <CustomButton
-          label="Export Excel"
+          label={localExportLoading ? "Exporting..." : "Export Excel"}
           onClick={handleExportExcelClick}
-          disabled={loading || mutasiBarangReport.length === 0}
+          disabled={
+            loading ||
+            mutasiBarangReport.length === 0 ||
+            localExportLoading ||
+            printLoading
+          }
         />
         <CustomButton
-          label="Export CSV"
+          label={localExportLoading ? "Exporting..." : "Export CSV"}
           onClick={handleExportCSVClick}
-          disabled={loading || mutasiBarangReport.length === 0}
+          disabled={
+            loading ||
+            mutasiBarangReport.length === 0 ||
+            localExportLoading ||
+            printLoading
+          }
         />
         {/* <CustomButton
           label={exportLoading ? "Downloading..." : "Download"}
@@ -320,9 +418,14 @@ const LaporanMutasiBarang = () => {
           disabled={exportLoading || loading || mutasiBarangReport.length === 0}
         /> */}
         <CustomButton
-          label="Print"
+          label={printLoading ? "Printing..." : "Print"}
           onClick={handlePrintClick}
-          disabled={loading || mutasiBarangReport.length === 0}
+          disabled={
+            loading ||
+            mutasiBarangReport.length === 0 ||
+            localExportLoading ||
+            printLoading
+          }
         />
       </div>
       <div className={styles.searchFilterSection}>

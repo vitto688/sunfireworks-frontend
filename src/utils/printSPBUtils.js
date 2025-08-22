@@ -98,23 +98,23 @@ export const printSPB = (data) => {
          
           }
           body {
-            font-family: 'DejaVu Sans Mono', 'Courier New', Courier, monospace; /* Monospace for dot matrix */
-            margin: 10mm 5mm 5mm 5mm; /* Equal margins on all sides */
+            font-family: 'Courier New', Courier, monospace;
+            margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
             max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Adjusted for LX-310 readability */
-            line-height: 1.3; /* Tighter line spacing for dot matrix */
+            font-size: 12px; /* Standard font size */
+            line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
             font-weight: 400;
-            font-weight: 400;
-            /* ESC/P compatible character spacing */
-            letter-spacing: 0.5px;
-            /* Force content to start from top */
+            /* 10cpi character spacing */
+            letter-spacing: 0.2px;
+            /* Force content to start from top center */
             display: block;
             position: relative;
             top: 0;
             vertical-align: top;
+            text-align: left; /* Reset text alignment for content */
           }
           .header {
             text-align: center;
@@ -125,10 +125,10 @@ export const printSPB = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 14px; /* Slightly smaller for LX-310 */
-            font-weight: 600; /* Bolder for dot matrix readability */
+            font-size: 12px; /* 10cpi compatible header size */
+            font-weight: 700; /* Bolder for better dot matrix visibility */
             margin: 0;
-            letter-spacing: 2px; /* Adjusted for ESC/P */
+            letter-spacing: 1.0px; /* 10cpi character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
@@ -147,13 +147,13 @@ export const printSPB = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 600; /* Bolder for dot matrix */
+            font-weight: 700; /* Bolder for better dot matrix visibility */
             min-width: 85px; /* Slightly reduced */
-            font-size: 11px; /* Adjusted for LX-310 */
+            font-size: 12px; /* Standard font size */
           }
           .infoRow .value {
-            font-weight: 400;
-            font-size: 11px;
+            font-weight: 500; /* Slightly bolder for better visibility */
+            font-size: 12px; /* Standard font size */
           }
           table {
             width: 100%;
@@ -175,8 +175,8 @@ export const printSPB = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Consistent with table size */
-            line-height: 1.3; /* Tighter line height for space saving */
+            font-size: 12px; /* Standard font size */
+            line-height: 1.2; /* Optimized line height for dot matrix */
             /* Default text handling */
             word-break: keep-all;
             white-space: nowrap;
@@ -186,8 +186,8 @@ export const printSPB = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 500; /* Consistent bold weight for headers */
-            font-size: 12px; /* Smaller font for headers to save space */
+            font-weight: 600; /* Consistent bold weight for headers */
+            font-size: 12px; /* Standard font size */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -203,7 +203,7 @@ export const printSPB = (data) => {
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Smaller for code readability */
+            font-size: 12px; /* Standard font size */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -222,21 +222,21 @@ export const printSPB = (data) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 250px; 
+            width: 290px; 
             padding-left: 3px;
-            font-weight: 400;
-            font-size: 12px; /* Smaller for better fit */
+            font-weight: 500; /* Slightly bolder for better visibility */
+            font-size: 12px; /* Standard font size */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-kp { 
-            width: 25px; 
+            width: 35px; 
             font-size: 12px;
           }
           .col-packing { 
-            width: 55px; 
+            width: 65px; 
             font-size: 12px;
             /* Prevent wrapping */
             overflow: hidden;
@@ -244,7 +244,8 @@ export const printSPB = (data) => {
           }
           .col-carton { 
             width: 35px; 
-            font-size: 12px; /* Smaller for numbers */
+            font-weight: 400;
+            font-size: 12px; /* Standard font size */
           }
           .col-pack { 
             width: 35px; 
@@ -264,7 +265,7 @@ export const printSPB = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Consistent with main headers */
+            font-size: 12px; /* Standard font size for subheaders */
             height: 22px; /* Reduced height for better spacing */
             font-weight: 500; /* Consistent bold weight */
             -webkit-print-color-adjust: exact;
@@ -433,32 +434,124 @@ export const printSPB = (data) => {
   const blob = new Blob([htmlContent], { type: "text/html" });
   const url = URL.createObjectURL(blob);
 
-  // Open in new window
-  const printWindow = window.open(url, "_blank");
+  // Create preview window first
+  const previewWindow = window.open(
+    "",
+    "_blank",
+    "width=1000,height=800,scrollbars=yes,resizable=yes"
+  );
 
-  if (printWindow) {
-    // Wait for content to load then focus and setup print
-    printWindow.onload = () => {
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url); // Clean up
-      }, 250);
-    };
-
-    // Fallback if onload doesn't trigger
-    setTimeout(() => {
-      if (printWindow && !printWindow.closed) {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url);
-      }
-    }, 1000);
+  if (previewWindow) {
+    // Add preview HTML with print button
+    previewWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Preview - SPB ${
+          data.document_number || data.spb_number || data.id
+        }</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+          }
+          .preview-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+          }
+          .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+          }
+          .btn-print {
+            background: #007cba;
+            color: white;
+          }
+          .btn-print:hover {
+            background: #005a87;
+          }
+          .btn-close {
+            background: #dc3545;
+            color: white;
+          }
+          .btn-close:hover {
+            background: #c82333;
+          }
+          .preview-container {
+            max-width: 1000px;
+            margin: 50px auto 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+          }
+          iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="preview-controls">
+          <button class="btn btn-print" onclick="printDocument()">🖨️ Print</button>
+          <button class="btn btn-close" onclick="window.close()">❌ Close</button>
+        </div>
+        <div class="preview-container">
+          <iframe id="printFrame" src="${url}"></iframe>
+        </div>
+        <script>
+          function printDocument() {
+            const frame = document.getElementById('printFrame');
+            frame.contentWindow.focus();
+            frame.contentWindow.print();
+          }
+          
+          // Auto-cleanup when window closes
+          window.addEventListener('beforeunload', function() {
+            URL.revokeObjectURL('${url}');
+          });
+        </script>
+      </body>
+      </html>
+    `);
+    previewWindow.document.close();
   } else {
-    // Fallback to regular print
-    URL.revokeObjectURL(url);
-    window.print();
+    // Fallback if popup is blocked - direct print
+    const printWindow = window.open(url, "_blank");
+
+    if (printWindow) {
+      printWindow.onload = () => {
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url);
+        }, 250);
+      };
+
+      setTimeout(() => {
+        if (printWindow && !printWindow.closed) {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url);
+        }
+      }, 1000);
+    } else {
+      URL.revokeObjectURL(url);
+      window.print();
+    }
   }
 };

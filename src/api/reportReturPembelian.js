@@ -22,3 +22,20 @@ export const exportReturPembelianReport = async (params = {}) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Fetch all retur pembelian report data for print/export (without pagination)
+export const fetchAllReturPembelianReportData = async (params = {}) => {
+  try {
+    // Remove page parameter and add paginate=false to get all data
+    const { page, ...otherParams } = params;
+    const response = await axios.get("/report/retur-pembelian/", {
+      params: {
+        ...otherParams,
+        paginate: false, // Use paginate=false to get all data
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

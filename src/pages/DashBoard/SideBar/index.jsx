@@ -46,6 +46,8 @@ import { LAPORAN_MUTASI_BARANG_PATH } from "../Laporan/MutasiBarang";
 import { LAPORAN_RETUR_PEMBELIAN_PATH } from "../Laporan/ReturPembelian";
 import { LAPORAN_PENERIMAAN_BARANG_PATH } from "../Laporan/PenerimaanBarang";
 import { LAPORAN_PENGELUARAN_BARANG_PATH } from "../Laporan/PengeluaranBarang";
+import { LAPORAN_MUTASI_BARANG_PENJUALAN_PATH } from "../Laporan/MutasiBarangPenjualan";
+import { LAPORAN_MUTASI_BARANG_PEMBELIAN_PATH } from "../Laporan/MutasiBarangPembelian";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -132,6 +134,16 @@ const SideBar = () => {
                 name: "Mutasi Barang",
                 to: LAPORAN_MUTASI_BARANG_PATH,
                 isSelected: LAPORAN_MUTASI_BARANG_PATH === pathname,
+              },
+              {
+                name: "Mutasi Barang Penjualan",
+                to: LAPORAN_MUTASI_BARANG_PENJUALAN_PATH,
+                isSelected: LAPORAN_MUTASI_BARANG_PENJUALAN_PATH === pathname,
+              },
+              {
+                name: "Mutasi Barang Pembelian",
+                to: LAPORAN_MUTASI_BARANG_PEMBELIAN_PATH,
+                isSelected: LAPORAN_MUTASI_BARANG_PEMBELIAN_PATH === pathname,
               },
 
               {

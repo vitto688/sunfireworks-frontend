@@ -33,7 +33,7 @@ const spkReducer = (state = initialSPKState, action) => {
         item.items.forEach((subItem) => {
           if (
             subItem.unfulfilled_carton_quantity > 0 ||
-            subItem.fulfilled_carton_quantity > 0
+            subItem.unfulfilled_pack_quantity > 0
           ) {
             isNotCompleted = true;
           }
@@ -63,7 +63,7 @@ const spkReducer = (state = initialSPKState, action) => {
         item.items.forEach((subItem) => {
           if (
             subItem.unfulfilled_carton_quantity > 0 ||
-            subItem.fulfilled_carton_quantity > 0
+            subItem.unfulfilled_pack_quantity > 0
           ) {
             isNotCompleted = true;
           }

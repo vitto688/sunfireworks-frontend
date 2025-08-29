@@ -19,6 +19,8 @@ import penerimaanBarangReportReducer from "./reducers/penerimaanBarangReportRedu
 import mutasiBarangReportReducer from "./reducers/mutasiBarangReportReducer";
 import returPenjualanReportReducer from "./reducers/returPenjualanReportReducer";
 import pengeluaranBarangReportReducer from "./reducers/pengeluaranBarangReportReducer";
+import mutasiBarangPenjualanReportReducer from "./reducers/mutasiBarangPenjualanReportReducer";
+import mutasiBarangPembelianReportReducer from "./reducers/mutasiBarangPembelianReportReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -48,6 +50,8 @@ const rootReducer = combineReducers({
   pengeluaranBarangReport: pengeluaranBarangReportReducer,
   penerimaanBarangReport: penerimaanBarangReportReducer,
   mutasiBarangReport: mutasiBarangReportReducer,
+  mutasiBarangPenjualanReport: mutasiBarangPenjualanReportReducer,
+  mutasiBarangPembelianReport: mutasiBarangPembelianReportReducer,
 });
 
 export default rootReducer;

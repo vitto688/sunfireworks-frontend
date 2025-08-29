@@ -166,6 +166,12 @@ import LaporanPenerimaanBarang, {
 import LaporanPengeluaranBarang, {
   LAPORAN_PENGELUARAN_BARANG_PATH,
 } from "./Laporan/PengeluaranBarang";
+import LaporanMutasiBarangPenjualan, {
+  LAPORAN_MUTASI_BARANG_PENJUALAN_PATH,
+} from "./Laporan/MutasiBarangPenjualan";
+import LaporanMutasiBarangPembelian, {
+  LAPORAN_MUTASI_BARANG_PEMBELIAN_PATH,
+} from "./Laporan/MutasiBarangPembelian";
 import UbahReturPembelian, {
   UBAH_RETUR_PEMBELIAN_PATH,
 } from "./MutasiKeluar/ReturPembelian/EditReturPembelian";
@@ -326,6 +332,14 @@ const Dashboard = () => {
             <Route
               path={LAPORAN_PENGELUARAN_BARANG_PATH}
               element={<LaporanPengeluaranBarang />}
+            />
+            <Route
+              path={LAPORAN_MUTASI_BARANG_PENJUALAN_PATH}
+              element={<LaporanMutasiBarangPenjualan />}
+            />
+            <Route
+              path={LAPORAN_MUTASI_BARANG_PEMBELIAN_PATH}
+              element={<LaporanMutasiBarangPembelian />}
             />
             <Route path={CHANGE_PASSWORD_PATH} element={<ChangePassword />} />
           </Routes>

@@ -337,10 +337,10 @@ export const printPengeluaranBarangReport = (reportData, filters = {}) => {
           }
           
           body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 12px;
+            font-size: 9px;
             line-height: 1.4;
             color: black;
             font-weight: 400;
@@ -365,7 +365,7 @@ export const printPengeluaranBarangReport = (reportData, filters = {}) => {
           }
           .reportInfo {
             margin-bottom: 25px;
-            font-size: 12px;
+            font-size: 9px;
           }
           .reportInfo div {
             margin: 5px 0;
@@ -603,33 +603,204 @@ export const printPengeluaranBarangReport = (reportData, filters = {}) => {
   const blob = new Blob([htmlContent], { type: "text/html" });
   const url = URL.createObjectURL(blob);
 
-  // Open in new window
-  const printWindow = window.open(url, "_blank");
+  // Create preview window first
+  const previewWindow = window.open(
+    "",
+    "_blank",
+    "width=1000,height=800,scrollbars=yes,resizable=yes"
+  );
 
-  if (printWindow) {
-    // Wait for content to load then focus and setup print
-    printWindow.onload = () => {
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url); // Clean up
-      }, 250);
-    };
+  if (previewWindow) {
+    // Add preview HTML with print button
+    const previewHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Preview - LAPORAN PENGELUARAN BARANG</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 10px 20px 20px 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+          }
+          .preview-container {
+            max-width: 1000px;
+            margin: 20px auto 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            top: 0;
+          }
+          .preview-header {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+          }
+          .preview-actions {
+            display: flex;
+            gap: 10px;
+          }
+          .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+          }
+          .btn-print {
+            background: #16a34a;
+            color: white;
+          }
+          .btn-print:hover {
+            background: #15803d;
+          }
+          .btn-close {
+            background: #dc2626;
+            color: white;
+          }
+          .btn-close:hover {
+            background: #b91c1c;
+          }
+          .preview-content {
+            padding: 20px;
+            background: white;
+          }
+          .document-frame {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+          }
+          iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+            display: block;
+          }
+          .preview-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #6b7280;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="preview-container">
+          <div class="preview-header">
+            <h1 class="preview-title">Preview - Laporan Pengeluaran Barang</h1>
+            <div class="preview-actions">
+              <button class="btn btn-print" onclick="printDocument()">
+                <span>🖨️</span> Print Document
+              </button>
+              <button class="btn btn-close" onclick="window.close()">
+                <span>✕</span> Close
+              </button>
+            </div>
+          </div>
+          <div class="preview-info">
+            <strong>Petunjuk:</strong> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
+          </div>
+          <div class="preview-content">
+            <div class="document-frame">
+              <iframe src="${url}" title="Document Preview"></iframe>
+            </div>
+          </div>
+        </div>
 
-    // Fallback if onload doesn't trigger
-    setTimeout(() => {
-      if (printWindow && !printWindow.closed) {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-        URL.revokeObjectURL(url);
-      }
-    }, 1000);
+        <script>
+          function printDocument() {
+            // Open print window with the document
+            const printWindow = window.open("${url}", "_blank");
+            
+            if (printWindow) {
+              // Wait for content to load then focus and setup print
+              printWindow.onload = () => {
+                printWindow.focus();
+                setTimeout(() => {
+                  printWindow.print();
+                  printWindow.close();
+                }, 250);
+              };
+
+              // Fallback if onload doesn't trigger
+              setTimeout(() => {
+                if (printWindow && !printWindow.closed) {
+                  printWindow.focus();
+                  printWindow.print();
+                  printWindow.close();
+                }
+              }, 1000);
+              
+              // Close preview window after initiating print
+              setTimeout(() => {
+                window.close();
+              }, 500);
+            } else {
+              alert('Pop-up diblokir! Silakan izinkan pop-up untuk website ini.');
+            }
+          }
+
+          // Clean up URL when preview window is closed
+          window.addEventListener('beforeunload', () => {
+            URL.revokeObjectURL("${url}");
+          });
+        </script>
+      </body>
+      </html>
+    `;
+
+    previewWindow.document.write(previewHtml);
+    previewWindow.document.close();
+    previewWindow.focus();
   } else {
-    // Fallback to regular print
-    URL.revokeObjectURL(url);
-    window.print();
+    // Fallback: if preview window blocked, directly open print window
+    const printWindow = window.open(url, "_blank");
+
+    if (printWindow) {
+      // Wait for content to load then focus and setup print
+      printWindow.onload = () => {
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url); // Clean up
+        }, 250);
+      };
+
+      // Fallback if onload doesn't trigger
+      setTimeout(() => {
+        if (printWindow && !printWindow.closed) {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+          URL.revokeObjectURL(url);
+        }
+      }, 1000);
+    } else {
+      // Fallback to regular print
+      URL.revokeObjectURL(url);
+      window.print();
+    }
   }
 };
 

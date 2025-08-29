@@ -19,6 +19,8 @@ import penerimaanBarangReportSaga from "./sagas/penerimaanBarangReportSaga";
 import pengeluaranBarangReportSaga from "./sagas/pengeluaranBarangReportSaga";
 import mutasiBarangReportSaga from "./sagas/mutasiBarangReportSaga";
 import returPenjualanReportSaga from "./sagas/returPenjualanReportSaga";
+import mutasiBarangPenjualanReportSaga from "./sagas/mutasiBarangPenjualanReportSaga";
+import mutasiBarangPembelianReportSaga from "./sagas/mutasiBarangPembelianReportSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -49,5 +51,7 @@ export default function* rootSaga() {
     penerimaanBarangReportSaga(),
     pengeluaranBarangReportSaga(),
     mutasiBarangReportSaga(),
+    mutasiBarangPenjualanReportSaga(),
+    mutasiBarangPembelianReportSaga(),
   ]);
 }

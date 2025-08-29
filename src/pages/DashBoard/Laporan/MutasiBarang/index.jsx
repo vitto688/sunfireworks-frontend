@@ -256,7 +256,7 @@ const LaporanMutasiBarang = () => {
       };
 
       // Use fetched data for print
-      printMutasiBarangReport(allData, filters);
+      printMutasiBarangReport(allData, filters, true);
     } catch (error) {
       console.error("Error fetching data for print:", error);
       alert("Gagal mengambil data untuk print. Silakan coba lagi.");

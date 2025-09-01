@@ -8,8 +8,22 @@ export const fetchProductsSuccess = (products) => ({
   payload: products,
 });
 
+export const fetchProductsAdminRequest = () => ({
+  type: "FETCH_PRODUCTS_ADMIN_REQUEST",
+});
+
+export const fetchProductsAdminSuccess = (products) => ({
+  type: "FETCH_PRODUCTS_ADMIN_SUCCESS",
+  payload: products,
+});
+
 export const fetchProductsFailure = (error) => ({
   type: "FETCH_PRODUCTS_FAILURE",
+  payload: error,
+});
+
+export const fetchProductsAdminFailure = (error) => ({
+  type: "FETCH_PRODUCTS_ADMIN_FAILURE",
   payload: error,
 });
 

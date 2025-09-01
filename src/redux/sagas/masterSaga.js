@@ -41,6 +41,8 @@ import {
   addCustomerFailure,
   updateCustomerSuccess,
   updateCustomerFailure,
+  fetchProductsAdminSuccess,
+  fetchProductsAdminFailure,
 } from "../actions/masterActions";
 
 // import API functions
@@ -53,6 +55,7 @@ import warehouseAPI from "../../api/warehouse";
 export function* loadInitialMasterData() {
   yield all([
     fetchProducts(),
+    fetchProductsAdmin(),
     fetchCategories(),
     fetchWarehouses(),
     fetchSuppliers(),
@@ -67,6 +70,15 @@ function* fetchProducts() {
     yield put(fetchProductsSuccess(products)); // Dispatch success action with products
   } catch (error) {
     yield put(fetchProductsFailure(error.message)); // Dispatch failure action with error message
+  }
+}
+
+function* fetchProductsAdmin() {
+  try {
+    const products = yield call(productAPI.getAllProductsAdmin); // Call the API function
+    yield put(fetchProductsAdminSuccess(products)); // Dispatch success action with products
+  } catch (error) {
+    yield put(fetchProductsAdminFailure(error.message)); // Dispatch failure action with error message
   }
 }
 

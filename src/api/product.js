@@ -11,6 +11,16 @@ const productAPI = {
     }
   },
 
+  getAllProductsAdmin: async () => {
+    try {
+      const response = await axiosInstance.get("/products/?view=all");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching admin products:", error);
+      throw error;
+    }
+  },
+
   getProductById: async (id) => {
     try {
       const response = await axiosInstance.get(`/products/${id}`);

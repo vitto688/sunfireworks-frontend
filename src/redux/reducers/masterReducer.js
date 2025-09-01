@@ -1,5 +1,6 @@
 const initialState = {
   products: [],
+  productsAdmin: [],
   categories: [],
   warehouses: [],
   suppliers: [],
@@ -11,6 +12,7 @@ const initialState = {
   currentCustomer: null,
   loading: {
     products: false,
+    productsAdmin: false,
     categories: false,
     warehouses: false,
     suppliers: false,
@@ -26,11 +28,19 @@ const masterReducer = (state = initialState, action) => {
     //#region products
     case "FETCH_PRODUCTS_REQUEST":
       return { ...state, loading: { ...state.loading, products: true } };
+    case "FETCH_PRODUCTS_ADMIN_REQUEST":
+      return { ...state, loading: { ...state.loading, productsAdmin: true } };
     case "FETCH_PRODUCTS_SUCCESS":
       return {
         ...state,
         products: action.payload,
         loading: { ...state.loading, products: false },
+      };
+    case "FETCH_PRODUCTS_ADMIN_SUCCESS":
+      return {
+        ...state,
+        productsAdmin: action.payload,
+        loading: { ...state.loading, productsAdmin: false },
       };
     case "FETCH_PRODUCTS_FAILURE":
       return {
@@ -38,6 +48,13 @@ const masterReducer = (state = initialState, action) => {
         errorCode: action.payload,
         errorMessage: "Gagal mengambil data produk.",
         loading: { ...state.loading, products: false },
+      };
+    case "FETCH_PRODUCTS_ADMIN_FAILURE":
+      return {
+        ...state,
+        errorCode: action.payload,
+        errorMessage: "Gagal mengambil data produk admin.",
+        loading: { ...state.loading, productsAdmin: false },
       };
     case "ADD_PRODUCT_REQUEST":
       return { ...state, loading: { ...state.loading, products: true } };

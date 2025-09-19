@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Stock Report Table</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-top: 20px;
+    }
+    
+    th, td {
+      border: 1px solid black;
+      padding: 4px 6px;
+      text-align: left;
+      font-size: 10px;
+      text-align: center !important;
+    }
+    
+    thead th {
+      background: white !important;
+      font-weight: 600;
+      text-align: center !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .col-warehouse-header { 
+      width: 140px; 
+      min-width: 140px;
+      font-size: 9px;
+      text-align: center !important;
+      font-weight: 600;
+      vertical-align: middle !important;
+    }
+    
+    .col-warehouse-sub { 
+      width: 70px; 
+      min-width: 70px;
+      font-size: 9px;
+      text-align: center !important;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test Table Structure</h2>
+  
+  <table>
+    <thead>
+      <!-- Main header row -->
+      <tr>
+        <th rowspan="2">NO</th>
+        <th rowspan="2">KODE PRODUK</th>
+        <th rowspan="2">NAMA PRODUK</th>
+        <th rowspan="2">KATEGORI</th>
+        <th rowspan="2">SUPPLIER</th>
+        <th rowspan="2">PACKING</th>
+        <th class="col-warehouse-header" colspan="2">Gudang Utama</th>
+        <th class="col-warehouse-header" colspan="2">Gudang Cabang A</th>
+        <th class="col-warehouse-header" colspan="2">Gudang Cabang B</th>
+      </tr>
+      <!-- Sub-header row -->
+      <tr>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>P001</td>
+        <td>Produk Test 1</td>
+        <td>Kategori A</td>
+        <td>Supplier 1</td>
+        <td>Box</td>
+        <td>10</td>
+        <td>5</td>
+        <td>8</td>
+        <td>3</td>
+        <td>12</td>
+        <td>7</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>P002</td>
+        <td>Produk Test 2</td>
+        <td>Kategori B</td>
+        <td>Supplier 2</td>
+        <td>Pcs</td>
+        <td>15</td>
+        <td>2</td>
+        <td>20</td>
+        <td>1</td>
+        <td>5</td>
+        <td>9</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

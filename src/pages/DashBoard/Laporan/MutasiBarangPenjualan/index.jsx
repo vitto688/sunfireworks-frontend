@@ -492,7 +492,10 @@ const LaporanMutasiBarangPenjualan = () => {
             <label className={styles.filterLabel}>Produk</label>
             <div className={styles.productFilterButtons}>
               <button
-                onClick={() => setProductDialogOpen(true)}
+                onClick={() => {
+                  console.log("open dialog", products);
+                  setProductDialogOpen(true);
+                }}
                 className={styles.productSelectButton}
               >
                 {selectedProduct

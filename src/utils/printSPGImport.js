@@ -183,13 +183,13 @@ export const printSPGImport = (data) => {
             font-size: 12px;
           }
           .col-kode { 
-            width: 8%;
+            width: 10%;
             font-size: 12px; /* Standard font size */
           }
           .col-nama { 
-            width: 15%;
+            width: 17%;
             padding-left: 3px;
-            font-weight: 500; /* Slightly bolder for better visibility */
+            // font-weight: 500; /* Slightly bolder for better visibility */
             font-size: 12px; /* Standard font size */
             text-align: left;
           }
@@ -198,12 +198,12 @@ export const printSPGImport = (data) => {
             font-size: 12px; /* Standard font size */
           }
           .col-carton { 
-            width: 5%;
+            width: 11%;
             font-weight: 400;
             font-size: 12px; /* Standard font size */
           }
           .col-pack { 
-            width: 5%;
+            width: 11%;
             font-weight: 400;
             font-size: 12px; /* Standard font size */
           }
@@ -228,7 +228,7 @@ export const printSPGImport = (data) => {
             font-size: 12px; /* Standard font size */
           }
           .col-ukuran-gudang { 
-            width: 10%;
+            width: 8%;
             font-size: 12px; /* Standard font size */
           }
           .col-kg-gudang { 
@@ -236,7 +236,7 @@ export const printSPGImport = (data) => {
             font-size: 12px; /* Standard font size */
           }
           .col-kode-produksi { 
-            width: 15%;
+            width: 10%;
             font-size: 12px; /* Standard font size */
           }
           .subheader th {
@@ -361,8 +361,8 @@ export const printSPGImport = (data) => {
               <th rowspan="2" class="col-inn">INN</th>
               <th rowspan="2" class="col-out">OUT</th>
               <th rowspan="2" class="col-pjg">PJG</th>
+              <th rowspan="2" class="col-ukuran-gudang">UK GUDANG</th>
               <th rowspan="2" class="col-kg-dus">KG DUS</th>
-              <th rowspan="2" class="col-ukuran-gudang">UKURAN GUDANG</th>
               <th rowspan="2" class="col-kg-gudang">KG GUDANG</th>
               <th rowspan="2" class="col-kode-produksi">KODE PRODUKSI</th>
             </tr>
@@ -391,8 +391,8 @@ export const printSPGImport = (data) => {
                 <td class="col-inn">${formatNumberWithDot(item.inn || 0)}</td>
                 <td class="col-out">${formatNumberWithDot(item.out || 0)}</td>
                 <td class="col-pjg">${item.pjg || "-"}</td>
-                <td class="col-kg-dus">${item.packaging_weight || "-"}</td>
                 <td class="col-ukuran-gudang">${item.warehouse_size || "-"}</td>
+                <td class="col-kg-dus">${item.packaging_weight || "-"}</td>
                 <td class="col-kg-gudang">${item.warehouse_weight || "-"}</td>
                 <td class="col-kode-produksi">${
                   item.production_code || "-"

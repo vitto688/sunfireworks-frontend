@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Header Table Center Alignment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      font-size: 9px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+      margin-bottom: 25px;
+    }
+    
+    th, td {
+      border: 1px solid black;
+      padding: 6px 4px;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    
+    th {
+      background: white !important;
+      font-weight: 600 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+    
+    .col-no { 
+      width: 40px; 
+      min-width: 40px;
+      text-align: center !important;
+    }
+    .col-kode { 
+      width: 100px; 
+      min-width: 100px;
+      font-size: 9px;
+      text-align: center !important;
+    }
+    .col-nama { 
+      width: 200px; 
+      min-width: 200px;
+      text-align: left !important;
+      padding-left: 8px;
+      font-size: 9px;
+    }
+    .col-kategori { 
+      width: 120px; 
+      min-width: 120px;
+      font-size: 9px;
+      text-align: center !important;
+    }
+    .col-supplier { 
+      width: 120px; 
+      min-width: 120px;
+      font-size: 9px;
+      text-align: center !important;
+    }
+    .col-packing { 
+      width: 90px; 
+      min-width: 90px;
+      font-size: 9px;
+      text-align: center !important;
+    }
+    .col-warehouse-header { 
+      width: 140px; 
+      min-width: 140px;
+      font-size: 10px;
+      text-align: center !important;
+      font-weight: bold !important;
+      vertical-align: middle !important;
+      background: #f8f9fa !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+    .col-warehouse-sub { 
+      width: 70px; 
+      min-width: 70px;
+      font-size: 9px;
+      text-align: center !important;
+      font-weight: 600;
+      background: white !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test: Header Table Center Alignment</h2>
+  
+  <table>
+    <thead>
+      <!-- Main header row -->
+      <tr>
+        <th class="col-no" rowspan="2">NO</th>
+        <th class="col-kode" rowspan="2">KODE PRODUK</th>
+        <th class="col-nama" rowspan="2">NAMA PRODUK</th>
+        <th class="col-kategori" rowspan="2">KATEGORI</th>
+        <th class="col-supplier" rowspan="2">SUPPLIER</th>
+        <th class="col-packing" rowspan="2">PACKING</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG UTAMA</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG CABANG A</th>
+      </tr>
+      <!-- Sub-header row -->
+      <tr>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>P001</td>
+        <td class="col-nama">Produk Test 1 (Left Aligned)</td>
+        <td>Kategori A</td>
+        <td>Supplier 1</td>
+        <td>Box</td>
+        <td>10</td>
+        <td>5</td>
+        <td>8</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>P002</td>
+        <td class="col-nama">Produk Test 2 (Left Aligned)</td>
+        <td>Kategori B</td>
+        <td>Supplier 2</td>
+        <td>Pcs</td>
+        <td>15</td>
+        <td>2</td>
+        <td>20</td>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 30px; padding: 15px; background: #e8f4f8; border-radius: 5px;">
+    <h3>✅ Center Alignment Check:</h3>
+    <ul>
+      <li><strong>NO:</strong> ✅ Center aligned</li>
+      <li><strong>KODE PRODUK:</strong> ✅ Center aligned</li>
+      <li><strong>NAMA PRODUK:</strong> ⚠️ Left aligned (by design)</li>
+      <li><strong>KATEGORI:</strong> ✅ Center aligned</li>
+      <li><strong>SUPPLIER:</strong> ✅ Center aligned</li>
+      <li><strong>PACKING:</strong> ✅ Center aligned</li>
+      <li><strong>Warehouse Headers:</strong> ✅ Center aligned dengan background gray</li>
+      <li><strong>Sub Headers (Carton/Pack):</strong> ✅ Center aligned</li>
+    </ul>
+    
+    <p><strong>Note:</strong> Kolom "NAMA PRODUK" sengaja left-aligned untuk readability nama produk yang panjang.</p>
+  </div>
+
+</body>
+</html>

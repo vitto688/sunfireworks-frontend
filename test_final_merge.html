@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Final Merged Headers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      font-size: 9px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+      margin-bottom: 25px;
+    }
+    
+    th, td {
+      border: 1px solid black;
+      padding: 6px 4px;
+      text-align: center !important;
+      vertical-align: middle;
+    }
+    
+    th {
+      background: white !important;
+      font-weight: 600;
+      text-align: center !important;
+      vertical-align: middle !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+    
+    .col-warehouse-header { 
+      width: 140px; 
+      min-width: 140px;
+      font-size: 10px;
+      text-align: center !important;
+      font-weight: bold !important;
+      vertical-align: middle !important;
+      background: #f8f9fa !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+    
+    .col-warehouse-sub { 
+      width: 70px; 
+      min-width: 70px;
+      font-size: 9px;
+      text-align: center !important;
+      font-weight: 600;
+      background: white !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border: 1px solid black !important;
+    }
+    
+    .col-no { 
+      width: 40px; 
+      min-width: 40px;
+    }
+    .col-kode { 
+      width: 100px; 
+      min-width: 100px;
+      font-size: 9px;
+    }
+    .col-nama { 
+      width: 200px; 
+      min-width: 200px;
+      text-align: left !important;
+      padding-left: 8px;
+      font-size: 9px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Final Test - Merged Warehouse Headers</h2>
+  
+  <table>
+    <thead>
+      <!-- Main header row dengan merged columns -->
+      <tr>
+        <th class="col-no" rowspan="2">NO</th>
+        <th class="col-kode" rowspan="2">KODE PRODUK</th>
+        <th class="col-nama" rowspan="2">NAMA PRODUK</th>
+        <th rowspan="2">KATEGORI</th>
+        <th rowspan="2">SUPPLIER</th>
+        <th rowspan="2">PACKING</th>
+        
+        <!-- Warehouse headers yang di-merge -->
+        <th class="col-warehouse-header" colspan="2">GUDANG UTAMA</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG CABANG A</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG CABANG B</th>
+      </tr>
+      
+      <!-- Sub-header row untuk Carton/Pack -->
+      <tr>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>P001</td>
+        <td class="col-nama">Produk Test Nama Panjang</td>
+        <td>Kategori A</td>
+        <td>Supplier 1</td>
+        <td>Box</td>
+        <td>10</td>
+        <td>5</td>
+        <td>8</td>
+        <td>3</td>
+        <td>12</td>
+        <td>7</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>P002</td>
+        <td class="col-nama">Produk Test Kedua</td>
+        <td>Kategori B</td>
+        <td>Supplier 2</td>
+        <td>Pcs</td>
+        <td>15</td>
+        <td>2</td>
+        <td>20</td>
+        <td>1</td>
+        <td>5</td>
+        <td>9</td>
+      </tr>
+      <!-- Total row -->
+      <tr style="background: white !important; font-weight: 600; border-top: 1px solid black;">
+        <td colspan="6" style="text-align: center !important; font-size: 11px; font-weight: 600;">TOTAL</td>
+        <td class="col-warehouse-sub">25</td>
+        <td class="col-warehouse-sub">7</td>
+        <td class="col-warehouse-sub">28</td>
+        <td class="col-warehouse-sub">4</td>
+        <td class="col-warehouse-sub">17</td>
+        <td class="col-warehouse-sub">16</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border: 1px solid #ddd; border-radius: 5px;">
+    <h3 style="margin-top: 0;">✅ Status Check - Kolom Warehouse Merged:</h3>
+    <ul>
+      <li><strong>GUDANG UTAMA:</strong> Header merentang 2 kolom (Carton + Pack) ✓</li>
+      <li><strong>GUDANG CABANG A:</strong> Header merentang 2 kolom (Carton + Pack) ✓</li>
+      <li><strong>GUDANG CABANG B:</strong> Header merentang 2 kolom (Carton + Pack) ✓</li>
+      <li><strong>Background:</strong> Header gudang memiliki background abu-abu muda ✓</li>
+      <li><strong>Border:</strong> Semua cell memiliki border hitam yang jelas ✓</li>
+      <li><strong>Alignment:</strong> Text di-center dan vertical middle ✓</li>
+    </ul>
+  </div>
+
+</body>
+</html>

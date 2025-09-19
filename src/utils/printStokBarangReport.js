@@ -1,4 +1,102 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
+import * as XLSXStyle from "xlsx-js-style";
+
+/*
+ * For optimal styling support, include xlsx-js-style library in your HTML:
+ *
+ * Method 1 - CDN:
+ * <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+ * <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+ *
+ * Method 2 - NPM:
+ * npm install xlsx-js-style
+ * import XLSX from 'xlsx-js-style';
+ *
+ * The library will be detected as window.XLSX_STYLE or passed as XLSX parameter
+ */
+
+// Helper function to transform data from vertical to horizontal structure
+const transformDataToHorizontal = (reportData) => {
+  if (!reportData || reportData.length === 0) {
+    return { transformedData: [], warehouses: [] };
+  }
+
+  // Get all unique warehouses
+  const warehouses = [
+    ...new Set(reportData.map((item) => item.warehouse_name)),
+  ].filter(Boolean);
+
+  // Group data by product (using product_code + product_name as key)
+  const groupedData = {};
+
+  reportData.forEach((item) => {
+    const productKey = `${item.product_code || ""}_${item.product_name || ""}`;
+
+    if (!groupedData[productKey]) {
+      groupedData[productKey] = {
+        product_code: item.product_code || "-",
+        product_name: item.product_name || "-",
+        product_category: item.product_category || "-",
+        supplier_name: item.supplier_name || "-",
+        packing: item.packing || "-",
+        warehouses: {},
+      };
+    }
+
+    // Store warehouse data
+    if (item.warehouse_name) {
+      groupedData[productKey].warehouses[item.warehouse_name] = {
+        carton: item.carton_quantity || 0,
+        pack: item.pack_quantity || 0,
+      };
+    }
+  });
+
+  // Convert to array and fill missing warehouse data
+  const transformedData = Object.values(groupedData).map((product) => {
+    const warehouseData = {};
+    warehouses.forEach((warehouse) => {
+      const data = product.warehouses[warehouse] || { carton: 0, pack: 0 };
+      warehouseData[warehouse] = {
+        carton: data.carton,
+        pack: data.pack,
+      };
+    });
+
+    return {
+      ...product,
+      warehouseData,
+    };
+  });
+
+  return { transformedData, warehouses };
+};
+
+// Helper function to calculate totals for each warehouse
+const calculateWarehouseTotals = (transformedData, warehouses) => {
+  const totals = {};
+
+  warehouses.forEach((warehouse) => {
+    let totalCarton = 0;
+    let totalPack = 0;
+
+    transformedData.forEach((item) => {
+      const warehouseData = item.warehouseData[warehouse] || {
+        carton: 0,
+        pack: 0,
+      };
+      totalCarton += warehouseData.carton;
+      totalPack += warehouseData.pack;
+    });
+
+    totals[warehouse] = {
+      carton: totalCarton,
+      pack: totalPack,
+    };
+  });
+
+  return totals;
+};
 
 // Function to generate Excel file from stok barang data
 export const exportStokBarangToExcel = (reportData, filters = {}) => {
@@ -27,12 +125,11 @@ export const exportStokBarangToExcel = (reportData, filters = {}) => {
     return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
   };
 
-  // Calculate totals
-  const totalCarton =
-    reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-    0;
-  const totalPack =
-    reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+  // Transform data to horizontal structure
+  const { transformedData, warehouses } = transformDataToHorizontal(reportData);
+
+  // Calculate warehouse totals
+  const warehouseTotals = calculateWarehouseTotals(transformedData, warehouses);
 
   // Create CSV content (Excel-compatible)
   const csvContent = [];
@@ -42,53 +139,89 @@ export const exportStokBarangToExcel = (reportData, filters = {}) => {
   csvContent.push(["SUN FIREWORKS"]);
   csvContent.push([""]);
   csvContent.push(["Filter:", createFilterInfo()]);
-  csvContent.push(["Total Data:", `${reportData?.length || 0} item`]);
+  csvContent.push(["Total Data:", `${transformedData?.length || 0} item`]);
   csvContent.push(["Tanggal Export:", formatDate(new Date())]);
   csvContent.push([""]);
 
-  // Table headers
-  csvContent.push([
+  // Table headers with sub-columns - dynamic based on warehouses
+  const mainHeaders = [
     "NO",
     "KODE PRODUK",
     "NAMA PRODUK",
     "KATEGORI",
     "SUPPLIER",
     "PACKING",
-    "GUDANG",
-    "CARTON",
-    "PACK",
-  ]);
+  ];
+
+  // Add warehouse names as main headers
+  warehouses.forEach((warehouse) => {
+    mainHeaders.push(warehouse, "");
+  });
+  csvContent.push(mainHeaders);
+
+  // Add sub-headers (Carton, Pack for each warehouse)
+  const subHeaders = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "", // Empty for basic columns
+  ];
+  warehouses.forEach(() => {
+    subHeaders.push("Carton", "Pack");
+  });
+  csvContent.push(subHeaders);
 
   // Table data
-  if (reportData?.length > 0) {
-    reportData.forEach((item, index) => {
-      csvContent.push([
+  if (transformedData?.length > 0) {
+    transformedData.forEach((item, index) => {
+      const row = [
         index + 1,
         item.product_code || "-",
         item.product_name || "-",
         item.product_category || "-",
         item.supplier_name || "-",
         item.packing || "-",
-        item.warehouse_name || "-",
-        item.carton_quantity || 0,
-        item.pack_quantity || 0,
-      ]);
+      ];
+
+      // Add carton and pack values for each warehouse
+      warehouses.forEach((warehouse) => {
+        const warehouseData = item.warehouseData[warehouse] || {
+          carton: 0,
+          pack: 0,
+        };
+        row.push(warehouseData.carton, warehouseData.pack);
+      });
+
+      csvContent.push(row);
     });
 
     // Total row
-    csvContent.push(["", "", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+    const totalRow = ["", "", "", "", "", "TOTAL"];
+
+    warehouses.forEach((warehouse) => {
+      const totals = warehouseTotals[warehouse] || { carton: 0, pack: 0 };
+      totalRow.push(totals.carton, totals.pack);
+    });
+
+    csvContent.push(totalRow);
   } else {
-    csvContent.push([
-      "",
+    const emptyRow = [
       "",
       "",
       "",
       "Tidak ada data stok barang yang ditemukan",
       "",
       "",
-      "",
-      "",
-    ]);
+    ];
+
+    // Add empty cells for warehouse columns
+    warehouses.forEach(() => {
+      emptyRow.push("", "");
+    });
+
+    csvContent.push(emptyRow);
   }
 
   // Convert to CSV string
@@ -139,21 +272,41 @@ export const exportStokBarangToExcel = (reportData, filters = {}) => {
   return filename;
 };
 
-// Enhanced Excel export using XLSX library
+// Enhanced Excel export using XLSX-JS-STYLE library for better styling
 export const exportStokBarangToExcelAdvanced = (
   reportData,
   filters = {},
   XLSX = null
 ) => {
   try {
-    // Check if XLSX library is available
-    if (!XLSX && typeof window.XLSX === "undefined") {
-      console.warn("XLSX library not found. Falling back to CSV export.");
+    // Use xlsx-js-style for enhanced styling support
+    let xlsxLib = null;
+    let hasAdvancedStyling = false;
+
+    if (XLSXStyle && XLSXStyle.utils) {
+      // Use imported xlsx-js-style
+      xlsxLib = XLSXStyle;
+      hasAdvancedStyling = true;
+      console.log("Using imported xlsx-js-style library for advanced styling");
+    } else if (typeof window !== "undefined" && window.XLSX_STYLE) {
+      // Fallback to browser XLSX-JS-STYLE
+      xlsxLib = window.XLSX_STYLE;
+      hasAdvancedStyling = true;
+      console.log("Using browser XLSX-JS-STYLE for enhanced styling support");
+    } else if (typeof window !== "undefined" && window.XLSX) {
+      // Fallback to standard XLSX
+      xlsxLib = window.XLSX;
+      hasAdvancedStyling = false;
+      console.warn("Using browser standard XLSX. Limited styling available");
+    } else if (XLSX) {
+      // Node.js fallback to standard XLSX
+      xlsxLib = XLSX;
+      hasAdvancedStyling = false;
+      console.warn("Using standard XLSX library - xlsx-js-style not available");
+    } else {
+      console.warn("No XLSX library found. Falling back to CSV export.");
       return exportStokBarangToExcel(reportData, filters);
     }
-
-    // Use provided XLSX or fallback to window.XLSX
-    const xlsxLib = XLSX || window.XLSX;
 
     // Create filter info string
     const createFilterInfo = () => {
@@ -180,13 +333,15 @@ export const exportStokBarangToExcelAdvanced = (
       return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
     };
 
-    // Calculate totals
-    const totalCarton =
-      reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-      0;
-    const totalPack =
-      reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) ||
-      0;
+    // Transform data to horizontal structure
+    const { transformedData, warehouses } =
+      transformDataToHorizontal(reportData);
+
+    // Calculate warehouse totals
+    const warehouseTotals = calculateWarehouseTotals(
+      transformedData,
+      warehouses
+    );
 
     // Create workbook and worksheet
     const wb = xlsxLib.utils.book_new();
@@ -197,59 +352,95 @@ export const exportStokBarangToExcelAdvanced = (
     wsData.push(["SUN FIREWORKS"]);
     wsData.push([""]);
     wsData.push(["Filter:", createFilterInfo()]);
-    wsData.push(["Total Data:", `${reportData?.length || 0} item`]);
+    wsData.push(["Total Data:", `${transformedData?.length || 0} item`]);
     wsData.push(["Tanggal Export:", formatDate(new Date())]);
     wsData.push([""]);
 
-    // Table headers
-    wsData.push([
+    // Table headers with sub-columns - dynamic based on warehouses
+    const mainHeaders = [
       "NO",
       "KODE PRODUK",
       "NAMA PRODUK",
       "KATEGORI",
       "SUPPLIER",
       "PACKING",
-      "GUDANG",
-      "CARTON",
-      "PACK",
-    ]);
+    ];
+
+    // Add warehouse names as main headers
+    warehouses.forEach((warehouse) => {
+      mainHeaders.push(warehouse, "");
+    });
+    wsData.push(mainHeaders);
+
+    // Add sub-headers (Carton, Pack for each warehouse)
+    const subHeaders = [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "", // Empty for basic columns
+    ];
+    warehouses.forEach(() => {
+      subHeaders.push("Carton", "Pack");
+    });
+    wsData.push(subHeaders);
 
     // Table data
-    if (reportData?.length > 0) {
-      reportData.forEach((item, index) => {
-        wsData.push([
+    if (transformedData?.length > 0) {
+      transformedData.forEach((item, index) => {
+        const row = [
           index + 1,
           item.product_code || "-",
           item.product_name || "-",
           item.product_category || "-",
           item.supplier_name || "-",
           item.packing || "-",
-          item.warehouse_name || "-",
-          item.carton_quantity || 0,
-          item.pack_quantity || 0,
-        ]);
+        ];
+
+        // Add carton and pack values for each warehouse
+        warehouses.forEach((warehouse) => {
+          const warehouseData = item.warehouseData[warehouse] || {
+            carton: 0,
+            pack: 0,
+          };
+          row.push(warehouseData.carton, warehouseData.pack);
+        });
+
+        wsData.push(row);
       });
 
       // Total row
-      wsData.push(["", "", "", "", "", "", "TOTAL", totalCarton, totalPack]);
+      const totalRow = ["", "", "", "", "", "TOTAL"];
+
+      warehouses.forEach((warehouse) => {
+        const totals = warehouseTotals[warehouse] || { carton: 0, pack: 0 };
+        totalRow.push(totals.carton, totals.pack);
+      });
+
+      wsData.push(totalRow);
     } else {
-      wsData.push([
-        "",
+      const emptyRow = [
         "",
         "",
         "",
         "Tidak ada data stok barang yang ditemukan",
         "",
         "",
-        "",
-        "",
-      ]);
+      ];
+
+      // Add empty cells for warehouse columns
+      warehouses.forEach(() => {
+        emptyRow.push("", "");
+      });
+
+      wsData.push(emptyRow);
     }
 
     // Create worksheet
     const ws = xlsxLib.utils.aoa_to_sheet(wsData);
 
-    // Set column widths
+    // Set column widths - dynamic based on warehouses with sub-columns
     const colWidths = [
       { wch: 5 }, // NO
       { wch: 15 }, // KODE PRODUK
@@ -257,11 +448,315 @@ export const exportStokBarangToExcelAdvanced = (
       { wch: 15 }, // KATEGORI
       { wch: 15 }, // SUPPLIER
       { wch: 10 }, // PACKING
-      { wch: 15 }, // GUDANG
-      { wch: 8 }, // CARTON
-      { wch: 8 }, // PACK
     ];
+
+    // Add widths for each warehouse sub-columns (Carton, Pack)
+    warehouses.forEach(() => {
+      colWidths.push({ wch: 10 }); // Carton column
+      colWidths.push({ wch: 8 }); // Pack column
+    });
+
     ws["!cols"] = colWidths;
+
+    // Set row heights for better presentation
+    ws["!rows"] = [
+      { hpt: 20 }, // Row 0: Title "LAPORAN STOK BARANG"
+      { hpt: 16 }, // Row 1: Company "SUN FIREWORKS"
+      { hpt: 12 }, // Row 2: Empty
+      { hpt: 12 }, // Row 3: Filter info
+      { hpt: 12 }, // Row 4: Total Data
+      { hpt: 12 }, // Row 5: Tanggal Export
+      { hpt: 12 }, // Row 6: Empty
+      { hpt: 18 }, // Row 7: Main headers (NO, KODE, warehouse names)
+      { hpt: 14 }, // Row 8: Sub-headers (Carton, Pack)
+    ];
+
+    // Add comprehensive merge cells for better header presentation
+    const merges = [];
+
+    // Find the actual header row by searching wsData
+    const headerRowIdx = wsData.findIndex(
+      (row) => Array.isArray(row) && row[0] === "NO" && row[1] === "KODE PRODUK"
+    );
+
+    if (headerRowIdx >= 0) {
+      // Merge title header across all columns
+      const totalCols = 6 + warehouses.length * 2; // 6 basic columns + 2 per warehouse
+      if (totalCols > 1) {
+        merges.push({
+          s: { r: 0, c: 0 }, // "LAPORAN STOK BARANG"
+          e: { r: 0, c: totalCols - 1 },
+        });
+
+        merges.push({
+          s: { r: 1, c: 0 }, // "SUN FIREWORKS"
+          e: { r: 1, c: totalCols - 1 },
+        });
+      }
+
+      // Merge warehouse headers across their sub-columns (Carton + Pack)
+      let colIndex = 6; // Start after PACKING column (F = 5, so next is 6)
+      warehouses.forEach((warehouse) => {
+        // Merge warehouse header across 2 columns (Carton + Pack)
+        const startCol = colIndex;
+        const endCol = colIndex + 1;
+
+        merges.push({
+          s: { r: headerRowIdx, c: startCol },
+          e: { r: headerRowIdx, c: endCol },
+        });
+
+        colIndex += 2; // Move to next warehouse (skip 2 columns)
+      });
+
+      // Merge basic headers vertically (NO, KODE PRODUK, etc.) to span across both header rows
+      for (let col = 0; col < 6; col++) {
+        merges.push({
+          s: { r: headerRowIdx, c: col },
+          e: { r: headerRowIdx + 1, c: col },
+        });
+      }
+    }
+
+    // Apply merges to worksheet
+    if (merges.length > 0) {
+      ws["!merges"] = merges;
+    }
+
+    // Define comprehensive styles with simple, compatible format
+    const titleHeaderStyle = {
+      font: {
+        name: "Arial",
+        sz: 14,
+        bold: true,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+    };
+
+    const companyHeaderStyle = {
+      font: {
+        name: "Arial",
+        sz: 12,
+        bold: true,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+    };
+
+    const headerStyle = {
+      font: {
+        name: "Arial",
+        sz: 10,
+        bold: true,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+      border: {
+        top: { style: "medium", color: { rgb: "000000" } },
+        bottom: { style: "medium", color: { rgb: "000000" } },
+        left: { style: "medium", color: { rgb: "000000" } },
+        right: { style: "medium", color: { rgb: "000000" } },
+      },
+    };
+
+    const warehouseHeaderStyle = {
+      font: {
+        name: "Arial",
+        sz: 11,
+        bold: true,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+      border: {
+        top: { style: "medium", color: { rgb: "000000" } },
+        bottom: { style: "medium", color: { rgb: "000000" } },
+        left: { style: "medium", color: { rgb: "000000" } },
+        right: { style: "medium", color: { rgb: "000000" } },
+      },
+    };
+
+    // Define data cell styles with simplified format
+    const dataCellStyle = {
+      font: {
+        name: "Arial",
+        sz: 9,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+      border: {
+        top: { style: "thin", color: { rgb: "000000" } },
+        bottom: { style: "thin", color: { rgb: "000000" } },
+        left: { style: "thin", color: { rgb: "000000" } },
+        right: { style: "thin", color: { rgb: "000000" } },
+      },
+    };
+
+    const productNameCellStyle = {
+      font: {
+        name: "Arial",
+        sz: 9,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "left", // Product names left-aligned
+        vertical: "center",
+      },
+      border: {
+        top: { style: "thin", color: { rgb: "000000" } },
+        bottom: { style: "thin", color: { rgb: "000000" } },
+        left: { style: "thin", color: { rgb: "000000" } },
+        right: { style: "thin", color: { rgb: "000000" } },
+      },
+    };
+
+    const totalRowStyle = {
+      font: {
+        name: "Arial",
+        sz: 10,
+        bold: true,
+        color: { rgb: "000000" },
+      },
+      alignment: {
+        horizontal: "center",
+        vertical: "center",
+      },
+      border: {
+        top: { style: "medium", color: { rgb: "000000" } },
+        bottom: { style: "medium", color: { rgb: "000000" } },
+        left: { style: "medium", color: { rgb: "000000" } },
+        right: { style: "medium", color: { rgb: "000000" } },
+      },
+    };
+
+    // Apply comprehensive styling to ALL cells
+    // First, find the actual header rows by checking wsData
+    const actualHeaderRowIndex = wsData.findIndex(
+      (row) => Array.isArray(row) && row[0] === "NO" && row[1] === "KODE PRODUK"
+    );
+    const actualSubHeaderRowIndex = actualHeaderRowIndex + 1;
+
+    // Calculate the correct range based on wsData dimensions
+    const maxRows = wsData.length;
+    const maxCols = Math.max(
+      ...wsData.map((row) => (Array.isArray(row) ? row.length : 0))
+    );
+
+    // Update worksheet range to ensure all cells are included
+    ws["!ref"] = xlsxLib.utils.encode_range({
+      s: { r: 0, c: 0 },
+      e: { r: maxRows - 1, c: maxCols - 1 },
+    });
+
+    // Apply styles to EVERY cell using a more robust approach
+    for (let row = 0; row < maxRows; row++) {
+      for (let col = 0; col < maxCols; col++) {
+        const cellAddress = xlsxLib.utils.encode_cell({ r: row, c: col });
+        const cellValue =
+          wsData[row] && wsData[row][col] ? wsData[row][col] : "";
+
+        // Ensure cell exists with proper structure
+        if (!ws[cellAddress]) {
+          ws[cellAddress] = { v: cellValue, t: "s" }; // s = string type
+        }
+
+        // Ensure cell has value
+        if (ws[cellAddress].v === undefined || ws[cellAddress].v === null) {
+          ws[cellAddress].v = cellValue;
+        }
+
+        // Apply appropriate style based on cell position and content
+        let cellStyle = null;
+
+        if (row === 0) {
+          // Title row "LAPORAN STOK BARANG"
+          cellStyle = { ...titleHeaderStyle };
+        } else if (row === 1) {
+          // Company row "SUN FIREWORKS"
+          cellStyle = { ...companyHeaderStyle };
+        } else if (row === actualHeaderRowIndex) {
+          // Main header row
+          if (col >= 6 && cellValue && cellValue !== "") {
+            // Warehouse header (merged across 2 columns)
+            cellStyle = { ...warehouseHeaderStyle };
+          } else {
+            // Basic header (merged vertically with sub-header)
+            cellStyle = { ...headerStyle };
+          }
+        } else if (row === actualSubHeaderRowIndex) {
+          // Sub-header row (Carton, Pack)
+          if (col >= 6) {
+            // Sub-header under warehouse (Carton/Pack)
+            cellStyle = { ...headerStyle };
+          } else {
+            // Merged cells don't need separate styling
+            cellStyle = null;
+          }
+        } else if (row > actualSubHeaderRowIndex) {
+          // Data rows
+          const isTotalRow =
+            (wsData[row] && wsData[row][5] === "TOTAL") ||
+            String(cellValue).includes("Tidak ada data");
+
+          if (isTotalRow) {
+            // Total row
+            cellStyle = { ...totalRowStyle };
+          } else {
+            // Regular data cell
+            if (col === 2) {
+              // NAMA PRODUK column
+              cellStyle = { ...productNameCellStyle };
+            } else {
+              cellStyle = { ...dataCellStyle };
+            }
+          }
+        } else {
+          // Info rows (Filter, Total Data, Tanggal Export)
+          cellStyle = {
+            font: {
+              name: "Arial",
+              sz: 10,
+              color: { rgb: "000000" },
+            },
+            alignment: {
+              horizontal: "left",
+              vertical: "center",
+              wrapText: false,
+              shrinkToFit: false,
+              indent: 0,
+            },
+            numFmt: "@",
+          };
+        }
+
+        // Apply style if defined
+        if (cellStyle) {
+          ws[cellAddress].s = cellStyle;
+
+          // Ensure cell type is correct for numbers vs text
+          if (typeof cellValue === "number") {
+            ws[cellAddress].t = "n"; // number type
+          } else {
+            ws[cellAddress].t = "s"; // string type
+          }
+        }
+      }
+    }
 
     // Add worksheet to workbook
     xlsxLib.utils.book_append_sheet(wb, ws, "Laporan Stok Barang");
@@ -270,8 +765,39 @@ export const exportStokBarangToExcelAdvanced = (
     const currentDate = new Date().toISOString().split("T")[0];
     const filename = `Laporan_Stok_Barang_${currentDate}.xlsx`;
 
-    // Write and download file
-    xlsxLib.writeFile(wb, filename);
+    // Debug: Check library and styling
+    console.log("Has advanced styling:", hasAdvancedStyling);
+    console.log("Library name:", xlsxLib.version || "Unknown version");
+    console.log(
+      "First cell has styling:",
+      !!ws[xlsxLib.utils.encode_cell({ r: 0, c: 0 })].s
+    );
+
+    // Write and download file with proper styling options
+    try {
+      if (hasAdvancedStyling) {
+        // Using xlsx-js-style - write with styling options enabled
+        console.log("Writing with xlsx-js-style advanced styling options");
+        xlsxLib.writeFile(wb, filename, {
+          cellStyles: true,
+          bookSST: false,
+          bookType: "xlsx",
+        });
+      } else {
+        // Using standard XLSX - basic write without styling
+        console.log("Writing with standard XLSX (no styling)");
+        xlsxLib.writeFile(wb, filename);
+      }
+    } catch (writeError) {
+      console.error("Error writing Excel file with styling:", writeError);
+      // Emergency fallback - try basic write
+      try {
+        xlsxLib.writeFile(wb, filename);
+      } catch (basicError) {
+        console.error("Basic write also failed:", basicError);
+        throw basicError;
+      }
+    }
 
     return filename;
   } catch (error) {
@@ -282,12 +808,8 @@ export const exportStokBarangToExcelAdvanced = (
 };
 
 export const printStokBarangReport = (reportData, filters = {}) => {
-  // Calculate totals
-  const totalCarton =
-    reportData?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-    0;
-  const totalPack =
-    reportData?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+  // Use original vertical structure for print
+  const printData = reportData || [];
 
   // Create filter info string
   const createFilterInfo = () => {
@@ -323,8 +845,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
         <title>LAPORAN STOK BARANG</title>
         <style>
           @page {
-            margin: 15mm;
-            size: A4;
+            margin: 10mm;
+            size: A4 landscape;
             @top-left { content: ""; }
             @top-center { content: ""; }
             @top-right { content: ""; }
@@ -335,8 +857,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           
           @media print {
             @page {
-              size: A4 !important;
-              margin: 15mm !important;
+              size: A4 landscape !important;
+              margin: 10mm !important;
             }
             
             * {
@@ -349,32 +871,32 @@ export const printStokBarangReport = (reportData, filters = {}) => {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 9px;
-            line-height: 1.4;
+            font-size: 8px;
+            line-height: 1.3;
             color: black;
             font-weight: 400;
           }
           .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             border-bottom: 1px solid black;
-            padding-bottom: 12px;
+            padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             margin: 0;
             letter-spacing: 1px;
             text-transform: uppercase;
           }
           .header h2 {
-            font-size: 14px;
-            margin: 8px 0;
+            font-size: 12px;
+            margin: 6px 0;
             color: #333;
           }
           .reportInfo {
-            margin-bottom: 25px;
-            font-size: 9px;
+            margin-bottom: 15px;
+            font-size: 8px;
           }
           .reportInfo div {
             margin: 5px 0;
@@ -387,64 +909,73 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
-            margin-bottom: 25px;
+            font-size: 8px;
+            margin-bottom: 20px;
+            table-layout: fixed;
           }
           th, td {
             border: 1px solid black;
-            padding: 6px 4px;
-            text-align: center;
-            vertical-align: middle;
+            padding: 4px 2px;
+            text-align: center !important;
+            vertical-align: middle !important;
+            word-wrap: break-word;
+            overflow: hidden;
           }
           th {
             background: white !important;
-            font-weight: 600;
+            font-weight: 600 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            border: 1px solid black !important;
+            font-size: 8px;
           }
           .col-no { 
-            width: 40px; 
-            min-width: 40px;
+            width: 4%; 
+            text-align: center !important;
+            font-size: 8px;
           }
           .col-kode { 
-            width: 100px; 
-            min-width: 100px;
-            font-size: 9px;
+            width: 10%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-nama { 
-            width: 200px; 
-            min-width: 200px;
+            width: 25%; 
             text-align: left !important;
-            padding-left: 8px;
-            font-size: 9px;
+            padding-left: 4px;
+            font-size: 7px;
           }
           .col-kategori { 
-            width: 120px; 
-            min-width: 120px;
-            font-size: 9px;
+            width: 15%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-supplier { 
-            width: 120px; 
-            min-width: 120px;
-            font-size: 9px;
+            width: 15%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-packing { 
-            width: 90px; 
-            min-width: 90px;
-            font-size: 9px;
+            width: 10%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-gudang { 
-            width: 100px; 
-            min-width: 100px;
-            font-size: 9px;
+            width: 12%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-carton { 
-            width: 70px; 
-            min-width: 70px;
+            width: 7%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .col-pack { 
-            width: 70px; 
-            min-width: 70px;
+            width: 7%; 
+            font-size: 7px;
+            text-align: center !important;
           }
           .total-row {
             background: white !important;
@@ -472,17 +1003,17 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           }
           .signature {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 25px;
           }
           .signature-box {
             display: inline-block;
-            margin: 0 40px;
+            margin: 0 30px;
             text-align: center;
           }
           .signature-line {
             border-bottom: 1px solid black;
-            width: 150px;
-            height: 50px;
+            width: 120px;
+            height: 40px;
             display: inline-block;
             margin-bottom: 5px;
           }
@@ -501,7 +1032,7 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           </div>
           <div>
             <span class="label">Total Data:</span>
-            <span>${reportData?.length || 0} item</span>
+            <span>${printData?.length || 0} item</span>
           </div>
           <div>
             <span class="label">Tanggal Cetak:</span>
@@ -513,8 +1044,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           <thead>
             <tr>
               <th class="col-no">NO</th>
-              <th class="col-kode">KODE PRODUK</th>
-              <th class="col-nama">NAMA PRODUK</th>
+              <th class="col-kode">KODE</th>
+              <th class="col-nama">NAMA</th>
               <th class="col-kategori">KATEGORI</th>
               <th class="col-supplier">SUPPLIER</th>
               <th class="col-packing">PACKING</th>
@@ -525,8 +1056,8 @@ export const printStokBarangReport = (reportData, filters = {}) => {
           </thead>
           <tbody>
             ${
-              reportData?.length > 0
-                ? reportData
+              printData?.length > 0
+                ? printData
                     .map(
                       (item, index) => `
                 <tr>
@@ -554,17 +1085,6 @@ export const printStokBarangReport = (reportData, filters = {}) => {
                   </td>
                 </tr>
               `
-            }
-            ${
-              reportData?.length > 0
-                ? `
-            <tr class="total-row">
-              <td colspan="7" class="total-label">TOTAL</td>
-              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
-              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
-            </tr>
-            `
-                : ""
             }
           </tbody>
         </table>

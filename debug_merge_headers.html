@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Merged Table Headers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      font-size: 10px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-top: 20px;
+    }
+    
+    th, td {
+      border: 2px solid #000;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    
+    thead th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+    
+    .col-warehouse-header { 
+      width: 140px; 
+      min-width: 140px;
+      font-size: 10px;
+      text-align: center !important;
+      font-weight: 600;
+      vertical-align: middle !important;
+      background: #e8f4f8 !important;
+      border: 2px solid #000 !important;
+    }
+    
+    .col-warehouse-sub { 
+      width: 70px; 
+      min-width: 70px;
+      font-size: 9px;
+      text-align: center !important;
+      font-weight: 600;
+      background: #fff !important;
+      border: 2px solid #000 !important;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test Table dengan Merged Headers</h2>
+  
+  <table>
+    <thead>
+      <!-- Main header row dengan merged columns -->
+      <tr>
+        <th rowspan="2" style="background: #ddd;">NO</th>
+        <th rowspan="2" style="background: #ddd;">KODE</th>
+        <th rowspan="2" style="background: #ddd;">NAMA PRODUK</th>
+        <th rowspan="2" style="background: #ddd;">KATEGORI</th>
+        <th rowspan="2" style="background: #ddd;">SUPPLIER</th>
+        <th rowspan="2" style="background: #ddd;">PACKING</th>
+        
+        <!-- Warehouse headers yang di-merge -->
+        <th class="col-warehouse-header" colspan="2">GUDANG UTAMA</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG CABANG A</th>
+        <th class="col-warehouse-header" colspan="2">GUDANG CABANG B</th>
+      </tr>
+      
+      <!-- Sub-header row untuk Carton/Pack -->
+      <tr>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+        <th class="col-warehouse-sub">Carton</th>
+        <th class="col-warehouse-sub">Pack</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>P001</td>
+        <td>Produk Test 1</td>
+        <td>Kategori A</td>
+        <td>Supplier 1</td>
+        <td>Box</td>
+        <td>10</td>
+        <td>5</td>
+        <td>8</td>
+        <td>3</td>
+        <td>12</td>
+        <td>7</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>P002</td>
+        <td>Produk Test 2</td>
+        <td>Kategori B</td>
+        <td>Supplier 2</td>
+        <td>Pcs</td>
+        <td>15</td>
+        <td>2</td>
+        <td>20</td>
+        <td>1</td>
+        <td>5</td>
+        <td>9</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Keterangan:</h3>
+  <p>• Header "GUDANG UTAMA", "GUDANG CABANG A", "GUDANG CABANG B" seharusnya ter-merge merentang 2 kolom (Carton + Pack)</p>
+  <p>• Border yang tebal menunjukkan struktur merge dengan jelas</p>
+  <p>• Background biru muda pada header gudang untuk memperjelas merge</p>
+
+</body>
+</html>

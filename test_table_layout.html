@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Tabel Layout</title>
+  <style>
+    @page {
+      margin: 10mm;
+      size: A4 landscape;
+    }
+    
+    @media print {
+      @page {
+        size: A4 landscape !important;
+        margin: 10mm !important;
+      }
+      
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 8px;
+      line-height: 1.3;
+      color: black;
+      font-weight: 400;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid black;
+      padding-bottom: 8px;
+    }
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header h2 {
+      font-size: 12px;
+      margin: 6px 0;
+      color: #333;
+    }
+    .reportInfo {
+      margin-bottom: 15px;
+      font-size: 8px;
+    }
+    .reportInfo div {
+      margin: 3px 0;
+    }
+    .reportInfo .label {
+      font-weight: 600;
+      display: inline-block;
+      width: 80px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8px;
+      margin-bottom: 20px;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 4px 2px;
+      text-align: center !important;
+      vertical-align: middle !important;
+      word-wrap: break-word;
+      overflow: hidden;
+    }
+    th {
+      background: white !important;
+      font-weight: 600 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-size: 8px;
+    }
+    .col-no { 
+      width: 4%; 
+      text-align: center !important;
+      font-size: 8px;
+    }
+    .col-kode { 
+      width: 10%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-nama { 
+      width: 25%; 
+      text-align: left !important;
+      padding-left: 4px;
+      font-size: 7px;
+    }
+    .col-kategori { 
+      width: 15%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-supplier { 
+      width: 15%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-packing { 
+      width: 10%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-gudang { 
+      width: 12%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-carton { 
+      width: 7%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+    .col-pack { 
+      width: 7%; 
+      font-size: 7px;
+      text-align: center !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>LAPORAN STOK BARANG</h1>
+    <h2>SUN FIREWORKS</h2>
+  </div>
+
+  <div class="reportInfo">
+    <div>
+      <span class="label">Filter:</span>
+      <span>Semua Data</span>
+    </div>
+    <div>
+      <span class="label">Total Data:</span>
+      <span>20 item</span>
+    </div>
+    <div>
+      <span class="label">Tanggal Cetak:</span>
+      <span>15 Sep 2025</span>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="col-no">NO</th>
+        <th class="col-kode">KODE</th>
+        <th class="col-nama">NAMA</th>
+        <th class="col-kategori">KATEGORI</th>
+        <th class="col-supplier">SUPPLIER</th>
+        <th class="col-packing">PACKING</th>
+        <th class="col-gudang">GUDANG</th>
+        <th class="col-carton">CARTON</th>
+        <th class="col-pack">PACK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-no">1</td>
+        <td class="col-kode">FW-001-A</td>
+        <td class="col-nama">Roman Candle 10 SHOT 8 Ball</td>
+        <td class="col-kategori">ROMAN CANDLE</td>
+        <td class="col-supplier">PT. SUPPLIER A</td>
+        <td class="col-packing">20/1</td>
+        <td class="col-gudang">Gudang Utama</td>
+        <td class="col-carton">100</td>
+        <td class="col-pack">50</td>
+      </tr>
+      <tr>
+        <td class="col-no">2</td>
+        <td class="col-kode">FW-002-B</td>
+        <td class="col-nama">Fountain Cake 25 SHOT Premium</td>
+        <td class="col-kategori">FOUNTAIN CAKE</td>
+        <td class="col-supplier">PT. SUPPLIER B</td>
+        <td class="col-packing">12/1</td>
+        <td class="col-gudang">Gudang Cabang</td>
+        <td class="col-carton">75</td>
+        <td class="col-pack">25</td>
+      </tr>
+      <tr>
+        <td class="col-no">3</td>
+        <td class="col-kode">FW-003-C</td>
+        <td class="col-nama">Sparklers Golden Light Premium Quality</td>
+        <td class="col-kategori">SPARKLERS</td>
+        <td class="col-supplier">CV. SUPPLIER C</td>
+        <td class="col-packing">50/10</td>
+        <td class="col-gudang">Gudang Pusat</td>
+        <td class="col-carton">200</td>
+        <td class="col-pack">150</td>
+      </tr>
+      <tr>
+        <td class="col-no">4</td>
+        <td class="col-kode">FW-004-D</td>
+        <td class="col-nama">Aerial Shell 6 Inch Multi Color</td>
+        <td class="col-kategori">AERIAL SHELL</td>
+        <td class="col-supplier">PT. SUPPLIER A</td>
+        <td class="col-packing">6/1</td>
+        <td class="col-gudang">Gudang Utama</td>
+        <td class="col-carton">30</td>
+        <td class="col-pack">15</td>
+      </tr>
+      <tr>
+        <td class="col-no">5</td>
+        <td class="col-kode">FW-005-E</td>
+        <td class="col-nama">Ground Spinner Rainbow Colors</td>
+        <td class="col-kategori">GROUND SPINNER</td>
+        <td class="col-supplier">CV. SUPPLIER D</td>
+        <td class="col-packing">24/1</td>
+        <td class="col-gudang">Gudang Cabang</td>
+        <td class="col-carton">85</td>
+        <td class="col-pack">40</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="text-align: center; margin-top: 20px; font-size: 8px;">
+    Test Layout - Landscape A4 (29.7cm x 21cm)
+  </div>
+</body>
+</html>

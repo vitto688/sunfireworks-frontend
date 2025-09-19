@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Print Report - Stock Barang</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .title {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .test-section h3 {
+            color: #374151;
+            margin-top: 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .btn-success { background: #16a34a; }
+        .btn-success:hover { background: #15803d; }
+        .btn-warning { background: #ea580c; }
+        .btn-warning:hover { background: #c2410c; }
+        .sample-data {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Test Laporan Stok Barang - Print Functions</h1>
+        
+        <div class="info">
+            <strong>📋 Testing Info:</strong> Halaman ini untuk menguji fungsi print dengan struktur tabel baru yang sudah diperbaiki (landscape A4, font optimized, tidak terpotong).
+        </div>
+
+        <div class="test-section">
+            <h3>🖨️ Test Print Report (Vertical Structure)</h3>
+            <p>Test fungsi <code>printStokBarangReport</code> dengan data sample dalam struktur vertikal baru: NO | KODE | NAMA | KATEGORI | SUPPLIER | PACKING | GUDANG | CARTON | PACK</p>
+            <button onclick="testPrintReport()">Test Print Report</button>
+            <button onclick="testPrintWithFilters()">Test Print dengan Filter</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Test Excel Export Functions</h3>
+            <p>Test fungsi export Excel (CSV dan Advanced XLSX) - masih menggunakan struktur horizontal untuk export.</p>
+            <button onclick="testExcelCSV()" class="btn-success">Test Excel CSV Export</button>
+            <button onclick="testExcelAdvanced()" class="btn-warning">Test Excel XLSX Export</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Sample Data yang Digunakan</h3>
+            <div class="sample-data" id="sampleDataDisplay">
+                Loading sample data...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data untuk testing
+        const sampleReportData = [
+            {
+                product_code: "FW-001-A",
+                product_name: "Roman Candle 10 SHOT 8 Ball Premium Quality",
+                product_category: "ROMAN CANDLE",
+                supplier_name: "PT. SUPPLIER UTAMA",
+                packing: "20/1",
+                warehouse_name: "Gudang Utama",
+                carton_quantity: 100,
+                pack_quantity: 50
+            },
+            {
+                product_code: "FW-001-A", 
+                product_name: "Roman Candle 10 SHOT 8 Ball Premium Quality",
+                product_category: "ROMAN CANDLE",
+                supplier_name: "PT. SUPPLIER UTAMA",
+                packing: "20/1",
+                warehouse_name: "Gudang Cabang",
+                carton_quantity: 75,
+                pack_quantity: 30
+            },
+            {
+                product_code: "FW-002-B",
+                product_name: "Fountain Cake 25 SHOT Multi Color",
+                product_category: "FOUNTAIN CAKE", 
+                supplier_name: "CV. SUPPLIER BETA",
+                packing: "12/1",
+                warehouse_name: "Gudang Utama",
+                carton_quantity: 85,
+                pack_quantity: 40
+            },
+            {
+                product_code: "FW-003-C",
+                product_name: "Sparklers Golden Light Premium Quality Extra Long",
+                product_category: "SPARKLERS",
+                supplier_name: "PT. SUPPLIER GAMMA", 
+                packing: "50/10",
+                warehouse_name: "Gudang Pusat",
+                carton_quantity: 200,
+                pack_quantity: 150
+            },
+            {
+                product_code: "FW-004-D",
+                product_name: "Aerial Shell 6 Inch Multi Color Premium",
+                product_category: "AERIAL SHELL",
+                supplier_name: "CV. SUPPLIER DELTA",
+                packing: "6/1", 
+                warehouse_name: "Gudang Utama",
+                carton_quantity: 30,
+                pack_quantity: 15
+            },
+            {
+                product_code: "FW-005-E",
+                product_name: "Ground Spinner Rainbow Colors Special Edition",
+                product_category: "GROUND SPINNER",
+                supplier_name: "PT. SUPPLIER EPSILON",
+                packing: "24/1",
+                warehouse_name: "Gudang Cabang",
+                carton_quantity: 60,
+                pack_quantity: 25
+            }
+        ];
+
+        const sampleFilters = {
+            start_date: "2025-09-01",
+            end_date: "2025-09-15", 
+            category: "All Categories",
+            supplier: "All Suppliers",
+            warehouse: "All Warehouses",
+            search: ""
+        };
+
+        // Load and include the print utility functions
+        const script = document.createElement('script');
+        script.src = './src/utils/printStokBarangReport.js';
+        script.type = 'module';
+        document.head.appendChild(script);
+
+        // Utility functions for number formatting (inline for testing)
+        function formatNumberWithDot(number) {
+            if (number === null || number === undefined || number === '') return '0';
+            return Number(number).toLocaleString('id-ID');
+        }
+
+        function formatDate(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            return d.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit', 
+                year: 'numeric'
+            });
+        }
+
+        // Test function for print report
+        function testPrintReport() {
+            console.log('Testing printStokBarangReport with sample data...');
+            
+            // Create the print function inline since we can't easily import the module
+            printStokBarangReportTest(sampleReportData, {});
+        }
+
+        function testPrintWithFilters() {
+            console.log('Testing printStokBarangReport with filters...');
+            printStokBarangReportTest(sampleReportData, sampleFilters);
+        }
+
+        function testExcelCSV() {
+            alert('Excel CSV export akan ditest - fungsi ini masih menggunakan struktur horizontal untuk compatibility.');
+        }
+
+        function testExcelAdvanced() {
+            alert('Excel XLSX export akan ditest - fungsi ini masih menggunakan struktur horizontal untuk compatibility.');
+        }
+
+        // Display sample data
+        document.getElementById('sampleDataDisplay').innerHTML = `
+            <strong>Total Records:</strong> ${sampleReportData.length}<br>
+            <strong>Products:</strong> ${[...new Set(sampleReportData.map(item => item.product_code))].length} unique products<br>
+            <strong>Warehouses:</strong> ${[...new Set(sampleReportData.map(item => item.warehouse_name))].join(', ')}<br>
+            <strong>Categories:</strong> ${[...new Set(sampleReportData.map(item => item.product_category))].join(', ')}<br><br>
+            <strong>Sample Record:</strong><br>
+            ${JSON.stringify(sampleReportData[0], null, 2)}
+        `;
+
+        // Inline test version of the print function
+        function printStokBarangReportTest(reportData, filters = {}) {
+            const printData = reportData || [];
+
+            // Create filter info string
+            const createFilterInfo = () => {
+                let filterText = [];
+                if (filters.start_date && filters.end_date) {
+                    filterText.push(`Periode: ${formatDate(filters.start_date)} - ${formatDate(filters.end_date)}`);
+                }
+                if (filters.category && filters.category !== 0 && filters.category !== "All Categories") {
+                    filterText.push(`Kategori: ${filters.category}`);
+                }
+                if (filters.supplier && filters.supplier !== 0 && filters.supplier !== "All Suppliers") {
+                    filterText.push(`Supplier: ${filters.supplier}`);
+                }
+                if (filters.warehouse && filters.warehouse !== 0 && filters.warehouse !== "All Warehouses") {
+                    filterText.push(`Gudang: ${filters.warehouse}`);
+                }
+                if (filters.search) {
+                    filterText.push(`Pencarian: ${filters.search}`);
+                }
+                return filterText.length > 0 ? filterText.join(" | ") : "Semua Data";
+            };
+
+            // Create complete HTML document with the updated styles
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>LAPORAN STOK BARANG</title>
+                    <style>
+                        @page {
+                            margin: 10mm;
+                            size: A4 landscape;
+                        }
+                        
+                        @media print {
+                            @page {
+                                size: A4 landscape !important;
+                                margin: 10mm !important;
+                            }
+                            * {
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                        }
+                        
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            font-size: 8px;
+                            line-height: 1.3;
+                            color: black;
+                            font-weight: 400;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 15px;
+                            border-bottom: 1px solid black;
+                            padding-bottom: 8px;
+                        }
+                        .header h1 {
+                            font-size: 16px;
+                            font-weight: 600;
+                            margin: 0;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                        }
+                        .header h2 {
+                            font-size: 12px;
+                            margin: 6px 0;
+                            color: #333;
+                        }
+                        .reportInfo {
+                            margin-bottom: 15px;
+                            font-size: 8px;
+                        }
+                        .reportInfo div {
+                            margin: 3px 0;
+                        }
+                        .reportInfo .label {
+                            font-weight: 600;
+                            display: inline-block;
+                            width: 80px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 8px;
+                            margin-bottom: 20px;
+                            table-layout: fixed;
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 4px 2px;
+                            text-align: center !important;
+                            vertical-align: middle !important;
+                            word-wrap: break-word;
+                            overflow: hidden;
+                        }
+                        th {
+                            background: white !important;
+                            font-weight: 600 !important;
+                            text-align: center !important;
+                            vertical-align: middle !important;
+                            font-size: 8px;
+                        }
+                        .col-no { width: 4%; text-align: center !important; font-size: 8px; }
+                        .col-kode { width: 10%; font-size: 7px; text-align: center !important; }
+                        .col-nama { width: 25%; text-align: left !important; padding-left: 4px; font-size: 7px; }
+                        .col-kategori { width: 15%; font-size: 7px; text-align: center !important; }
+                        .col-supplier { width: 15%; font-size: 7px; text-align: center !important; }
+                        .col-packing { width: 10%; font-size: 7px; text-align: center !important; }
+                        .col-gudang { width: 12%; font-size: 7px; text-align: center !important; }
+                        .col-carton { width: 7%; font-size: 7px; text-align: center !important; }
+                        .col-pack { width: 7%; font-size: 7px; text-align: center !important; }
+                        .signature {
+                            text-align: center;
+                            margin-top: 25px;
+                        }
+                        .signature-box {
+                            display: inline-block;
+                            margin: 0 30px;
+                            text-align: center;
+                        }
+                        .signature-line {
+                            border-bottom: 1px solid black;
+                            width: 120px;
+                            height: 40px;
+                            display: inline-block;
+                            margin-bottom: 5px;
+                        }
+                        .printInfo {
+                            font-size: 8px;
+                            color: #666;
+                            text-align: right;
+                            margin-top: 15px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>LAPORAN STOK BARANG</h1>
+                        <h2>SUN FIREWORKS</h2>
+                    </div>
+
+                    <div class="reportInfo">
+                        <div>
+                            <span class="label">Filter:</span>
+                            <span>${createFilterInfo()}</span>
+                        </div>
+                        <div>
+                            <span class="label">Total Data:</span>
+                            <span>${printData?.length || 0} item</span>
+                        </div>
+                        <div>
+                            <span class="label">Tanggal Cetak:</span>
+                            <span>${formatDate(new Date())}</span>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-no">NO</th>
+                                <th class="col-kode">KODE</th>
+                                <th class="col-nama">NAMA</th>
+                                <th class="col-kategori">KATEGORI</th>
+                                <th class="col-supplier">SUPPLIER</th>
+                                <th class="col-packing">PACKING</th>
+                                <th class="col-gudang">GUDANG</th>
+                                <th class="col-carton">CARTON</th>
+                                <th class="col-pack">PACK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${printData?.length > 0 ? printData.map((item, index) => `
+                                <tr>
+                                    <td class="col-no">${index + 1}</td>
+                                    <td class="col-kode">${item.product_code || "-"}</td>
+                                    <td class="col-nama">${item.product_name || "-"}</td>
+                                    <td class="col-kategori">${item.product_category || "-"}</td>
+                                    <td class="col-supplier">${item.supplier_name || "-"}</td>
+                                    <td class="col-packing">${item.packing || "-"}</td>
+                                    <td class="col-gudang">${item.warehouse_name || "-"}</td>
+                                    <td class="col-carton">${formatNumberWithDot(item.carton_quantity || 0)}</td>
+                                    <td class="col-pack">${formatNumberWithDot(item.pack_quantity || 0)}</td>
+                                </tr>
+                            `).join("") : `
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 20px; color: #666;">
+                                        Tidak ada data stok barang yang ditemukan
+                                    </td>
+                                </tr>
+                            `}
+                        </tbody>
+                    </table>
+
+                    <div class="signature">
+                        <div class="signature-box">
+                            <div>Dibuat oleh,</div>
+                            <div class="signature-line"></div>
+                            <div>Admin</div>
+                        </div>
+                        <div class="signature-box">
+                            <div>Disetujui oleh,</div>
+                            <div class="signature-line"></div>
+                            <div>Manager</div>
+                        </div>
+                    </div>
+
+                    <div class="printInfo">
+                        Dicetak pada: ${new Date().toLocaleString("id-ID")} | 
+                        Halaman: 1 dari 1 | 
+                        System: Sun Fireworks Management
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Create and open print window
+            const printWindow = window.open("", "_blank", "width=1200,height=800");
+            if (printWindow) {
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                printWindow.focus();
+                
+                // Auto print after a short delay
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            } else {
+                alert('Pop-up blocked! Please allow pop-ups for this website.');
+            }
+        }
+    </script>
+</body>
+</html>

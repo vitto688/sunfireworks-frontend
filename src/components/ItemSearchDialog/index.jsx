@@ -103,6 +103,14 @@ const ItemSearchDialog = ({
                       </span>
                     </div>
                   )}
+                  {product.supplier_name && (
+                    <div className={styles.productInfo}>
+                      <span className={styles.label}>KP:</span>
+                      <span className={styles.value}>
+                        {product.supplier_name || "-"}
+                      </span>
+                    </div>
+                  )}
                   {product.supplierName && product.packing && (
                     <div className={styles.productQuantity}>
                       <div className={styles.quantityItem}>

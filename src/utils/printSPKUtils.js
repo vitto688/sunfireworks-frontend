@@ -500,7 +500,7 @@ export const printSPK = (data) => {
             font-size: 12px;
           }
           .col-kode { 
-            width: 80px; 
+            width: 110px; 
             font-size: 12px; /* Standard font size */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
@@ -520,11 +520,11 @@ export const printSPK = (data) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 200px; 
-            padding-left: 3px;
-            font-weight: 500; /* Slightly bolder for better visibility */
+            width: 235px; 
+            // padding-left: 3px;
+            // font-weight: 500; /* Slightly bolder for better visibility */
             font-size: 12px; /* Standard font size */
-            text-align: left; /* Left align for product names */
+            // text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
@@ -641,7 +641,7 @@ export const printSPK = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPK&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">NO SPK&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.spk_number || data.id
               }</span>
@@ -653,11 +653,11 @@ export const printSPK = (data) => {
               <span class="value">${data.customer_name || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">UP. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">UP. &nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.customer_upline || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">Alamat &nbsp;:</span>
+              <span class="label">Alamat&nbsp;:</span>
               <span class="value">${data.customer_address || "-"}</span>
             </div>
           </div>

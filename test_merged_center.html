@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Excel Merged Header Center Alignment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    
+    .test-table {
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    .test-table th, .test-table td {
+      border: 2px solid #000;
+      padding: 8px;
+      font-size: 10px;
+    }
+    
+    .warehouse-header {
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-weight: bold;
+      font-size: 11px;
+      background-color: #f8f9fa;
+    }
+    
+    .sub-header {
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-weight: bold;
+      font-size: 10px;
+    }
+    
+    .regular-header {
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-weight: bold;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test: Excel Merged Header Center Alignment</h2>
+  
+  <p><strong>Expected Result:</strong> Kolom gudang yang di-merge harus ter-center baik horizontal maupun vertical</p>
+  
+  <table class="test-table">
+    <thead>
+      <!-- Main header row dengan merged columns -->
+      <tr>
+        <th class="regular-header" rowspan="2">NO</th>
+        <th class="regular-header" rowspan="2">KODE PRODUK</th>
+        <th class="regular-header" rowspan="2">NAMA PRODUK</th>
+        <th class="regular-header" rowspan="2">KATEGORI</th>
+        <th class="regular-header" rowspan="2">SUPPLIER</th>
+        <th class="regular-header" rowspan="2">PACKING</th>
+        
+        <!-- Merged warehouse headers -->
+        <th class="warehouse-header" colspan="2">GUDANG UTAMA</th>
+        <th class="warehouse-header" colspan="2">GUDANG CABANG A</th>
+        <th class="warehouse-header" colspan="2">GUDANG CABANG B</th>
+      </tr>
+      
+      <!-- Sub-header row -->
+      <tr>
+        <th class="sub-header">Carton</th>
+        <th class="sub-header">Pack</th>
+        <th class="sub-header">Carton</th>
+        <th class="sub-header">Pack</th>
+        <th class="sub-header">Carton</th>
+        <th class="sub-header">Pack</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr>
+        <td style="text-align: center;">1</td>
+        <td style="text-align: center;">P001</td>
+        <td style="text-align: left;">Produk Test 1</td>
+        <td style="text-align: center;">Kategori A</td>
+        <td style="text-align: center;">Supplier 1</td>
+        <td style="text-align: center;">Box</td>
+        <td style="text-align: center;">10</td>
+        <td style="text-align: center;">5</td>
+        <td style="text-align: center;">8</td>
+        <td style="text-align: center;">3</td>
+        <td style="text-align: center;">12</td>
+        <td style="text-align: center;">7</td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">2</td>
+        <td style="text-align: center;">P002</td>
+        <td style="text-align: left;">Produk Test 2</td>
+        <td style="text-align: center;">Kategori B</td>
+        <td style="text-align: center;">Supplier 2</td>
+        <td style="text-align: center;">Pcs</td>
+        <td style="text-align: center;">15</td>
+        <td style="text-align: center;">2</td>
+        <td style="text-align: center;">20</td>
+        <td style="text-align: center;">1</td>
+        <td style="text-align: center;">5</td>
+        <td style="text-align: center;">9</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 30px; padding: 15px; background: #e8f4f8; border-radius: 5px;">
+    <h3>✅ Check Results:</h3>
+    <ul>
+      <li><strong>Gudang Headers:</strong> Should be center-aligned with gray background</li>
+      <li><strong>Merged Cells:</strong> Each warehouse name should span 2 columns</li>
+      <li><strong>Text Position:</strong> Warehouse names should be perfectly centered</li>
+      <li><strong>Sub Headers:</strong> Carton/Pack should be center-aligned under merged headers</li>
+    </ul>
+    
+    <h3>🔧 Excel Implementation:</h3>
+    <p>Dalam implementasi Excel:</p>
+    <ul>
+      <li>Kedua cell dalam merged range harus memiliki styling yang sama</li>
+      <li>Alignment: horizontal="center", vertical="center"</li>
+      <li>Font: bold=true, size=11 untuk warehouse headers</li>
+      <li>Background: #f8f9fa untuk warehouse headers</li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -192,7 +192,7 @@ export const printSTB = (data) => {
             font-size: 12px;
           }
           .col-kode { 
-            width: 85px; 
+            width: 110px; 
             font-size: 12px; /* Standard font size */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
@@ -202,11 +202,11 @@ export const printSTB = (data) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 200px; 
+            width: 220px; 
             padding-left: 3px;
-            font-weight: 500; /* Slightly bolder for better visibility */
+            // font-weight: 500; /* Slightly bolder for better visibility */
             font-size: 12px; /* Standard font size */
-            text-align: left; /* Left align for product names */
+            // text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
@@ -223,20 +223,20 @@ export const printSTB = (data) => {
             text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 60px; 
-            font-weight: 400;
+            width: 30px; 
+            // font-weight: 400;
             font-size: 12px; /* Standard font size */
           }
           .col-pack { 
-            width: 60px; 
-            font-weight: 400;
+            width: 30px; 
+            // font-weight: 400;
             font-size: 12px;
           }
           .col-keterangan { 
             width: 100px; 
-            padding-left: 3px;
+            // padding-left: 3px;
             font-size: 12px;
-            text-align: left; /* Left align for notes */
+            // text-align: left; /* Left align for notes */
             overflow: hidden;
             text-overflow: ellipsis;
           }
@@ -333,15 +333,6 @@ export const printSTB = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG BAWANG :</span>
-              <span class="value">${
-                data.no_spg_bawang ||
-                data.document_number ||
-                data.stb_number ||
-                data.id
-              }</span>
-            </div>
-            <div class="infoRow">
               <span class="label">NO STB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.stb_number || data.id
@@ -368,8 +359,7 @@ export const printSTB = (data) => {
               <th rowspan="2" class="col-nama">NAMA PRODUK</th>
               <th rowspan="2" class="col-kp">KP</th>
               <th rowspan="2" class="col-packing">PACKING</th>
-              <th colspan="2">JUMLAH</th>
-              <th rowspan="2" class="col-keterangan">KETERANGAN</th>
+              <th colspan="2" style="width: 100px;">JUMLAH</th>
             </tr>
             <tr class="subheader">
               <th class="col-carton">CARTON</th>
@@ -393,9 +383,7 @@ export const printSTB = (data) => {
                 <td class="col-pack">${formatNumberWithDot(
                   item.pack_quantity || 0
                 )}</td>
-                <td class="col-keterangan">${
-                  item.notes || item.remarks || "-"
-                }</td>
+               
               </tr>
             `
                 )
@@ -405,7 +393,6 @@ export const printSTB = (data) => {
               <td colspan="5" class="total-label">TOTAL</td>
               <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
               <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
-              <td class="col-keterangan"></td>
             </tr>
           </tbody>
         </table>

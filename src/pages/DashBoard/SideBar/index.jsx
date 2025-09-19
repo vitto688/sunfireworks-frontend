@@ -341,7 +341,7 @@ const SideBar = () => {
       />
 
       <SideMenuItem
-        name="Stok Opname"
+        name="Penyesuaian Stok"
         to={STOCK_ADJUSTMENT_PATH}
         icon={
           <PenyesuaianStockDataIcon

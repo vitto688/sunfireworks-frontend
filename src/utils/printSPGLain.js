@@ -20,7 +20,7 @@ export const printSPGLain = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Portrait size for continuous form */
+            size: 8.5in 11in; /* Portrait size for continuous form */
             /* Epson LX-310 ESC/P settings */
             marks: none;
             orphans: 1;
@@ -36,7 +36,7 @@ export const printSPGLain = (data) => {
           /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              size: 8.5in 11in !important; /* Portrait orientation for physical printer */
               margin: 0 !important; /* Custom margin control */
             }
             
@@ -73,8 +73,8 @@ export const printSPGLain = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 9px !important;
-              font-weight: 300 !important;
+              font-size: 10px !important;
+              font-weight: 100 !important;
             }
             
             th {
@@ -82,8 +82,8 @@ export const printSPGLain = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 9px !important;
-              font-weight: 600 !important;
+              font-size: 10px !important;
+              font-weight: 200 !important;
               text-align: center !important;
             }
           }
@@ -92,11 +92,11 @@ export const printSPGLain = (data) => {
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
-            max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 9px; /* Changed to 9px font size */
+            max-width: 7.5in; /* Adjusted for 8.5in continuous form */
+            font-size: 10px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100;
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -115,8 +115,8 @@ export const printSPGLain = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 9px; /* Changed to 9px to match body font size */
-            font-weight: 700; /* Bolder for better dot matrix visibility */
+            font-size: 10px; /* Increased by 1 point */
+            font-weight: 300;
             margin: 0;
             letter-spacing: 1.0px; /* 10cpi character spacing */
             text-transform: uppercase;
@@ -137,13 +137,13 @@ export const printSPGLain = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400; /* Changed from 700 to 400 to remove bold */
+            font-weight: 200;
             min-width: 85px; /* Slightly reduced */
-            font-size: 9px; /* Changed to 9px font size */
+            font-size: 10px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 9px; /* Changed to 9px font size */
+            font-weight: 100;
+            font-size: 10px; /* Increased by 1 point */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -154,7 +154,7 @@ export const printSPGLain = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 9px; /* Changed to 9px font size */
+            font-size: 10px; /* Increased by 1 point */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -165,7 +165,7 @@ export const printSPGLain = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 9px; /* Changed to 9px font size */
+            font-size: 10px; /* Increased by 1 point */
             line-height: 1.2; /* Optimized line height for dot matrix */
             word-break: keep-all;
             white-space: nowrap;
@@ -175,8 +175,8 @@ export const printSPGLain = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 600; /* Consistent bold weight for headers */
-            font-size: 9px; /* Changed to 9px font size */
+            font-weight: 200;
+            font-size: 10px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -185,14 +185,14 @@ export const printSPGLain = (data) => {
             vertical-align: middle; /* Center vertically in header cells */
             padding: 3px 1px; /* Reduced padding for headers */
           }
-          /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
+          /* Column widths optimized for 8.5" portrait continuous form */
           .col-no { 
             width: 35px; 
-            font-size: 9px;
+            font-size: 10px;
           }
           .col-kode { 
             width: 110px; 
-            font-size: 9px; /* Changed to 9px font size */
+            font-size: 10px; /* Increased by 1 point */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -202,7 +202,7 @@ export const printSPGLain = (data) => {
           }
           .col-barcode { 
             width: 60px; 
-            font-size: 9px;
+            font-size: 10px;
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -213,8 +213,8 @@ export const printSPGLain = (data) => {
           .col-nama { 
             width: 290px; 
             padding-left: 3px;
-            font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 9px; /* Changed to 9px font size */
+            font-weight: 100;
+            font-size: 10px; /* Increased by 1 point */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
@@ -222,24 +222,24 @@ export const printSPGLain = (data) => {
           }
           .col-kp { 
             width: 35px; 
-            font-size: 9px;
+            font-size: 10px;
           }
           .col-packing { 
             width: 65px; 
-            font-size: 9px;
+            font-size: 10px;
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 9px; /* Changed to 9px font size */
+            font-weight: 200;
+            font-size: 10px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 9px;
+            font-weight: 200;
+            font-size: 10px;
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -255,9 +255,9 @@ export const printSPGLain = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 9px; /* Changed to 9px font size for subheaders */
+            font-size: 10px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 500; /* Consistent bold weight */
+            font-weight: 200;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -267,20 +267,20 @@ export const printSPGLain = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 500; /* Bolder total row for emphasis */
+            font-weight: 200;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 9px;
-            font-weight: 500; /* Bold total label */
+            font-size: 10px;
+            font-weight: 200;
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 500; /* Bold total values */
-            font-size: 9px;
+            font-weight: 200;
+            font-size: 10px;
           }
           .footer {
             padding: 15px;
@@ -292,12 +292,12 @@ export const printSPGLain = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 9px;
-            font-weight: 400;
+            font-size: 10px;
+            font-weight: 100;
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.5;
           }
           .signatureSection {
@@ -310,8 +310,8 @@ export const printSPGLain = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 9px;
-            font-weight: 400;
+            font-size: 10px;
+            font-weight: 100;
           }
           .signatureRight {
             margin-top: 50px;
@@ -332,7 +332,7 @@ export const printSPGLain = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG &nbsp;:</span>
+              <span class="label">NO SPG&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -340,7 +340,7 @@ export const printSPGLain = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">

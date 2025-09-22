@@ -312,7 +312,7 @@ export const printSPGImport = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">NO SPG :</span>
+              <span class="label">NO SPG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -326,20 +326,20 @@ export const printSPGImport = (data) => {
               <span class="value">${data.vehicle_number || "-"}</span>
             </div>
              <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
+              <span class="label">GUDANG TUJUAN:</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL INPUT :</span>
+              <span class="label">TANGGAL INPUT &nbsp;&nbsp;:</span>
               <span class="value">${
                 new Date(data.transaction_date).toLocaleDateString("id-ID") ||
                 "-"
               }</span>
             </div>
             <div class="infoRow">
-              <span class="label">MULAI BONGKAR :</span>
+              <span class="label">MULAI BONGKAR&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.start_unload || "-"}</span>
             </div>
             <div class="infoRow">

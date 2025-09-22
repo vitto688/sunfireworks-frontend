@@ -368,8 +368,8 @@ export const printSPK = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 12px !important;
-              font-weight: 300 !important;
+              font-size: 13px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
@@ -377,13 +377,13 @@ export const printSPK = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 12px !important;
-              font-weight: 600 !important;
+              font-size: 13px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
               text-align: center !important;
             }
             
             .col-kode {
-              font-size: 12px !important;
+              font-size: 13px !important; /* Increased by 1 point */
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
@@ -391,7 +391,7 @@ export const printSPK = (data) => {
             }
             
             .col-barcode {
-              font-size: 12px !important;
+              font-size: 13px !important; /* Increased by 1 point */
               padding: 6px 2px !important;
               word-break: break-all !important;
               white-space: normal !important;
@@ -405,10 +405,10 @@ export const printSPK = (data) => {
             padding: 0;
             width: calc(100% - 20mm); /* Adjust width based on margins */
             max-width: 190mm; /* A4 width minus margins */
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100; /* Reduced by another 100 points */
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -427,8 +427,8 @@ export const printSPK = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 12px; /* Standardized header size */
-            font-weight: 700; /* Bolder for better visibility */
+            font-size: 13px; /* Increased by 1 point */
+            font-weight: 300; /* Reduced by another 100 points */
             margin: 0;
             letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
@@ -437,6 +437,7 @@ export const printSPK = (data) => {
             display: flex;
             justify-content: space-between;
             margin-bottom: 25px; /* Reduced spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             gap: 30px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
@@ -449,13 +450,13 @@ export const printSPK = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 700; /* Bolder for better visibility */
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 12px; /* Standard font size */
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 13px; /* Increased by 1 point */
           }
           table {
             width: 100%;
@@ -463,7 +464,7 @@ export const printSPK = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -474,7 +475,7 @@ export const printSPK = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             line-height: 1.2; /* Optimized line height */
             word-break: keep-all;
             white-space: nowrap;
@@ -484,8 +485,8 @@ export const printSPK = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 600; /* Consistent bold weight for headers */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 13px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -497,11 +498,11 @@ export const printSPK = (data) => {
           /* Column widths optimized for A4 portrait form */
           .col-no { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 13px; /* Increased by 1 point */
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
@@ -511,7 +512,7 @@ export const printSPK = (data) => {
           }
           .col-barcode { 
             width: 70px; 
-            font-size: 12px;
+            font-size: 13px; /* Increased by 1 point */
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -523,7 +524,7 @@ export const printSPK = (data) => {
             width: 235px; 
             // padding-left: 3px;
             // font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             // text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
@@ -531,24 +532,24 @@ export const printSPK = (data) => {
           }
           .col-kp { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 13px; /* Increased by 1 point */
           }
           .col-packing { 
             width: 70px; 
-            font-size: 12px;
+            font-size: 13px; /* Increased by 1 point */
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 45px; 
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 13px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 45px; 
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 13px; /* Increased by 1 point */
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -564,9 +565,9 @@ export const printSPK = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
+            font-size: 13px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 500; /* Consistent bold weight */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -576,20 +577,20 @@ export const printSPK = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 500; /* Bolder total row for emphasis */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 500; /* Bold total label */
+            font-size: 13px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 500; /* Bold total values */
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 13px; /* Increased by 1 point */
           }
           .footer {
             padding: 15px;
@@ -601,13 +602,14 @@ export const printSPK = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 13px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 13px; /* Increased by 1 point */
             line-height: 1.5;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -619,8 +621,8 @@ export const printSPK = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 13px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
             margin-top: 50px;

@@ -48,8 +48,7 @@ export const printSPGLain = (data) => {
             body {
               margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
               padding: 0 !important;
-              width: calc(100% - 20mm); /* Adjust width based on margins */
-              max-width: 190mm; /* A4 width minus margins */
+              width: 100%; /* Adjust width based on margins */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -74,8 +73,8 @@ export const printSPGLain = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 10px !important;
-              font-weight: 100 !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
@@ -83,18 +82,49 @@ export const printSPGLain = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 10px !important;
-              font-weight: 200 !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
               text-align: center !important;
+            }
+            
+            .col-kode {
+              font-size: 13px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-kode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+            
+            .col-barcode {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-barcode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
-            width: calc(100% - 20mm); /* Adjust width based on margins */
-            max-width: 190mm; /* A4 width minus margins */
-            font-size: 10px; /* Increased by 1 point */
+            width: 100%; /* Adjust width based on margins */
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
             font-weight: 100;
@@ -116,10 +146,10 @@ export const printSPGLain = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 10px; /* Increased by 1 point */
-            font-weight: 300;
+            font-size: 14px; /* Increased by 1 point */
+            font-weight: 300; /* Reduced by another 100 points */
             margin: 0;
-            letter-spacing: 1.0px; /* 10cpi character spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
@@ -138,13 +168,13 @@ export const printSPGLain = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 200;
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 10px; /* Increased by 1 point */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 100;
-            font-size: 10px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -155,7 +185,7 @@ export const printSPGLain = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 10px; /* Increased by 1 point */
+            font-size: 11px; /* Increased by 1 point */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -166,7 +196,7 @@ export const printSPGLain = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 10px; /* Increased by 1 point */
+            font-size: 12px; /* Increased by 1 point */
             line-height: 1.2; /* Optimized line height for dot matrix */
             word-break: keep-all;
             white-space: nowrap;
@@ -176,8 +206,8 @@ export const printSPGLain = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 200;
-            font-size: 10px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -189,58 +219,107 @@ export const printSPGLain = (data) => {
           /* Column widths optimized for A4 portrait form */
           .col-no { 
             width: 35px; 
-            font-size: 10px;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-no-head { 
+            width: 35px; 
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kode { 
             width: 110px; 
-            font-size: 10px; /* Increased by 1 point */
+            font-size: 13px; /* Increased by 1 point */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
+            line-height: 1.2; /* Tighter line spacing */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-kode-head { 
+            width: 110px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Reduced horizontal padding for better fit */
+            word-break: break-all; /* Allow breaking long codes */
+            white-space: normal; /* Allow wrapping if needed */
+            line-height: 1.2; /* Tighter line spacing */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-barcode { 
-            width: 60px; 
-            font-size: 10px;
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-barcode-head { 
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Consistent with kode column */
+            word-break: break-all; /* Allow breaking if needed */
+            white-space: normal; /* Allow wrapping if needed */
+            line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
             width: 290px; 
-            padding-left: 3px;
-            font-weight: 100;
-            font-size: 10px; /* Increased by 1 point */
-            text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            font-size: 13px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-nama-head { 
+            width: 290px; 
+            font-size: 11px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-kp { 
             width: 35px; 
-            font-size: 10px;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kp-head { 
+            width: 35px; 
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-packing { 
             width: 65px; 
-            font-size: 10px;
-            /* Prevent wrapping */
+            font-size: 13px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-packing-head { 
+            width: 65px; 
+            font-size: 11px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-weight: 200;
-            font-size: 10px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-carton-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 35px; 
-            font-weight: 200;
-            font-size: 10px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-pack-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -256,9 +335,9 @@ export const printSPGLain = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 10px; /* Increased by 1 point */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 200;
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -275,13 +354,13 @@ export const printSPGLain = (data) => {
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 10px;
-            font-weight: 200;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 200;
-            font-size: 10px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .footer {
             padding: 15px;
@@ -293,13 +372,14 @@ export const printSPGLain = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 10px;
-            font-weight: 100;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 10px;
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.5;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -311,8 +391,8 @@ export const printSPGLain = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 10px;
-            font-weight: 100;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
             margin-top: 50px;
@@ -327,13 +407,13 @@ export const printSPGLain = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">Tanggal&nbsp;&nbsp;:</span>
               <span class="value">${new Date(
                 data.transaction_date || data.created_at || new Date()
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG &nbsp;:</span>
+              <span class="label">No. SPG :</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -341,11 +421,11 @@ export const printSPGLain = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
+              <span class="label">Gudang Tujuan :</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
           </div>
@@ -354,12 +434,12 @@ export const printSPGLain = (data) => {
         <table>
           <thead>
             <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode">BARCODE</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
+              <th rowspan="2" class="col-no-head">NO</th>
+              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+              <th rowspan="2" class="col-barcode-head">BARCODE</th>
+              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+              <th rowspan="2" class="col-kp-head">KP</th>
+              <th rowspan="2" class="col-packing-head">PACKING</th>
               <th colspan="2">JUMLAH</th>
             </tr>
             <tr class="subheader">
@@ -444,7 +524,7 @@ export const printSPGLain = (data) => {
           body {
             margin: 0;
             padding: 10px 20px 20px 20px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             min-height: 100vh;
             display: flex;
@@ -471,7 +551,7 @@ export const printSPGLain = (data) => {
             align-items: center;
           }
           .preview-title {
-            font-size: 18px;
+            font-size: 12px;
             font-weight: 600;
             margin: 0;
           }
@@ -521,7 +601,7 @@ export const printSPGLain = (data) => {
             background: #f8fafc;
             padding: 15px;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
           }
         </style>

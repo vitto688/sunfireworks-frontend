@@ -84,7 +84,7 @@ export const printSTB = (data) => {
               padding: 4px 2px !important;
               vertical-align: middle !important;
               font-size: 12px !important;
-              font-weight: 600 !important;
+              font-weight: 400 !important;
               text-align: center !important;
             }
           }
@@ -117,7 +117,7 @@ export const printSTB = (data) => {
           }
           .header h1 {
             font-size: 12px; /* Standardized header size */
-            font-weight: 700; /* Bolder for better visibility */
+            font-weight: 400; /* Normal weight */
             margin: 0;
             letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
@@ -138,12 +138,12 @@ export const printSTB = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 700; /* Bolder for better visibility */
+            font-weight: 400; /* Normal weight */
             min-width: 85px; /* Slightly reduced */
             font-size: 12px; /* Standard font size */
           }
           .infoRow .value {
-            font-weight: 500; /* Slightly bolder for better visibility */
+            font-weight: 400; /* Normal weight */
             font-size: 12px; /* Standard font size */
           }
           .infoRow .sj {
@@ -176,7 +176,7 @@ export const printSTB = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 600; /* Consistent bold weight for headers */
+            font-weight: 400; /* Normal weight for headers */
             font-size: 12px; /* Standard font size */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
@@ -255,7 +255,7 @@ export const printSTB = (data) => {
             background: white !important;
             font-size: 12px; /* Standard font size for subheaders */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 500; /* Consistent bold weight */
+            font-weight: 400; /* Normal weight */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -265,7 +265,7 @@ export const printSTB = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 500; /* Bolder total row for emphasis */
+            font-weight: 400; /* Normal weight for total row */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
@@ -273,11 +273,11 @@ export const printSTB = (data) => {
           .total-row .total-label {
             text-align: right !important;
             font-size: 12px;
-            font-weight: 500; /* Bold total label */
+            font-weight: 400; /* Normal weight for total label */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 500; /* Bold total values */
+            font-weight: 400; /* Normal weight for total values */
             font-size: 12px;
           }
           .footer {
@@ -400,7 +400,7 @@ export const printSTB = (data) => {
         <div class="footer">
           <div class="notesSection">
             <div class="notesLabel">
-              <strong>CATATAN :</strong>
+              <p>CATATAN :</p>
             </div>
             <div class="notesContent">
               ${data.notes || data.remarks || "-"}
@@ -476,7 +476,7 @@ export const printSTB = (data) => {
           }
           .preview-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 400;
             margin: 0;
           }
           .preview-actions {
@@ -488,7 +488,7 @@ export const printSTB = (data) => {
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 400;
             transition: background-color 0.2s;
           }
           .btn-print {
@@ -544,7 +544,7 @@ export const printSTB = (data) => {
             </div>
           </div>
           <div class="preview-info">
-            <strong>Petunjuk:</strong> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
+            <p>Petunjuk:</p> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
           </div>
           <div class="preview-content">
             <div class="document-frame">

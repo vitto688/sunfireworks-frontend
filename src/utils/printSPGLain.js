@@ -20,7 +20,7 @@ export const printSPGLain = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 8.5in 11in; /* Portrait size for continuous form */
+            size: A4; /* A4 size for SPG documents */
             /* Epson LX-310 ESC/P settings */
             marks: none;
             orphans: 1;
@@ -36,7 +36,7 @@ export const printSPGLain = (data) => {
           /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 8.5in 11in !important; /* Portrait orientation for physical printer */
+              size: A4 !important; /* A4 size for SPG documents */
               margin: 0 !important; /* Custom margin control */
             }
             
@@ -46,9 +46,10 @@ export const printSPGLain = (data) => {
             }
             
             body {
-              margin: 5mm; /* Equal margins on all sides */
+              margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
               padding: 0 !important;
-              // width: 100% !important;
+              width: calc(100% - 20mm); /* Adjust width based on margins */
+              max-width: 190mm; /* A4 width minus margins */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -88,11 +89,11 @@ export const printSPGLain = (data) => {
             }
           }
           body {
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
-            width: calc(100% - 10mm); /* Adjust width based on equal margins */
-            max-width: 7.5in; /* Adjusted for 8.5in continuous form */
+            width: calc(100% - 20mm); /* Adjust width based on margins */
+            max-width: 190mm; /* A4 width minus margins */
             font-size: 10px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
@@ -109,7 +110,7 @@ export const printSPGLain = (data) => {
           .header {
             text-align: center;
             margin-top: 0; /* Start from very top */
-            margin-bottom: 25px; /* Reduced for continuous form */
+            margin-bottom: 25px; /* Reduced for A4 form */
             border-bottom: 0.1px solid black; /* Solid border for header */
             padding-top: 0; /* No top padding */
             padding-bottom: 8px;
@@ -185,7 +186,7 @@ export const printSPGLain = (data) => {
             vertical-align: middle; /* Center vertically in header cells */
             padding: 3px 1px; /* Reduced padding for headers */
           }
-          /* Column widths optimized for 8.5" portrait continuous form */
+          /* Column widths optimized for A4 portrait form */
           .col-no { 
             width: 35px; 
             font-size: 10px;
@@ -332,7 +333,7 @@ export const printSPGLain = (data) => {
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">NO SPG &nbsp;:</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -340,7 +341,7 @@ export const printSPGLain = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
@@ -443,7 +444,7 @@ export const printSPGLain = (data) => {
           body {
             margin: 0;
             padding: 10px 20px 20px 20px;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             background-color: #f5f5f5;
             min-height: 100vh;
             display: flex;

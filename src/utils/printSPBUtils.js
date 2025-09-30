@@ -20,8 +20,8 @@ export const printSPB = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Back to correct portrait size for continuous form */
-            /* Epson LX-310 ESC/P settings */
+            size: A4; /* A4 size for documents */
+            /* Print settings */
             marks: none;
             orphans: 1;
             widows: 1;
@@ -33,10 +33,9 @@ export const printSPB = (data) => {
             @bottom-right { content: ""; }
           }
           
-          /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              size: A4 !important;
               margin: 0 !important; /* Custom margin control */
             }
             
@@ -46,10 +45,9 @@ export const printSPB = (data) => {
             }
             
             body {
-              margin: 5mm; /* Equal margins on all sides */
+              margin: 0 auto 5mm auto; /* Top margin larger, auto horizontal centering */
               padding: 0 !important;
-              width: 100% !important;
-              /* Force content to start from absolute top */
+              width: 100%; /* Adjust width based on margins */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -81,32 +79,63 @@ export const printSPB = (data) => {
               height: auto !important;
               padding: 6px 4px !important;
               line-height: 1.4 !important;
-              /* Force top alignment in print */
               vertical-align: top !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
               min-height: 25px !important;
               height: 25px !important;
-              padding: 4px 2px !important; /* Consistent header padding */
-              /* Force top alignment in print */
-              vertical-align: middle !important; /* Center align in print */
-              font-size: 12px !important; /* Consistent header font size */
-              font-weight: 400 !important; /* Normal weight */
-              text-align: center !important; /* Center align text */
+              padding: 4px 2px !important;
+              vertical-align: middle !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
+              text-align: center !important;
+            }
+            
+            .col-kode {
+              font-size: 13px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-kode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+            
+            .col-barcode {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-barcode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
          
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
-            width: calc(100% - 10mm); /* Adjust width based on equal margins */
-            max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Standard font size */
+            width: 100%; /* Adjust width based on margins */
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100; /* Reduced by another 100 points */
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -125,16 +154,17 @@ export const printSPB = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 12px; /* 10cpi compatible header size */
-            font-weight: 400; /* Normal weight */
+            font-size: 14px; /* Increased by 1 point */
+            font-weight: 300; /* Reduced by another 100 points */
             margin: 0;
-            letter-spacing: 1.0px; /* 10cpi character spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
             margin-bottom: 25px; /* Reduced spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             gap: 30px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
@@ -147,13 +177,28 @@ export const printSPB = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .infoRowBigger {
+            display: flex;
+            gap: 12px; /* Reduced gap */
+            align-items: center;
+            margin-bottom: 6px; /* Tighter spacing */
+          }
+          .infoRowBigger .label {
+            font-weight: 200; /* Reduced by another 100 points */
+            min-width: 85px; /* Slightly reduced */
+            font-size: 12px; /* Increased by 1 point */
+          }
+          .infoRowBigger .value {
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 12px; /* Increased by 1 point */
           }
           table {
             width: 100%;
@@ -161,8 +206,8 @@ export const printSPB = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Optimized for LX-310 */
-            /* ESC/P table spacing */
+            font-size: 11px; /* Increased by 1 point */
+            /* Table spacing */
             table-layout: fixed;
             /* Prevent table compression */
             min-height: auto;
@@ -175,8 +220,7 @@ export const printSPB = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
-            line-height: 1.2; /* Optimized line height for dot matrix */
+            font-size: 12px; /* Increased by 1 point */
             /* Default text handling */
             word-break: keep-all;
             white-space: nowrap;
@@ -186,76 +230,117 @@ export const printSPB = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 400; /* Normal weight for headers */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            line-height: 1.1; /* Tighter line height for headers */
             text-align: center; /* Center align all headers */
             vertical-align: middle; /* Center vertically in header cells */
             padding: 3px 1px; /* Reduced padding for headers */
           }
-          /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
+          /* Column widths optimized for A4 portrait form */
           .col-no { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-kode-head { 
+            width: 110px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Reduced horizontal padding for better fit */
+            word-break: break-all; /* Allow breaking long codes */
+            white-space: normal; /* Allow wrapping if needed */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-barcode { 
-            width: 60px; 
-            font-size: 12px;
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-barcode-head { 
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Consistent with kode column */
+            word-break: break-all; /* Allow breaking if needed */
+            white-space: normal; /* Allow wrapping if needed */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
             width: 290px; 
-            padding-left: 3px;
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
-            text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            font-size: 13px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-nama-head { 
+            width: 290px; 
+            font-size: 11px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-kp { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kp-head { 
+            width: 35px; 
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-packing { 
             width: 65px; 
-            font-size: 12px;
-            /* Prevent wrapping */
+            font-size: 13px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-packing-head { 
+            width: 65px; 
+            font-size: 11px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-carton-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 35px; 
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-pack-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 25px; /* Minimum row height */
+            min-height: 20px; /* Minimum row height */
           }
           
           tbody td {
@@ -265,9 +350,9 @@ export const printSPB = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -277,20 +362,20 @@ export const printSPB = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 400; /* Normal weight for total row */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400; /* Normal weight for total label */
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400; /* Normal weight for total values */
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .footer {
             padding: 15px;
@@ -302,13 +387,14 @@ export const printSPB = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.5;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -320,8 +406,8 @@ export const printSPB = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
             margin-top: 50px;
@@ -336,39 +422,40 @@ export const printSPB = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">Tanggal &nbsp;:</span>
               <span class="value">${new Date(
                 data.created_at || data.transaction_date
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPB &nbsp;:</span>
+              <span class="label">No. SPB :</span>
               <span class="value">${
                 data.document_number || data.spb_number || data.id
               }</span>
             </div>
           </div>
           <div class="rightInfo">
-            <div class="infoRow">
-              <span class="label">GUDANG TUJUAN &nbsp;:</span>
-              <span class="value">${data.warehouse_name || "-"}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">NO SURAT JALAN :</span>
+          <div class="infoRow">
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
+            <div class="infoRow">
+              <span class="label">Gudang Tujuan &nbsp;:</span>
+              <span class="value">${data.warehouse_name || "-"}</span>
+            </div>
+            
           </div>
         </div>
 
         <table>
           <thead>
             <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode">BARCODE</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
+              <th rowspan="2" class="col-no-head">NO</th>
+              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+              <th rowspan="2" class="col-barcode-head">BARCODE</th>
+              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+              <th rowspan="2" class="col-kp-head">KP</th>
+              <th rowspan="2" class="col-packing-head">PACKING</th>
               <th colspan="2">JUMLAH</th>
             </tr>
             <tr class="subheader">
@@ -410,7 +497,7 @@ export const printSPB = (data) => {
         <div class="footer">
           <div class="notesSection">
             <div class="notesLabel">
-              <p>CATATAN :</p>
+              <strong>CATATAN :</strong>
             </div>
             <div class="notesContent">
               ${data.notes || "-"}
@@ -443,90 +530,166 @@ export const printSPB = (data) => {
 
   if (previewWindow) {
     // Add preview HTML with print button
-    previewWindow.document.write(`
+    const previewHtml = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
-        <title>Preview - SPB ${
-          data.document_number || data.spb_number || data.id
-        }</title>
+        <title>Preview - SPB</title>
         <style>
           body {
             margin: 0;
-            padding: 20px;
+            padding: 10px 20px 20px 20px;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
           }
-          .preview-controls {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
+          .preview-container {
+            max-width: 1000px;
+            margin: 20px auto 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            top: 0;
+          }
+          .preview-header {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .preview-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 0;
+          }
+          .preview-actions {
             display: flex;
             gap: 10px;
           }
           .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 400;
+            font-weight: 500;
+            transition: background-color 0.2s;
           }
           .btn-print {
-            background: #007cba;
+            background: #16a34a;
             color: white;
           }
           .btn-print:hover {
-            background: #005a87;
+            background: #15803d;
           }
           .btn-close {
-            background: #dc3545;
+            background: #dc2626;
             color: white;
           }
           .btn-close:hover {
-            background: #c82333;
+            background: #b91c1c;
           }
-          .preview-container {
-            max-width: 1000px;
-            margin: 50px auto 20px auto;
+          .preview-content {
+            padding: 20px;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 5px;
+          }
+          .document-frame {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
             overflow: hidden;
+            background: white;
           }
           iframe {
             width: 100%;
             height: 800px;
             border: none;
+            display: block;
+          }
+          .preview-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
           }
         </style>
       </head>
       <body>
-        <div class="preview-controls">
-          <button class="btn btn-print" onclick="printDocument()">🖨️ Print</button>
-          <button class="btn btn-close" onclick="window.close()">❌ Close</button>
-        </div>
         <div class="preview-container">
-          <iframe id="printFrame" src="${url}"></iframe>
+          <div class="preview-header">
+            <h1 class="preview-title">Preview - Surat Pengeluaran Barang (SPB)</h1>
+            <div class="preview-actions">
+              <button class="btn btn-print" onclick="printDocument()">
+                <span>🖨️</span> Print Document
+              </button>
+              <button class="btn btn-close" onclick="window.close()">
+                <span>✕</span> Close
+              </button>
+            </div>
+          </div>
+          <div class="preview-info">
+            <strong>Petunjuk:</strong> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
+          </div>
+          <div class="preview-content">
+            <div class="document-frame">
+              <iframe src="${url}" title="Document Preview"></iframe>
+            </div>
+          </div>
         </div>
+
         <script>
           function printDocument() {
-            const frame = document.getElementById('printFrame');
-            frame.contentWindow.focus();
-            frame.contentWindow.print();
+            // Open print window with the document
+            const printWindow = window.open("${url}", "_blank");
+            
+            if (printWindow) {
+              // Wait for content to load then focus and setup print
+              printWindow.onload = () => {
+                printWindow.focus();
+                setTimeout(() => {
+                  printWindow.print();
+                  printWindow.close();
+                }, 250);
+              };
+
+              // Fallback if onload doesn't trigger
+              setTimeout(() => {
+                if (printWindow && !printWindow.closed) {
+                  printWindow.focus();
+                  printWindow.print();
+                  printWindow.close();
+                }
+              }, 1000);
+              
+              // Close preview window after initiating print
+              setTimeout(() => {
+                window.close();
+              }, 500);
+            } else {
+              alert('Pop-up diblokir! Silakan izinkan pop-up untuk website ini.');
+            }
           }
-          
-          // Auto-cleanup when window closes
-          window.addEventListener('beforeunload', function() {
-            URL.revokeObjectURL('${url}');
+
+          // Clean up URL when preview window is closed
+          window.addEventListener('beforeunload', () => {
+            URL.revokeObjectURL("${url}");
           });
         </script>
       </body>
       </html>
-    `);
+    `;
+
+    previewWindow.document.write(previewHtml);
     previewWindow.document.close();
+    previewWindow.focus();
   } else {
     // Fallback if popup is blocked - direct print
     const printWindow = window.open(url, "_blank");

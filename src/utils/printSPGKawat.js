@@ -20,8 +20,8 @@ export const printSPGKawat = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Portrait size for continuous form */
-            /* Epson LX-310 ESC/P settings */
+            size: A4; /* A4 size for documents */
+            /* Print settings */
             marks: none;
             orphans: 1;
             widows: 1;
@@ -33,10 +33,9 @@ export const printSPGKawat = (data) => {
             @bottom-right { content: ""; }
           }
           
-          /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              size: A4 !important;
               margin: 0 !important; /* Custom margin control */
             }
             
@@ -46,8 +45,9 @@ export const printSPGKawat = (data) => {
             }
             
             body {
-              margin: 5mm; /* Equal margins on all sides */
+              margin: 0 auto 5mm auto; /* Top margin larger, auto horizontal centering */
               padding: 0 !important;
+              width: 100%; /* Adjust width based on margins */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -72,8 +72,8 @@ export const printSPGKawat = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 12px !important;
-              font-weight: 300 !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
@@ -81,21 +81,52 @@ export const printSPGKawat = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 12px !important;
-              font-weight: 400 !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
               text-align: center !important;
+            }
+            
+            .col-kode {
+              font-size: 13px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-kode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+            
+            .col-barcode {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-barcode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
-            width: calc(100% - 10mm); /* Adjust width based on equal margins */
-            max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Standard font size */
+            width: 100%; /* Adjust width based on margins */
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100; /* Reduced by another 100 points */
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -114,16 +145,17 @@ export const printSPGKawat = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 12px; /* 10cpi compatible header size */
-            font-weight: 400; /* Normal weight */
+            font-size: 14px; /* Increased by 1 point */
+            font-weight: 300; /* Reduced by another 100 points */
             margin: 0;
-            letter-spacing: 1.0px; /* 10cpi character spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
             margin-bottom: 25px; /* Reduced spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             gap: 30px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
@@ -136,13 +168,13 @@ export const printSPGKawat = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -153,7 +185,7 @@ export const printSPGKawat = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -164,8 +196,7 @@ export const printSPGKawat = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
-            line-height: 1.2; /* Optimized line height for dot matrix */
+            font-size: 12px; /* Increased by 1 point */
             word-break: keep-all;
             white-space: nowrap;
             height: auto; /* Allow natural height */
@@ -174,70 +205,111 @@ export const printSPGKawat = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 400; /* Normal weight for headers */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            line-height: 1.1; /* Tighter line height for headers */
             text-align: center; /* Center align all headers */
             vertical-align: middle; /* Center vertically in header cells */
             padding: 3px 1px; /* Reduced padding for headers */
           }
+          /* Column widths optimized for A4 portrait form */
           .col-no { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-kode-head { 
+            width: 110px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Reduced horizontal padding for better fit */
+            word-break: break-all; /* Allow breaking long codes */
+            white-space: normal; /* Allow wrapping if needed */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-barcode { 
-            width: 60px; 
-            font-size: 12px;
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-barcode-head { 
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Consistent with kode column */
+            word-break: break-all; /* Allow breaking if needed */
+            white-space: normal; /* Allow wrapping if needed */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
             width: 290px; 
-            padding-left: 3px;
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
-            text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            font-size: 13px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-nama-head { 
+            width: 290px; 
+            font-size: 11px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
           }
           .col-kp { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kp-head { 
+            width: 35px; 
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-packing { 
             width: 65px; 
-            font-size: 12px;
-            /* Prevent wrapping */
+            font-size: 13px; /* Increased by 1 point */
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-packing-head { 
+            width: 65px; 
+            font-size: 11px; /* Increased by 1 point */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-carton-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-pack-head { 
+            width: 35px; 
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -253,9 +325,9 @@ export const printSPGKawat = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -265,20 +337,20 @@ export const printSPGKawat = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 400; /* Normal weight for total row */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400; /* Normal weight for total label */
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400; /* Normal weight for total values */
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .footer {
             padding: 15px;
@@ -290,13 +362,14 @@ export const printSPGKawat = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.5;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -308,8 +381,8 @@ export const printSPGKawat = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
             margin-top: 50px;
@@ -324,13 +397,13 @@ export const printSPGKawat = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL :</span>
+              <span class="label">Tanggal&nbsp;&nbsp;:</span>
               <span class="value">${new Date(
                 data.transaction_date || data.created_at || new Date()
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO SPG &nbsp;:</span>
+              <span class="label">No. SPG :</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
@@ -338,11 +411,11 @@ export const printSPGKawat = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
+              <span class="label">Gudang Tujuan :</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
           </div>
@@ -351,17 +424,17 @@ export const printSPGKawat = (data) => {
         <table>
           <thead>
             <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode">BARCODE</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
+              <th rowspan="2" class="col-no-head">NO</th>
+              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+              <th rowspan="2" class="col-barcode-head">BARCODE</th>
+              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+              <th rowspan="2" class="col-kp-head">KP</th>
+              <th rowspan="2" class="col-packing-head">PACKING</th>
               <th colspan="2">JUMLAH</th>
             </tr>
             <tr class="subheader">
-              <th class="col-carton">CARTON</th>
-              <th class="col-pack">PACK</th>
+              <th class="col-carton-head">CARTON</th>
+              <th class="col-pack-head">PACK</th>
             </tr>
           </thead>
           <tbody>
@@ -468,8 +541,8 @@ export const printSPGKawat = (data) => {
             align-items: center;
           }
           .preview-title {
-            font-size: 18px;
-            font-weight: 400;
+            font-size: 12px;
+            font-weight: 600;
             margin: 0;
           }
           .preview-actions {
@@ -481,7 +554,7 @@ export const printSPGKawat = (data) => {
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 400;
+            font-weight: 500;
             transition: background-color 0.2s;
           }
           .btn-print {
@@ -518,7 +591,7 @@ export const printSPGKawat = (data) => {
             background: #f8fafc;
             padding: 15px;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
           }
         </style>

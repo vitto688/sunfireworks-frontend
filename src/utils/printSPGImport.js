@@ -72,8 +72,8 @@ export const printSPGImport = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 12px !important;
-              font-weight: 300 !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
@@ -81,21 +81,21 @@ export const printSPGImport = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 12px !important;
-              font-weight: 400 !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
               text-align: center !important;
             }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
             max-width: calc(297mm - 10mm); /* A4 landscape width minus margins */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100; /* Reduced by another 100 points */
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -114,10 +114,10 @@ export const printSPGImport = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 12px; /* 10cpi compatible header size */
-            font-weight: 400; /* Normal weight */
+            font-size: 14px; /* Increased by 1 point */
+            font-weight: 300; /* Reduced by another 100 points */
             margin: 0;
-            letter-spacing: 1.0px; /* 10cpi character spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
           }
           .documentInfo {
@@ -136,13 +136,13 @@ export const printSPGImport = (data) => {
             margin-bottom: 6px; /* Tighter spacing */
           }
           .infoRow .label {
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 120px; /* Keep wider for landscape */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
           }
           .infoRow .value {
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           table {
             width: 100%;
@@ -150,7 +150,7 @@ export const printSPGImport = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -161,15 +161,15 @@ export const printSPGImport = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
-            line-height: 1.2; /* Optimized line height for dot matrix */
-            word-wrap: break-word;
-            overflow: hidden;
+            font-size: 12px; /* Increased by 1 point */
+            // line-height: 1.2; /* Optimized line height */
+            word-break: keep-all;
+            white-space: nowrap;
           }
           th {
             background: white !important;
-            font-weight: 400; /* Normal weight for headers */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -180,70 +180,130 @@ export const printSPGImport = (data) => {
           }
           .col-no { 
             width: 3%;
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-no-head { 
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kode { 
             width: 10%;
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
+            text-align: left;
+          }
+          .col-kode-head { 
+            width: 10%;
+            font-size: 11px; /* Increased by 1 point */
+            text-align: center;
           }
           .col-nama { 
-            width: 17%;
-            padding-left: 3px;
-            // font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 12px; /* Standard font size */
+            width: 19%;
+            // padding-left: 3px;
+            font-size: 13px; /* Increased by 1 point */
             text-align: left;
+          }
+          .col-nama-head { 
+            width: 19%;
+            font-size: 11px; /* Increased by 1 point */
+            text-align: center;
           }
           .col-packing { 
             width: 6%;
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Increased by 1 point */
+          }
+          .col-packing-head { 
+            width: 6%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-carton { 
             width: 11%;
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-carton-head { 
+            width: 11%;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-pack { 
             width: 11%;
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-pack-head { 
+            width: 11%;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-ukuran-dus { 
-            width: 8%;
-            font-size: 12px; /* Standard font size */
+            width: 7%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-ukuran-dus-head { 
+            width: 7%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-inn { 
-            width: 4%;
-            font-size: 12px;
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-inn-head { 
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-out { 
-            width: 4%;
-            font-size: 12px;
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-out-head { 
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-pjg { 
-            width: 4%;
-            font-size: 12px;
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-pjg-head { 
+            width: 3%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kg-dus { 
-            width: 6%;
-            font-size: 12px; /* Standard font size */
+            width: 5%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kg-dus-head { 
+            width: 5%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-ukuran-gudang { 
-            width: 8%;
-            font-size: 12px; /* Standard font size */
+            width: 7%;
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-ukuran-gudang-head { 
+            width: 7%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kg-gudang { 
             width: 7%;
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kg-gudang-head { 
+            width: 7%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-kode-produksi { 
             width: 10%;
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Increased by 1 point */
+          }
+          .col-kode-produksi-head { 
+            width: 10%;
+            font-size: 11px; /* Increased by 1 point */
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
+            font-size: 11px; /* Increased by 1 point */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -253,20 +313,20 @@ export const printSPGImport = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 400; /* Normal weight for total row */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400; /* Normal weight for total label */
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200; /* Reduced by another 100 points */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400; /* Normal weight for total values */
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 11px; /* Increased by 1 point */
           }
           .footer {
             padding: 15px;
@@ -278,13 +338,14 @@ export const printSPGImport = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px; /* Increased by 1 point */
             line-height: 1.5;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -296,8 +357,8 @@ export const printSPGImport = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px; /* Increased by 1 point */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
             margin-top: 50px;
@@ -312,38 +373,38 @@ export const printSPGImport = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">NO SPG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SPG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 data.document_number || data.sj_number || data.id
               }</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO KONTAINER :</span>
+              <span class="label">No. Kontainer &nbsp;&nbsp;:</span>
               <span class="value">${data.container_number || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO KENDARAAN :</span>
+              <span class="label">No. Kendaraan :</span>
               <span class="value">${data.vehicle_number || "-"}</span>
             </div>
              <div class="infoRow">
-              <span class="label">GUDANG TUJUAN:</span>
+              <span class="label">Gudang Tujuan :</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL INPUT &nbsp;&nbsp;:</span>
+              <span class="label">Tanggal Input &nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${
                 new Date(data.transaction_date).toLocaleDateString("id-ID") ||
                 "-"
               }</span>
             </div>
             <div class="infoRow">
-              <span class="label">MULAI BONGKAR&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">Mulai Bongkar&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.start_unload || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">SELESAI BONGKAR :</span>
+              <span class="label">Selesai Bongkar :</span>
               <span class="value">${data.finish_load || "-"}</span>
             </div>
           </div>
@@ -352,23 +413,23 @@ export const printSPGImport = (data) => {
         <table>
           <thead>
             <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
+              <th rowspan="2" class="col-no-head">NO</th>
+              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+              <th rowspan="2" class="col-packing-head">PACKING</th>
               <th colspan="2">JUMLAH</th>
-              <th rowspan="2" class="col-ukuran-dus">UKURAN DUS</th>
-              <th rowspan="2" class="col-inn">INN</th>
-              <th rowspan="2" class="col-out">OUT</th>
-              <th rowspan="2" class="col-pjg">PJG</th>
-              <th rowspan="2" class="col-ukuran-gudang">UK GUDANG</th>
-              <th rowspan="2" class="col-kg-dus">KG DUS</th>
-              <th rowspan="2" class="col-kg-gudang">KG GUDANG</th>
-              <th rowspan="2" class="col-kode-produksi">KODE PRODUKSI</th>
+              <th rowspan="2" class="col-ukuran-dus-head">UKURAN DUS</th>
+              <th rowspan="2" class="col-inn-head">INN</th>
+              <th rowspan="2" class="col-out-head">OUT</th>
+              <th rowspan="2" class="col-pjg-head">PJG</th>
+              <th rowspan="2" class="col-ukuran-gudang-head">UK GUDANG</th>
+              <th rowspan="2" class="col-kg-dus-head">KG DUS</th>
+              <th rowspan="2" class="col-kg-gudang-head">KG GUDANG</th>
+              <th rowspan="2" class="col-kode-produksi-head">KODE PRODUKSI</th>
             </tr>
             <tr class="subheader">
-              <th class="col-carton">CARTON</th>
-              <th class="col-pack">PACK</th>
+              <th class="col-carton-head">CARTON</th>
+              <th class="col-pack-head">PACK</th>
             </tr>
           </thead>
           <tbody>
@@ -484,8 +545,8 @@ export const printSPGImport = (data) => {
             align-items: center;
           }
           .preview-title {
-            font-size: 18px;
-            font-weight: 400;
+            font-size: 12px;
+            font-weight: 600;
             margin: 0;
           }
           .preview-actions {
@@ -497,7 +558,7 @@ export const printSPGImport = (data) => {
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 400;
+            font-weight: 500;
             transition: background-color 0.2s;
           }
           .btn-print {
@@ -534,7 +595,7 @@ export const printSPGImport = (data) => {
             background: #f8fafc;
             padding: 15px;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
           }
         </style>

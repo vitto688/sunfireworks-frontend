@@ -91,22 +91,36 @@ export const printReturPembelian = (data) => {
               padding: 4px 2px !important; /* Consistent header padding */
               /* Force top alignment in print */
               vertical-align: middle !important; /* Center align in print */
-              font-size: 12px !important; /* Consistent header font size */
-              font-weight: 400 !important; /* Normal weight */
+              font-size: 11px !important; /* Consistent header font size */
+              font-weight: 200 !important; /* Lightweight */
               text-align: center !important; /* Center align text */
+            }
+            
+            /* Print-specific font adjustments like in printSPK */
+            tbody td {
+              font-size: 12px !important;
+            }
+            .col-kode {
+              font-size: 13px !important;
+            }
+            .col-nama {
+              font-size: 13px !important;
+            }
+            .col-barcode {
+              font-size: 11px !important;
             }
          
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
             padding: 0;
             width: calc(100% - 10mm); /* Adjust width based on equal margins */
             max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Standard font size */
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100;
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -125,8 +139,8 @@ export const printReturPembelian = (data) => {
             padding-bottom: 8px;
           }
           .header h1 {
-            font-size: 12px; /* 10cpi compatible header size */
-            font-weight: 400; /* Normal weight */
+            font-size: 14px; /* 10cpi compatible header size */
+            font-weight: 200; /* Lightweight for header */
             margin: 0;
             letter-spacing: 1.0px; /* 10cpi character spacing */
             text-transform: uppercase;
@@ -148,13 +162,13 @@ export const printReturPembelian = (data) => {
           }
           .infoRow .label {
             display: inline-block;
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Lightweight for labels */
             min-width: 85px; /* Slightly reduced */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Standard font size */
           }
           .infoRow .value {
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
+            font-weight: 100; /* Very light for values */
+            font-size: 11px; /* Standard font size */
           }
           .infoRow .sj {
             margin-left: 32px;
@@ -165,7 +179,7 @@ export const printReturPembelian = (data) => {
             border-spacing: 0; /* No spacing between cells */
             margin: 0 auto 20px auto; /* Center table */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Standard font size */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -176,7 +190,7 @@ export const printReturPembelian = (data) => {
             padding: 4px 2px; /* Reduced padding to save space */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
+            font-size: 11px; /* Standard font size */
             line-height: 1.2; /* Optimized line height for dot matrix */
             word-break: keep-all;
             white-space: nowrap;
@@ -186,8 +200,8 @@ export const printReturPembelian = (data) => {
           }
           th {
             background: white !important;
-            font-weight: 400; /* Normal weight for headers */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Lightweight for headers */
+            font-size: 11px; /* Standard font size */
             height: 22px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -199,21 +213,32 @@ export const printReturPembelian = (data) => {
           /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
           .col-no { 
             width: 35px; 
-            font-size: 12px;
+            font-size: 11px;
           }
           .col-kode { 
             width: 110px; 
-            font-size: 12px; /* Standard font size */
+            font-size: 13px; /* Larger font for better readability */
             padding: 4px 1px; /* Reduced horizontal padding for better fit */
             word-break: break-all; /* Allow breaking long codes */
             white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
+            line-height: 1.2; /* Optimized line spacing */
             overflow: hidden;
             text-overflow: ellipsis;
           }
+          .col-kode-head { 
+            width: 110px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Reduced horizontal padding for better fit */
+            word-break: break-all; /* Allow breaking long codes */
+            white-space: normal; /* Allow wrapping if needed */
+            // line-height: 1.1; /* Tighter line spacing */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+          }
           .col-barcode { 
-            width: 60px; 
-            font-size: 12px;
+            width:75px; 
+            font-size: 11px;
             padding: 4px 1px; /* Consistent with kode column */
             word-break: break-all; /* Allow breaking if needed */
             white-space: normal; /* Allow wrapping if needed */
@@ -221,36 +246,61 @@ export const printReturPembelian = (data) => {
             overflow: hidden;
             text-overflow: ellipsis;
           }
+          .col-barcode-head { 
+            width: 75px; 
+            font-size: 11px; /* Increased by 1 point */
+            padding: 4px 1px; /* Consistent with kode column */
+            word-break: break-all; /* Allow breaking if needed */
+            white-space: normal; /* Allow wrapping if needed */
+            // line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
           .col-nama { 
-            width: 250px; 
+            width: 320px; 
             padding-left: 3px;
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
+            font-weight: 200; /* Lightweight */
+            font-size: 13px; /* Larger font for better readability */
             text-align: left; /* Left align for product names */
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
           }
+          .col-nama-head { 
+            width: 320px; 
+            // padding-left: 3px;
+            // font-weight: 500; /* Slightly bolder for better visibility */
+            font-size: 11px; /* Increased by 1 point */
+            // text-align: left; /* Left align for product names */
+            /* Prevent text wrapping issues */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+          }
           .col-kp { 
-            width: 25px; 
-            font-size: 12px;
+            width: 35px; 
+            font-size: 11px;
+          }
+             .col-kp-head { 
+            width: 35px; 
+            font-size: 11px; /* Increased by 1 point */
           }
           .col-packing { 
-            width: 55px; 
-            font-size: 12px;
+            width: 70px; 
+            font-size: 11px;
             /* Prevent wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            font-weight: 200;
+            font-size: 11px; /* Standard font size */
           }
           .col-pack { 
             width: 35px; 
-            font-weight: 400;
-            font-size: 12px;
+            font-weight: 200;
+            font-size: 11px;
           }
           
           /* Data row specific styling to prevent overlapping */
@@ -266,9 +316,9 @@ export const printReturPembelian = (data) => {
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
+            font-size: 11px; /* Standard font size for subheaders */
             height: 22px; /* Reduced height for better spacing */
-            font-weight: 400; /* Normal weight */
+            font-weight: 200; /* Lightweight */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             padding: 3px 1px; /* Consistent with main headers */
@@ -278,20 +328,20 @@ export const printReturPembelian = (data) => {
           }
           .total-row {
             background: white !important;
-            font-weight: 400; /* Normal weight for total row */
+            font-weight: 200; /* Lightweight for total row */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400; /* Normal weight for total label */
+            font-size: 11px;
+            font-weight: 200; /* Lightweight for total label */
             padding-right: 10px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400; /* Normal weight for total values */
-            font-size: 12px;
+            font-weight: 200; /* Lightweight for total values */
+            font-size: 11px;
           }
           .footer {
             padding: 15px;
@@ -303,12 +353,12 @@ export const printReturPembelian = (data) => {
             margin-bottom: 50px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 200;
             margin-bottom: 10px;
           }
           .notesContent {
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.5;
           }
           .signatureSection {
@@ -321,8 +371,8 @@ export const printReturPembelian = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 200;
           }
           .signatureRight {
             margin-top: 50px;
@@ -337,13 +387,13 @@ export const printReturPembelian = (data) => {
         <div class="documentInfo">
           <div class="leftInfo">
             <div class="infoRow">
-              <span class="label">TANGGAL &nbsp;&nbsp;:</span>
+              <span class="label">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${new Date(
                 data.transaction_date
               ).toLocaleDateString("id-ID")}</span>
             </div>
             <div class="infoRow">
-              <span class="label">NO FAKTUR :</span>
+              <span class="label">No. Faktur :</span>
               <span class="value">${
                 data.document_number || data.spk_number || data.id
               }</span>
@@ -351,11 +401,11 @@ export const printReturPembelian = (data) => {
           </div>
           <div class="rightInfo">
             <div class="infoRow">
-              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+              <span class="label">No. SJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
               <span class="value">${data.sj_number || "-"}</span>
             </div>
             <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
+              <span class="label">Gudang Tujuan :</span>
               <span class="value">${data.warehouse_name || "-"}</span>
             </div>
           </div>
@@ -364,13 +414,13 @@ export const printReturPembelian = (data) => {
         <table>
           <thead>
             <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode">BARCODE</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
-              <th colspan="2">JUMLAH</th>
+             <th rowspan="2" class="col-no-head">NO</th>
+              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+              <th rowspan="2" class="col-barcode-head">BARCODE</th>
+              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+              <th rowspan="2" class="col-kp-head">KP</th>
+              <th rowspan="2" class="col-packing-head">PACKING</th>
+                <th colspan="2">JUMLAH</th>
             </tr>
             <tr class="subheader">
               <th class="col-carton">CARTON</th>

@@ -554,7 +554,7 @@ export const printSPK = (data) => {
             // line-height: 1.1; /* Tighter line spacing */
             overflow: hidden;
             text-overflow: ellipsis;
-            text-align: left;
+            text-align: center;
           }
           .col-barcode { 
             width: 75px; 
@@ -596,7 +596,7 @@ export const printSPK = (data) => {
             /* Prevent text wrapping issues */
             overflow: hidden;
             text-overflow: ellipsis;
-            text-align: left;
+            text-align: center;
           }
           .col-kp { 
             width: 35px; 

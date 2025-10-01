@@ -48,8 +48,7 @@ export const printSTB = (data) => {
             body {
               margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
               padding: 0 !important;
-              width: calc(100% - 10mm); /* Adjust width based on margins */
-              max-width: 8.1in; /* Reduced max-width significantly */
+              width: 100%; /* Adjust width based on margins */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -74,8 +73,8 @@ export const printSTB = (data) => {
               padding: 6px 4px !important;
               line-height: 1.4 !important;
               vertical-align: top !important;
-              font-size: 12px !important;
-              font-weight: 300 !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
@@ -83,9 +82,25 @@ export const printSTB = (data) => {
               height: 25px !important;
               padding: 4px 2px !important;
               vertical-align: middle !important;
-              font-size: 12px !important;
-              font-weight: 400 !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
               text-align: center !important;
+            }
+            
+            .col-kode {
+              font-size: 13px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-kode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
           }
           body {
@@ -475,8 +490,8 @@ export const printSTB = (data) => {
             align-items: center;
           }
           .preview-title {
-            font-size: 18px;
-            font-weight: 400;
+            font-size: 12px;
+            font-weight: 600;
             margin: 0;
           }
           .preview-actions {
@@ -488,7 +503,7 @@ export const printSTB = (data) => {
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 400;
+            font-weight: 500;
             transition: background-color 0.2s;
           }
           .btn-print {
@@ -525,7 +540,7 @@ export const printSTB = (data) => {
             background: #f8fafc;
             padding: 15px;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
           }
         </style>

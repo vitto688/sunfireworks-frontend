@@ -157,6 +157,7 @@ const AddStockModalImport = ({
               // gudang: stock.warehouse_name,
               packQuantity: null,
               cartonQuantity: null,
+              packing: stock.packing,
               supplierName: stock.supplier_name,
             }))}
             defaultValue={

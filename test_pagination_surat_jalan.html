@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Pagination Surat Jalan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    .description {
+      color: #64748b;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #334155;
+      font-size: 18px;
+    }
+    .test-info {
+      background: #eff6ff;
+      padding: 12px;
+      border-left: 4px solid #3b82f6;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    button.secondary {
+      background: #10b981;
+    }
+    button.secondary:hover {
+      background: #059669;
+    }
+    .result {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧪 Test Pagination - Print Surat Jalan</h1>
+    <p class="description">
+      Halaman ini untuk testing fungsi pagination print Surat Jalan. 
+      Gunakan berbagai skenario di bawah untuk memverifikasi bahwa pagination bekerja dengan benar.
+    </p>
+
+    <!-- Test 1: Single Page -->
+    <div class="test-section">
+      <h2>Test 1: Single Page (8 Items)</h2>
+      <div class="test-info">
+        <strong>Expected:</strong> 1 halaman dengan 8 items + footer<br>
+        <strong>Items per page:</strong> 15 (default)
+      </div>
+      <button onclick="testSinglePage()">🖨️ Test Print 8 Items</button>
+      <div id="result1" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Test 2: Two Pages -->
+    <div class="test-section">
+      <h2>Test 2: Two Pages (20 Items)</h2>
+      <div class="test-info">
+        <strong>Expected:</strong> 2 halaman<br>
+        - Halaman 1: Items 1-15 (dengan header tabel)<br>
+        - Halaman 2: Items 16-20 (dengan header tabel + total + footer)<br>
+        <strong>Items per page:</strong> 15 (default)
+      </div>
+      <button onclick="testTwoPages()">🖨️ Test Print 20 Items</button>
+      <div id="result2" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Test 3: Three Pages -->
+    <div class="test-section">
+      <h2>Test 3: Three Pages (35 Items)</h2>
+      <div class="test-info">
+        <strong>Expected:</strong> 3 halaman<br>
+        - Halaman 1: Items 1-15<br>
+        - Halaman 2: Items 16-30<br>
+        - Halaman 3: Items 31-35 + total + footer<br>
+        <strong>Items per page:</strong> 15 (default)
+      </div>
+      <button onclick="testThreePages()">🖨️ Test Print 35 Items</button>
+      <div id="result3" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Test 4: Custom Items Per Page -->
+    <div class="test-section">
+      <h2>Test 4: Custom Items Per Page (25 Items, 10/page)</h2>
+      <div class="test-info">
+        <strong>Expected:</strong> 3 halaman<br>
+        - Halaman 1: Items 1-10<br>
+        - Halaman 2: Items 11-20<br>
+        - Halaman 3: Items 21-25 + total + footer<br>
+        <strong>Items per page:</strong> 10 (custom)
+      </div>
+      <button onclick="testCustomItemsPerPage()">🖨️ Test Print 25 Items (10/page)</button>
+      <div id="result4" class="result" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Helper function to format number
+    function formatNumberWithDot(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Generate mock data
+    function generateMockData(itemCount) {
+      const items = [];
+      for (let i = 1; i <= itemCount; i++) {
+        items.push({
+          product_code: `PRD-${String(i).padStart(4, '0')}`,
+          product_name: `Produk Test ${i}`,
+          packing: 'Box',
+          carton_quantity: Math.floor(Math.random() * 20) + 1,
+          pack_quantity: Math.floor(Math.random() * 100) + 10
+        });
+      }
+
+      return {
+        document_number: 'SJ-TEST-001',
+        created_at: new Date().toISOString(),
+        transaction_date: new Date().toISOString(),
+        customer_name: 'PT. Test Customer',
+        customer_upline: 'Bpk. Test',
+        customer_address: 'Jl. Test No. 123, Jakarta',
+        vehicle_type: 'Truk',
+        vehicle_number: 'B 1234 TEST',
+        spk_document_number: 'SPK-TEST-001',
+        notes: 'Ini adalah dokumen test untuk pagination. Harap diperiksa dengan teliti.',
+        items: items
+      };
+    }
+
+    // Mock print function (inline version for testing)
+    function mockPrintSuratJalan(data, itemsPerPage = 15) {
+      const totalCarton = data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) || 0;
+      const totalPack = data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+      const items = data.items || [];
+      const totalPages = Math.ceil(items.length / itemsPerPage);
+
+      console.log(`Total Items: ${items.length}`);
+      console.log(`Items Per Page: ${itemsPerPage}`);
+      console.log(`Total Pages: ${totalPages}`);
+
+      // Generate pages HTML
+      let pagesHTML = "";
+      
+      for (let page = 0; page < totalPages; page++) {
+        const startIndex = page * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, items.length);
+        const pageItems = items.slice(startIndex, endIndex);
+        const isLastPage = page === totalPages - 1;
+
+        console.log(`Page ${page + 1}: Items ${startIndex + 1}-${endIndex}`);
+
+        const rowsHTML = pageItems.map((item, index) => {
+          const globalIndex = startIndex + index + 1;
+          return `
+          <tr>
+            <td class="col-no">${globalIndex}</td>
+            <td class="col-kode">${item.product_code || "-"}</td>
+            <td class="col-barcode">-</td>
+            <td class="col-nama">${item.product_name || "-"}</td>
+            <td class="col-packing">${item.packing || "-"}</td>
+            <td class="col-carton">${formatNumberWithDot(item.carton_quantity || 0)}</td>
+            <td class="col-pack">${formatNumberWithDot(item.pack_quantity || 0)}</td>
+          </tr>
+        `;
+        }).join("");
+
+        const pageBreakClass = !isLastPage ? "page-break" : "";
+
+        pagesHTML += `
+        <div class="page-container ${pageBreakClass}">
+          <div class="header">
+            <h1>SURAT JALAN</h1>
+            ${totalPages > 1 ? `<p class="page-number">Halaman ${page + 1} dari ${totalPages}</p>` : ""}
+          </div>
+
+          <div class="documentInfo">
+            <div class="leftInfo">
+              <div class="infoRow">
+                <span class="label">Tanggal </span>
+                <span class="value">: ${new Date(data.created_at).toLocaleDateString("id-ID")}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">No. SJ </span>
+                <span class="value">: ${data.document_number}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">No. SPK </span>
+                <span class="value">: ${data.spk_document_number || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">Kendaraan </span>
+                <span class="value">: ${data.vehicle_type || "-"}</span>
+              </div>
+            </div>
+            <div class="rightInfo">
+              <div class="infoRow">
+                <span class="label">Kepada YTH </span>
+                <span class="value">: ${data.customer_name || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">UP. </span>
+                <span class="value">: ${data.customer_upline || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">Alamat </span>
+                <span class="value">: ${data.customer_address || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">No. Kendaraan </span>
+                <span class="value">: ${data.vehicle_number || "-"}</span>
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="col-no-head">NO</th>
+                <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+                <th rowspan="2" class="col-barcode-head">BARCODE</th>
+                <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+                <th rowspan="2" class="col-packing-head">PACKING</th>
+                <th colspan="2">JUMLAH</th>
+              </tr>
+              <tr class="subheader">
+                <th class="col-carton-head">CARTON</th>
+                <th class="col-pack-head">PACK</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHTML}
+              ${isLastPage ? `
+              <tr class="total-row">
+                <td colspan="5" class="total-label">TOTAL</td>
+                <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
+                <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
+              </tr>
+              ` : ""}
+            </tbody>
+          </table>
+
+          ${isLastPage ? `
+          <div class="footer">
+            <div class="notesSection">
+              <div class="notesLabel">
+                <strong>CATATAN :</strong>
+              </div>
+              <div class="notesContent">
+                ${data.notes || "-"}
+              </div>
+            </div>
+            
+            <div class="signatureSection">
+              <div class="signatureLeft">
+                <p>Hormat kami,</p>
+              </div>
+              <div class="signatureRight">
+                <p>(__________________)</p>
+              </div>
+            </div>
+          </div>
+          ` : ""}
+        </div>
+      `;
+      }
+
+      // Create complete HTML with CSS
+      const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SURAT JALAN - ${data.document_number}</title>
+  <style>
+    @page {
+      margin: 0;
+      size: A4;
+      marks: none;
+      orphans: 1;
+      widows: 1;
+    }
+    
+    @media print {
+      @page {
+        size: A4 !important;
+        margin: 0 !important;
+      }
+      
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .page-break {
+        page-break-after: always;
+        break-after: always;
+      }
+      
+      body {
+        margin: 0 auto 5mm auto;
+        padding: 0 !important;
+        width: 100%;
+      }
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10mm auto 5mm auto;
+      padding: 0;
+      width: 100%;
+      font-size: 11px;
+      line-height: 1.2;
+      color: black;
+      font-weight: 100;
+      letter-spacing: 0.2px;
+    }
+    
+    .page-container {
+      position: relative;
+    }
+    
+    .page-break {
+      page-break-after: always;
+      break-after: always;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      border-bottom: 0.1px solid black;
+      padding-bottom: 8px;
+    }
+    
+    .header h1 {
+      font-size: 14px;
+      font-weight: 300;
+      margin: 0;
+      letter-spacing: 1.0px;
+      text-transform: uppercase;
+    }
+    
+    .page-number {
+      font-size: 11px;
+      margin: 5px 0 0 0;
+      font-weight: 200;
+      color: #333;
+    }
+    
+    .documentInfo {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      gap: 30px;
+    }
+    
+    .leftInfo, .rightInfo {
+      flex: 1;
+    }
+    
+    .infoRow {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+    
+    .infoRow .label {
+      font-weight: 200;
+      min-width: 85px;
+      font-size: 11px;
+    }
+    
+    .infoRow .value {
+      font-weight: 100;
+      font-size: 11px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 auto 20px auto;
+      border: 0.1px solid black;
+      font-size: 11px;
+      table-layout: fixed;
+    }
+    
+    th, td {
+      border: 0.1px solid black;
+      padding: 4px 2px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    
+    th {
+      background: white !important;
+      font-weight: 200;
+      font-size: 11px;
+      height: 22px;
+    }
+    
+    .col-no, .col-no-head { width: 35px; }
+    .col-kode { width: 120px; text-align: left; font-size: 13px; }
+    .col-kode-head { width: 120px; font-size: 11px; }
+    .col-barcode { width: 75px; }
+    .col-nama { width: 290px; text-align: left; font-size: 13px; }
+    .col-nama-head { width: 290px; }
+    .col-packing { width: 70px; }
+    .col-carton, .col-pack { width: 35px; }
+    
+    .total-row {
+      background: white !important;
+      font-weight: 200;
+      border-top: 0.2px solid black;
+    }
+    
+    .total-row .total-label {
+      text-align: right !important;
+      padding-right: 10px;
+    }
+    
+    .footer {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .notesSection {
+      margin-bottom: 50px;
+    }
+    
+    .signatureSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .signatureRight {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  ${pagesHTML}
+</body>
+</html>
+      `;
+
+      // Open in new window
+      const printWindow = window.open("", "_blank");
+      if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      }
+    }
+
+    // Test functions
+    function testSinglePage() {
+      const data = generateMockData(8);
+      mockPrintSuratJalan(data, 15);
+      document.getElementById('result1').style.display = 'block';
+      document.getElementById('result1').innerHTML = `✅ Generated 8 items, should show 1 page`;
+    }
+
+    function testTwoPages() {
+      const data = generateMockData(20);
+      mockPrintSuratJalan(data, 15);
+      document.getElementById('result2').style.display = 'block';
+      document.getElementById('result2').innerHTML = `✅ Generated 20 items, should show 2 pages (Page 1: 1-15, Page 2: 16-20)`;
+    }
+
+    function testThreePages() {
+      const data = generateMockData(35);
+      mockPrintSuratJalan(data, 15);
+      document.getElementById('result3').style.display = 'block';
+      document.getElementById('result3').innerHTML = `✅ Generated 35 items, should show 3 pages (Page 1: 1-15, Page 2: 16-30, Page 3: 31-35)`;
+    }
+
+    function testCustomItemsPerPage() {
+      const data = generateMockData(25);
+      mockPrintSuratJalan(data, 10);
+      document.getElementById('result4').style.display = 'block';
+      document.getElementById('result4').innerHTML = `✅ Generated 25 items with 10 items/page, should show 3 pages`;
+    }
+  </script>
+</body>
+</html>

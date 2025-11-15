@@ -1,12 +1,151 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printSPGKawat = (data) => {
-  // Calculate totals
-  const totalCarton =
-    data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-    0;
-  const totalPack =
-    data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+export const printSPGKawat = (data, itemsPerPage = 6) => {
+  // Calculate pagination
+  const items = data.items || [];
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  // Generate pages HTML
+  const generatePagesHTML = () => {
+    let pagesHTML = "";
+
+    for (let page = 0; page < totalPages; page++) {
+      const startIndex = page * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, items.length);
+      const pageItems = items.slice(startIndex, endIndex);
+      const isLastPage = page === totalPages - 1;
+
+      // Generate rows for current page
+      const rowsHTML = pageItems
+        .map((item, index) => {
+          const globalIndex = startIndex + index + 1;
+          return `
+          <tr>
+            <td class="col-kode">${item.product_code || "-"}</td>
+            <td class="col-barcode">-</td>
+            <td class="col-nama">${item.product_name || "-"}</td>
+            <td class="col-kp">${item.supplier_name || "-"}</td>
+            <td class="col-packing">${item.packing || "-"}</td>
+            <td class="col-carton">${formatNumberWithDot(
+              item.carton_quantity || 0
+            )}</td>
+            <td class="col-pack">${formatNumberWithDot(
+              item.pack_quantity || 0
+            )}</td>
+          </tr>
+        `;
+        })
+        .join("");
+
+      // Calculate total for current page only
+      const pageCartonTotal = pageItems.reduce(
+        (sum, item) => sum + (item.carton_quantity || 0),
+        0
+      );
+      const pagePackTotal = pageItems.reduce(
+        (sum, item) => sum + (item.pack_quantity || 0),
+        0
+      );
+
+      // Pagination control - no page breaks for continuous printing
+      const shouldBreakPage = false;
+      const pageBreakClass = "";
+      const isFirstPage = page === 0;
+      const isFirstOnNewPaper = false;
+      const sectionHeightClass = isFirstPage ? "first-page" : "other-page";
+      const isOddPage = (page + 1) % 2 === 1;
+      const oddPageNotFirstClass =
+        isOddPage && !isFirstPage ? "odd-page-not-first" : "";
+
+      pagesHTML += `
+        <div class="page-container ${pageBreakClass} ${
+        !isFirstPage ? "next-page" : ""
+      } ${
+        isFirstOnNewPaper ? "first-on-paper" : ""
+      } ${sectionHeightClass} ${oddPageNotFirstClass}">
+          <div class="header">
+            <h1>SURAT PENERIMAAN GUDANG (SPG) KAWAT</h1>
+          </div>
+
+          <div class="documentInfo">
+            <div class="leftInfo">
+              <div class="infoRow">
+                <span class="label">Tanggal </span>
+                <span class="value">: ${new Date(
+                  data.transaction_date || data.created_at || new Date()
+                ).toLocaleDateString("id-ID")}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">No. SPG </span>
+                <span class="value">: ${
+                  data.document_number || data.sj_number || data.id
+                }</span>
+              </div>
+            </div>
+            <div class="rightInfo">
+              <div class="infoRow">
+                <span class="label">No. SJ </span>
+                <span class="value">: ${data.sj_number || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">Gudang Tujuan </span>
+                <span class="value">: ${data.warehouse_name || "-"}</span>
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+                <th rowspan="2" class="col-barcode-head">BARCODE</th>
+                <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+                <th rowspan="2" class="col-kp-head">KP</th>
+                <th rowspan="2" class="col-packing-head">PACKING</th>
+                <th colspan="2">JUMLAH</th>
+              </tr>
+              <tr class="subheader">
+                <th class="col-carton-head">CARTON</th>
+                <th class="col-pack-head">PACK</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHTML}
+              <tr class="total-row">
+                <td colspan="5" class="total-label">TOTAL</td>
+                <td class="col-carton">${formatNumberWithDot(
+                  pageCartonTotal
+                )}</td>
+                <td class="col-pack">${formatNumberWithDot(pagePackTotal)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="notesSection">
+              <div class="notesLabel">
+                <strong>CATATAN :</strong>
+              </div>
+              <div class="notesContent">
+                ${data.notes || "-"}
+              </div>
+            </div>
+            
+            <div class="signatureSection">
+              <div class="signatureLeft">
+                <p>Yang membuat,</p>
+              </div>
+              <div class="signatureRight">
+                <p>${data.user_username || data.user_email || "-"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return pagesHTML;
+  };
 
   // Create complete HTML document
   const htmlContent = `
@@ -19,9 +158,9 @@ export const printSPGKawat = (data) => {
         }</title>
         <style>
           @page {
-            margin: 0; /* Custom margin - set to zero for manual control */
-            size: A4; /* A4 size for documents */
-            /* Print settings */
+            margin: 0;
+            padding: 0;
+            size: letter;
             marks: none;
             orphans: 1;
             widows: 1;
@@ -35,8 +174,9 @@ export const printSPGKawat = (data) => {
           
           @media print {
             @page {
-              size: A4 !important;
-              margin: 0 !important; /* Custom margin control */
+              size: letter !important;
+              margin: 0 !important;
+              padding: 0 !important;
             }
             
             * {
@@ -44,10 +184,40 @@ export const printSPGKawat = (data) => {
               print-color-adjust: exact !important;
             }
             
+            .page-break {
+              page-break-after: always;
+              break-after: always;
+            }
+            
+            .page-container {
+              box-sizing: border-box !important;
+            }
+            
+            .page-container.first-page {
+              height: 5.5in !important;
+            }
+            
+            .page-container.other-page {
+              height: 5.5in !important;
+            }
+            
+            .page-container.odd-page-not-first {
+              padding-top: 40px !important;
+            }
+            
+            .page-container.next-page {
+              margin-top: 0 !important;
+            }
+            
+            .page-container.first-on-paper {
+              margin-top: 0 !important;
+              padding-top: 0 !important;
+            }
+            
             body {
-              margin: 0 auto 5mm auto; /* Top margin larger, auto horizontal centering */
+              margin: 0 !important;
               padding: 0 !important;
-              width: 100%; /* Adjust width based on margins */
+              width: 100% !important;
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -55,7 +225,6 @@ export const printSPGKawat = (data) => {
             }
             
             table {
-              page-break-inside: avoid;
               vertical-align: top !important;
               position: relative !important;
               margin-top: 0 !important;
@@ -120,256 +289,293 @@ export const printSPGKawat = (data) => {
           }
           body {
             font-family: Arial, sans-serif;
-            margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
+            margin: 0;
             padding: 0;
-            width: 100%; /* Adjust width based on margins */
-            font-size: 11px; /* Increased by 1 point */
-            line-height: 1.2; /* Tighter line spacing for 10cpi */
+            width: 100%;
+            font-size: 11px;
+            line-height: 1.2;
             color: black;
-            font-weight: 100; /* Reduced by another 100 points */
-            /* 10cpi character spacing */
+            font-weight: 100;
             letter-spacing: 0.2px;
-            /* Force content to start from top center */
             display: block;
             position: relative;
             top: 0;
             vertical-align: top;
-            text-align: left; /* Reset text alignment for content */
+            text-align: left;
           }
+          
+          .page-container {
+            position: relative;
+            width: 100%;
+            padding: 0.3in 0.4in;
+            box-sizing: border-box;
+            overflow: hidden;
+          }
+          
+          .page-container.first-page {
+            height: 5.5in;
+          }
+          
+          .page-container.other-page {
+            height: 5.5in;
+          }
+          
+          .page-container.odd-page-not-first {
+            padding-top: 40px !important;
+          }
+          
+          .page-container.next-page {
+            margin-top: 0;
+            padding-top: 0.3in;
+          }
+          
+          .page-container.first-on-paper {
+            margin-top: 0;
+            padding-top: 0.5in;
+          }
+          
+          .page-break {
+            page-break-after: always;
+            break-after: always;
+          }
+          
           .header {
             text-align: center;
-            margin-top: 0; /* Start from very top */
-            margin-bottom: 25px; /* Reduced for continuous form */
-            border-bottom: 0.1px solid black; /* Solid border for header */
-            padding-top: 0; /* No top padding */
-            padding-bottom: 8px;
+            margin-bottom: 10px;
+            border-bottom: 0.1px solid black;
+            padding-bottom: 4px;
+            padding-top: 20px;
           }
+          
           .header h1 {
-            font-size: 14px; /* Increased by 1 point */
-            font-weight: 300; /* Reduced by another 100 points */
+            font-size: 13px;
+            font-weight: 400;
             margin: 0;
-            letter-spacing: 1.0px; /* Character spacing */
+            letter-spacing: 1.0px;
             text-transform: uppercase;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 25px; /* Reduced spacing */
-            letter-spacing: 1.0px; /* Character spacing */
-            gap: 30px; /* Reduced gap */
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            gap: 15px;
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
-            gap: 12px; /* Reduced gap */
+            gap: 3px;
             align-items: center;
-            margin-bottom: 6px; /* Tighter spacing */
+            margin-bottom: 3px;
           }
           .infoRow .label {
-            font-weight: 200; /* Reduced by another 100 points */
-            min-width: 85px; /* Slightly reduced */
-            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200;
+            min-width: 70px;
+            font-size: 9px;
           }
           .infoRow .value {
-            font-weight: 100; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
-          }
-          .infoRow .sj {
-            margin-left: 32px;
+            font-weight: 100;
+            font-size: 9px;
           }
           table {
             width: 100%;
-            border-collapse: collapse; /* Changed to collapse for cleaner borders */
-            border-spacing: 0; /* No spacing between cells */
-            margin: 0 auto 20px auto; /* Center table */
-            border: 0.1px solid black; /* Solid border for table */
-            font-size: 11px; /* Increased by 1 point */
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin: 0 auto 10px auto;
+            border: 0.1px solid black;
+            font-size: 9px;
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
             position: relative;
           }
           th, td {
-            border: 0.1px solid black; /* Solid border for cells */
-            padding: 4px 2px; /* Reduced padding to save space */
+            border: 0.1px solid black;
+            padding: 2px 1px;
             text-align: center;
-            vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Increased by 1 point */
+            vertical-align: top;
+            font-size: 9px;
+            line-height: 1.1;
             word-break: keep-all;
             white-space: nowrap;
-            height: auto; /* Allow natural height */
-            min-height: 18px; /* Reduced minimum row height */
-            box-sizing: border-box; /* Include padding in width calculation */
+            height: auto;
+            min-height: 14px;
+            box-sizing: border-box;
           }
           th {
             background: white !important;
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
-            height: 22px; /* Reduced height for headers */
+            font-weight: 200;
+            font-size: 9px;
+            height: 18px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            text-align: center; /* Center align all headers */
-            vertical-align: middle; /* Center vertically in header cells */
-            padding: 3px 1px; /* Reduced padding for headers */
+            line-height: 1.0;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px 1px;
           }
-          /* Column widths optimized for A4 portrait form */
-          .col-no { 
-            width: 35px; 
-            font-size: 11px; /* Increased by 1 point */
-          }
+          /* Column widths optimized for SPG Kawat documents */
           .col-kode { 
-            width: 110px; 
-            font-size: 13px; /* Increased by 1 point */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
           }
           .col-kode-head { 
-            width: 110px; 
-            font-size: 11px; /* Increased by 1 point */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
           }
           .col-barcode { 
-            width: 75px; 
-            font-size: 11px; /* Increased by 1 point */
-            padding: 4px 1px; /* Consistent with kode column */
-            word-break: break-all; /* Allow breaking if needed */
-            white-space: normal; /* Allow wrapping if needed */
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-barcode-head { 
-            width: 75px; 
-            font-size: 11px; /* Increased by 1 point */
-            padding: 4px 1px; /* Consistent with kode column */
-            word-break: break-all; /* Allow breaking if needed */
-            white-space: normal; /* Allow wrapping if needed */
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 290px; 
-            font-size: 13px; /* Increased by 1 point */
+            width: 300px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
           }
           .col-nama-head { 
-            width: 290px; 
-            font-size: 11px; /* Increased by 1 point */
+            width: 300px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
           }
           .col-kp { 
-            width: 35px; 
-            font-size: 11px; /* Increased by 1 point */
+            width: 60px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-kp-head { 
-            width: 35px; 
-            font-size: 11px; /* Increased by 1 point */
+            width: 60px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-packing { 
-            width: 65px; 
-            font-size: 13px; /* Increased by 1 point */
+            width: 60px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-packing-head { 
-            width: 65px; 
-            font-size: 11px; /* Increased by 1 point */
+            width: 60px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 35px; 
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           .col-carton-head { 
-            width: 35px; 
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           .col-pack { 
-            width: 35px; 
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           .col-pack-head { 
-            width: 35px; 
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 25px; /* Minimum row height */
+            min-height: 16px;
           }
           
           tbody td {
             height: auto;
-            min-height: 20px; /* Ensure minimum cell height */
-            vertical-align: top; /* Align content to top */
+            min-height: 14px;
+            vertical-align: top;
           }
           .subheader th {
             background: white !important;
-            font-size: 11px; /* Increased by 1 point */
-            height: 22px; /* Reduced height for better spacing */
-            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 9px;
+            height: 16px;
+            font-weight: 200;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 3px 1px; /* Consistent with main headers */
-            line-height: 1.1;
-            text-align: center; /* Center align subheaders */
-            vertical-align: middle; /* Center vertically */
+            padding: 2px 1px;
+            line-height: 1.0;
+            text-align: center;
+            vertical-align: middle;
           }
           .total-row {
             background: white !important;
-            font-weight: 200; /* Reduced by another 100 points */
+            font-weight: 200;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            border-top: 0.2px solid black; /* Solid border for total row */
+            border-top: 0.2px solid black;
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 11px; /* Increased by 1 point */
-            font-weight: 200; /* Reduced by another 100 points */
-            padding-right: 10px; /* Reduced padding */
+            font-size: 9px;
+            font-weight: 200;
+            padding-right: 8px;
           }
           .total-row td {
-            font-weight: 200; /* Reduced by another 100 points */
-            font-size: 11px; /* Increased by 1 point */
+            font-weight: 200;
+            font-size: 9px;
           }
           .footer {
-            padding: 15px;
+            padding: 8px;
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 40px;
           }
           .notesSection {
-            margin-bottom: 50px;
+            margin-bottom: 20px;
           }
           .notesLabel {
-            font-size: 11px; /* Increased by 1 point */
-            font-weight: 100; /* Reduced by another 100 points */
-            margin-bottom: 10px;
+            font-size: 9px;
+            font-weight: 100;
+            margin-bottom: 5px;
           }
           .notesContent {
-            font-size: 11px; /* Increased by 1 point */
-            line-height: 1.5;
-            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 9px;
+            line-height: 1.3;
+            font-weight: 100;
           }
           .signatureSection {
             display: flex;
@@ -381,112 +587,16 @@ export const printSPGKawat = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 11px; /* Increased by 1 point */
-            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 9px;
+            font-weight: 100;
           }
           .signatureRight {
-            margin-top: 50px;
+            margin-top: 25px;
           }
         </style>
       </head>
       <body>
-        <div class="header">
-          <h1>SURAT PENERIMAAN GUDANG (SPG) KAWAT</h1>
-        </div>
-
-        <div class="documentInfo">
-          <div class="leftInfo">
-            <div class="infoRow">
-              <span class="label">Tanggal&nbsp;&nbsp;:</span>
-              <span class="value">${new Date(
-                data.transaction_date || data.created_at || new Date()
-              ).toLocaleDateString("id-ID")}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">No. SPG :</span>
-              <span class="value">${
-                data.document_number || data.sj_number || data.id
-              }</span>
-            </div>
-          </div>
-          <div class="rightInfo">
-            <div class="infoRow">
-              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${data.sj_number || "-"}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">Gudang Tujuan :</span>
-              <span class="value">${data.warehouse_name || "-"}</span>
-            </div>
-          </div>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th rowspan="2" class="col-no-head">NO</th>
-              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode-head">BARCODE</th>
-              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp-head">KP</th>
-              <th rowspan="2" class="col-packing-head">PACKING</th>
-              <th colspan="2">JUMLAH</th>
-            </tr>
-            <tr class="subheader">
-              <th class="col-carton-head">CARTON</th>
-              <th class="col-pack-head">PACK</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              data.items
-                ?.map(
-                  (item, index) => `
-              <tr>
-                <td class="col-no">${index + 1}</td>
-                <td class="col-kode">${item.product_code || "-"}</td>
-                <td class="col-barcode">-</td>
-                <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">${item.supplier_name || "-"}</td>
-                <td class="col-packing">${item.packing || "-"}</td>
-                <td class="col-carton">${formatNumberWithDot(
-                  item.carton_quantity || 0
-                )}</td>
-                <td class="col-pack">${formatNumberWithDot(
-                  item.pack_quantity || 0
-                )}</td>
-              </tr>
-            `
-                )
-                .join("") || ""
-            }
-            <tr class="total-row">
-              <td colspan="6" class="total-label">TOTAL</td>
-              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
-              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="footer">
-          <div class="notesSection">
-            <div class="notesLabel">
-              <p>CATATAN :</p>
-            </div>
-            <div class="notesContent">
-              ${data.notes || "-"}
-            </div>
-          </div>
-          
-          <div class="signatureSection">
-            <div class="signatureLeft">
-              <p>Yang membuat,</p>
-            </div>
-            <div class="signatureRight">
-              <p>${data.user_username || data.user_email || "-"}</p>
-            </div>
-          </div>
-        </div>
+        ${generatePagesHTML()}
       </body>
       </html>
     `;
@@ -610,7 +720,7 @@ export const printSPGKawat = (data) => {
             </div>
           </div>
           <div class="preview-info">
-            <p>Petunjuk:</p> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
+            <strong>Petunjuk:</strong> Ini adalah preview dokumen yang akan dicetak. Klik "Print Document" untuk melanjutkan ke proses print, atau "Close" untuk membatalkan.
           </div>
           <div class="preview-content">
             <div class="document-frame">

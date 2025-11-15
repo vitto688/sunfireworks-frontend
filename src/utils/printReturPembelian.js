@@ -1,12 +1,147 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printReturPembelian = (data) => {
-  // Calculate totals
-  const totalCarton =
-    data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-    0;
-  const totalPack =
-    data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+export const printReturPembelian = (data, itemsPerPage = 6) => {
+  // Calculate pagination
+  const items = data.items || [];
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  // Generate pages HTML
+  const generatePagesHTML = () => {
+    let pagesHTML = "";
+
+    for (let page = 0; page < totalPages; page++) {
+      const startIndex = page * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, items.length);
+      const pageItems = items.slice(startIndex, endIndex);
+
+      // Calculate totals for this page
+      const pageCartonTotal = pageItems.reduce(
+        (sum, item) => sum + (item.carton_quantity || 0),
+        0
+      );
+      const pagePackTotal = pageItems.reduce(
+        (sum, item) => sum + (item.pack_quantity || 0),
+        0
+      );
+
+      // Determine page classes
+      const isFirstPage = page === 0;
+      const isOddPageNotFirst = page % 2 === 1 && page > 0;
+      const pageClass = isFirstPage ? "first-page" : "other-page";
+      const oddClass = isOddPageNotFirst ? "odd-page-not-first" : "";
+      const nextPageClass = page > 0 ? "next-page" : "";
+
+      pagesHTML += `
+        <div class="page-container ${pageClass} ${oddClass} ${nextPageClass}">
+          <div class="header">
+            <h1>RETUR PEMBELIAN</h1>
+            ${
+              totalPages > 1
+                ? `<div class="page-number">Halaman ${
+                    page + 1
+                  } dari ${totalPages}</div>`
+                : ""
+            }
+          </div>
+
+          <div class="documentInfo">
+            <div class="leftInfo">
+              <div class="infoRow">
+                <span class="label">Tanggal :</span>
+                <span class="value">${new Date(
+                  data.transaction_date
+                ).toLocaleDateString("id-ID")}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">No. Faktur :</span>
+                <span class="value">${
+                  data.document_number || data.spk_number || data.id
+                }</span>
+              </div>
+            </div>
+            <div class="rightInfo">
+              <div class="infoRow">
+                <span class="label">No. SJ :</span>
+                <span class="value">${data.sj_number || "-"}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">Gudang Tujuan :</span>
+                <span class="value">${data.warehouse_name || "-"}</span>
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+                <th rowspan="2" class="col-barcode-head">BARCODE</th>
+                <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+                <th rowspan="2" class="col-kp-head">KP</th>
+                <th rowspan="2" class="col-packing-head">PACKING</th>
+                <th colspan="2">JUMLAH</th>
+              </tr>
+              <tr class="subheader">
+                <th class="col-carton-head">CARTON</th>
+                <th class="col-pack-head">PACK</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pageItems
+                .map(
+                  (item) => `
+                <tr>
+                  <td class="col-kode">${item.product_code || "-"}</td>
+                  <td class="col-barcode">-</td>
+                  <td class="col-nama">${item.product_name || "-"}</td>
+                  <td class="col-kp">${item.supplier_name || "-"}</td>
+                  <td class="col-packing">${item.packing || "-"}</td>
+                  <td class="col-carton">${formatNumberWithDot(
+                    item.carton_quantity || 0
+                  )}</td>
+                  <td class="col-pack">${formatNumberWithDot(
+                    item.pack_quantity || 0
+                  )}</td>
+                </tr>
+              `
+                )
+                .join("")}
+              <tr class="total-row">
+                <td colspan="5" class="total-label">TOTAL</td>
+                <td class="col-carton">${formatNumberWithDot(
+                  pageCartonTotal
+                )}</td>
+                <td class="col-pack">${formatNumberWithDot(pagePackTotal)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="notesSection">
+              <div class="notesLabel">
+                <strong>CATATAN :</strong>
+              </div>
+              <div class="notesContent">
+                ${data.notes || "-"}
+              </div>
+            </div>
+            
+            <div class="signatureSection">
+              <div class="signatureLeft">
+                <p>Yang membuat,</p>
+              </div>
+              <div class="signatureRight">
+                <p>${data.user_username || "-"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        ${page < totalPages - 1 ? '<div class="page-break"></div>' : ""}
+      `;
+    }
+
+    return pagesHTML;
+  };
 
   // Create complete HTML document
   const htmlContent = `
@@ -20,8 +155,9 @@ export const printReturPembelian = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Portrait size for continuous form */
-            /* Epson LX-310 ESC/P settings */
+            padding: 0;
+            size: letter; /* Letter size for documents (8.5" x 11") */
+            /* Print settings */
             marks: none;
             orphans: 1;
             widows: 1;
@@ -36,8 +172,9 @@ export const printReturPembelian = (data) => {
           /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              size: letter !important; /* Letter size (8.5" x 11") */
               margin: 0 !important; /* Custom margin control */
+              padding: 0 !important;
             }
             
             * {
@@ -45,32 +182,52 @@ export const printReturPembelian = (data) => {
               print-color-adjust: exact !important;
             }
             
+            .page-break {
+              page-break-after: always;
+              break-after: always;
+            }
+            
+            .page-container {
+              box-sizing: border-box !important;
+            }
+            
+            .page-container.first-page {
+              height: 5.5in !important; /* First page is 5.5 inches */
+            }
+            
+            .page-container.other-page {
+              height: 5.5in !important; /* All other pages are 5.5 inches */
+            }
+            
+            .page-container.odd-page-not-first {
+              padding-top: 40px !important; /* Add extra padding for odd pages (not first page) */
+            }
+            
+            .page-container.next-page {
+              margin-top: 0 !important; /* No gap between sections */
+            }
+            
+            .page-container.first-on-paper {
+              margin-top: 0 !important; /* Reset margin for first section on new paper */
+              padding-top: 0 !important; /* Add top padding instead for spacing from paper edge */
+            }
+            
             body {
-              margin: 5mm; /* Equal margins on all sides */
+              margin: 0 !important;
               padding: 0 !important;
               width: 100% !important;
-              /* Force content to start from absolute top */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
               display: block !important;
             }
             
-            /* Ensure proper page breaks for continuous form */
-            .page-break {
-              page-break-before: always;
-            }
-            
-            /* Optimize for dot matrix printing */
             table {
-              page-break-inside: avoid;
-              /* Force table alignment to top */
               vertical-align: top !important;
               position: relative !important;
               margin-top: 0 !important;
             }
             
-            /* Fix overlapping rows in print */
             tbody tr {
               min-height: 25px !important;
               height: auto !important;
@@ -81,43 +238,59 @@ export const printReturPembelian = (data) => {
               height: auto !important;
               padding: 6px 4px !important;
               line-height: 1.4 !important;
-              /* Force top alignment in print */
               vertical-align: top !important;
+              font-size: 12px !important; /* Increased by 1 point */
+              font-weight: 100 !important; /* Reduced by another 100 points */
             }
             
             th {
               min-height: 25px !important;
               height: 25px !important;
-              padding: 4px 2px !important; /* Consistent header padding */
-              /* Force top alignment in print */
-              vertical-align: middle !important; /* Center align in print */
-              font-size: 11px !important; /* Consistent header font size */
-              font-weight: 200 !important; /* Lightweight */
-              text-align: center !important; /* Center align text */
+              padding: 4px 2px !important;
+              vertical-align: middle !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              font-weight: 200 !important; /* Reduced by another 100 points */
+              text-align: center !important;
             }
             
-            /* Print-specific font adjustments like in printSPK */
-            tbody td {
-              font-size: 12px !important;
-            }
             .col-kode {
-              font-size: 13px !important;
+              font-size: 13px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
-            .col-nama {
-              font-size: 13px !important;
+
+            .col-kode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
+            
             .col-barcode {
-              font-size: 11px !important;
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
             }
-         
+
+            .col-barcode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
           }
           body {
             font-family: Arial, sans-serif;
-            margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
+            margin: 0; /* No margin for compact form */
             padding: 0;
-            width: calc(100% - 10mm); /* Adjust width based on equal margins */
-            max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 11px; /* Standard font size */
+            width: 100%; /* Full width */
+            font-size: 11px;
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
             font-weight: 100;
@@ -130,56 +303,111 @@ export const printReturPembelian = (data) => {
             vertical-align: top;
             text-align: left; /* Reset text alignment for content */
           }
+          
+          .page-container {
+            position: relative;
+            width: 100%; /* Full width */
+            padding: 0.3in 0.4in; /* Padding for content */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent content overflow */
+          }
+          
+          .page-container.first-page {
+            height: 5.5in; /* First page is 5.5 inches tall */
+          }
+          
+          .page-container.other-page {
+            height: 5.5in; /* All other pages are 5.5 inches tall */
+          }
+          
+          .page-container.odd-page-not-first {
+            padding-top: 40px !important; /* Add extra padding for odd pages (not first page) */
+          }
+          
+          .page-container.next-page {
+            margin-top: 0; /* No gap between sections */
+            padding-top: 0.3in; /* Add top padding for sections after first */
+          }
+          
+          .page-container.first-on-paper {
+            margin-top: 0; /* Reset margin for first section on new paper */
+            padding-top: 0.5in; /* Add top padding instead for spacing from paper edge */
+          }
+          
+          .page-break {
+            page-break-after: always;
+            break-after: always;
+          }
+          
           .header {
             text-align: center;
-            margin-top: 0; /* Start from very top */
-            margin-bottom: 25px; /* Reduced for continuous form */
+            margin-bottom: 10px; /* Reduced for compact layout */
             border-bottom: 0.1px solid black; /* Solid border for header */
-            padding-top: 0; /* No top padding */
-            padding-bottom: 8px;
+            padding-bottom: 4px;
+            padding-top: 20px;
           }
+          
           .header h1 {
-            font-size: 14px; /* 10cpi compatible header size */
-            font-weight: 200; /* Lightweight for header */
+            font-size: 13px; /* Reduced for compact layout */
+            font-weight: 400; /* Reduced by another 100 points */
             margin: 0;
-            letter-spacing: 1.0px; /* 10cpi character spacing */
+            letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
+          }
+          
+          .page-number {
+            font-size: 9px; /* Smaller font */
+            margin: 3px 0 0 0;
+            font-weight: 200;
+            color: #333;
           }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 25px; /* Reduced spacing */
-            gap: 30px; /* Reduced gap */
+            margin-bottom: 10px; /* Reduced spacing for compact layout */
+            letter-spacing: 0.5px; /* Character spacing */
+            gap: 15px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
+            gap: 3px; /* Reduced gap */
+            align-items: center;
+            margin-bottom: 3px; /* Tighter spacing for compact layout */
+          }
+          .infoRow .label {
+            font-weight: 200; /* Reduced by another 100 points */
+            min-width: 70px; /* Reduced for compact */
+            font-size: 9px; /* Smaller for compact layout */
+          }
+          .infoRow .value {
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact layout */
+          }
+          .infoRowBigger {
+            display: flex;
             gap: 12px; /* Reduced gap */
             align-items: center;
             margin-bottom: 6px; /* Tighter spacing */
           }
-          .infoRow .label {
-            display: inline-block;
-            font-weight: 200; /* Lightweight for labels */
+          .infoRowBigger .label {
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 11px; /* Standard font size */
+            font-size: 12px; /* Increased by 1 point */
           }
-          .infoRow .value {
-            font-weight: 100; /* Very light for values */
-            font-size: 11px; /* Standard font size */
-          }
-          .infoRow .sj {
-            margin-left: 32px;
+          .infoRowBigger .value {
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 12px; /* Increased by 1 point */
           }
           table {
             width: 100%;
             border-collapse: collapse; /* Changed to collapse for cleaner borders */
             border-spacing: 0; /* No spacing between cells */
-            margin: 0 auto 20px auto; /* Center table */
+            margin: 0 auto 10px auto; /* Center table with reduced margin */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 11px; /* Standard font size */
+            font-size: 9px; /* Reduced for compact layout */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -187,179 +415,185 @@ export const printReturPembelian = (data) => {
           }
           th, td {
             border: 0.1px solid black; /* Solid border for cells */
-            padding: 4px 2px; /* Reduced padding to save space */
+            padding: 2px 1px; /* Reduced padding for compact layout */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 11px; /* Standard font size */
-            line-height: 1.2; /* Optimized line height for dot matrix */
+            font-size: 9px; /* Smaller font for compact */
+            line-height: 1.1; /* Tighter line height */
             word-break: keep-all;
             white-space: nowrap;
             height: auto; /* Allow natural height */
-            min-height: 18px; /* Reduced minimum row height */
+            min-height: 14px; /* Reduced minimum row height */
             box-sizing: border-box; /* Include padding in width calculation */
           }
           th {
             background: white !important;
-            font-weight: 200; /* Lightweight for headers */
-            font-size: 11px; /* Standard font size */
-            height: 22px; /* Reduced height for headers */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact */
+            height: 18px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            line-height: 1.1; /* Tighter line height for headers */
+            line-height: 1.0; /* Tighter line height for headers */
             text-align: center; /* Center align all headers */
             vertical-align: middle; /* Center vertically in header cells */
-            padding: 3px 1px; /* Reduced padding for headers */
+            padding: 2px 1px; /* Reduced padding for headers */
           }
-          /* Column widths optimized for Epson LX-310 9.5" portrait continuous form */
-          .col-no { 
-            width: 35px; 
-            font-size: 11px;
-          }
+          /* Column widths optimized for Retur Pembelian documents */
           .col-kode { 
-            width: 110px; 
-            font-size: 13px; /* Larger font for better readability */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.2; /* Optimized line spacing */
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
           }
           .col-kode-head { 
-            width: 110px; 
-            font-size: 11px; /* Increased by 1 point */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
-            // line-height: 1.1; /* Tighter line spacing */
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
           }
           .col-barcode { 
-            width:75px; 
-            font-size: 11px;
-            padding: 4px 1px; /* Consistent with kode column */
-            word-break: break-all; /* Allow breaking if needed */
-            white-space: normal; /* Allow wrapping if needed */
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
             line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-barcode-head { 
-            width: 75px; 
-            font-size: 11px; /* Increased by 1 point */
-            padding: 4px 1px; /* Consistent with kode column */
-            word-break: break-all; /* Allow breaking if needed */
-            white-space: normal; /* Allow wrapping if needed */
-            // line-height: 1.1;
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 320px; 
-            padding-left: 3px;
-            font-weight: 200; /* Lightweight */
-            font-size: 13px; /* Larger font for better readability */
-            text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            width: 300px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-align: left;
           }
           .col-nama-head { 
-            width: 320px; 
-            // padding-left: 3px;
-            // font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 11px; /* Increased by 1 point */
-            // text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            width: 300px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
           }
           .col-kp { 
-            width: 35px; 
-            font-size: 11px;
+            width: 60px; 
+            font-size: 9px;
           }
-             .col-kp-head { 
-            width: 35px; 
-            font-size: 11px; /* Increased by 1 point */
+          .col-kp-head { 
+            width: 60px; 
+            font-size: 9px;
           }
           .col-packing { 
-            width: 70px; 
-            font-size: 11px;
-            /* Prevent wrapping */
+            width: 60px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-packing-head { 
+            width: 60px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 35px; 
+            width: 10px; 
             font-weight: 200;
-            font-size: 11px; /* Standard font size */
+            font-size: 9px;
+          }
+          .col-carton-head { 
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           .col-pack { 
-            width: 35px; 
+            width: 10px; 
             font-weight: 200;
-            font-size: 11px;
+            font-size: 9px;
+          }
+          .col-pack-head { 
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 25px; /* Minimum row height */
+            min-height: 16px; /* Reduced minimum row height for compact */
           }
           
           tbody td {
             height: auto;
-            min-height: 20px; /* Ensure minimum cell height */
+            min-height: 14px; /* Reduced minimum cell height */
             vertical-align: top; /* Align content to top */
           }
           .subheader th {
             background: white !important;
-            font-size: 11px; /* Standard font size for subheaders */
-            height: 22px; /* Reduced height for better spacing */
-            font-weight: 200; /* Lightweight */
+            font-size: 9px; /* Smaller for compact */
+            height: 16px; /* Reduced height for better spacing */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 3px 1px; /* Consistent with main headers */
-            line-height: 1.1;
+            padding: 2px 1px; /* Consistent with main headers */
+            line-height: 1.0;
             text-align: center; /* Center align subheaders */
             vertical-align: middle; /* Center vertically */
           }
           .total-row {
             background: white !important;
-            font-weight: 200; /* Lightweight for total row */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 11px;
-            font-weight: 200; /* Lightweight for total label */
-            padding-right: 10px; /* Reduced padding */
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 200; /* Reduced by another 100 points */
+            padding-right: 8px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 200; /* Lightweight for total values */
-            font-size: 11px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact */
           }
           .footer {
-            padding: 15px;
+            padding: 8px;
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 40px; /* Reduced by 10px (from 50px to 40px) */
           }
           .notesSection {
-            margin-bottom: 50px;
+            margin-bottom: 20px;
           }
           .notesLabel {
-            font-size: 11px;
-            font-weight: 200;
-            margin-bottom: 10px;
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 100; /* Reduced by another 100 points */
+            margin-bottom: 5px;
           }
           .notesContent {
-            font-size: 11px;
-            line-height: 1.5;
+            font-size: 9px; /* Smaller for compact */
+            line-height: 1.3;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -371,112 +605,16 @@ export const printReturPembelian = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 11px;
-            font-weight: 200;
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
-            margin-top: 50px;
+            margin-top: 25px;
           }
         </style>
       </head>
       <body>
-        <div class="header">
-          <h1>RETUR PEMBELIAN</h1>
-        </div>
-
-        <div class="documentInfo">
-          <div class="leftInfo">
-            <div class="infoRow">
-              <span class="label">Tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${new Date(
-                data.transaction_date
-              ).toLocaleDateString("id-ID")}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">No. Faktur :</span>
-              <span class="value">${
-                data.document_number || data.spk_number || data.id
-              }</span>
-            </div>
-          </div>
-          <div class="rightInfo">
-            <div class="infoRow">
-              <span class="label">No. SJ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${data.sj_number || "-"}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">Gudang Tujuan :</span>
-              <span class="value">${data.warehouse_name || "-"}</span>
-            </div>
-          </div>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-             <th rowspan="2" class="col-no-head">NO</th>
-              <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
-              <th rowspan="2" class="col-barcode-head">BARCODE</th>
-              <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp-head">KP</th>
-              <th rowspan="2" class="col-packing-head">PACKING</th>
-                <th colspan="2">JUMLAH</th>
-            </tr>
-            <tr class="subheader">
-              <th class="col-carton">CARTON</th>
-              <th class="col-pack">PACK</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              data.items
-                ?.map(
-                  (item, index) => `
-              <tr>
-                <td class="col-no">${index + 1}</td>
-                <td class="col-kode">${item.product_code || "-"}</td>
-                <td class="col-barcode">-</td>
-                <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">${item.supplier_name || "-"}</td>
-                <td class="col-packing">${item.packing || "-"}</td>
-                <td class="col-carton">${formatNumberWithDot(
-                  item.carton_quantity || 0
-                )}</td>
-                <td class="col-pack">${formatNumberWithDot(
-                  item.pack_quantity || 0
-                )}</td>
-              </tr>
-            `
-                )
-                .join("") || ""
-            }
-            <tr class="total-row">
-              <td colspan="6" class="total-label">TOTAL</td>
-              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
-              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="footer">
-          <div class="notesSection">
-            <div class="notesLabel">
-              <p>CATATAN :</p>
-            </div>
-            <div class="notesContent">
-              ${data.notes || "-"}
-            </div>
-          </div>
-          
-          <div class="signatureSection">
-            <div class="signatureLeft">
-              <p>Yang membuat,</p>
-            </div>
-            <div class="signatureRight">
-              <p>${data.user_username || "-"}</p>
-            </div>
-          </div>
-        </div>
+        ${generatePagesHTML()}
       </body>
       </html>
     `;

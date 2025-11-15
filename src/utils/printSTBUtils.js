@@ -1,12 +1,166 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printSTB = (data) => {
-  // Calculate totals
-  const totalCarton =
-    data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
-    0;
-  const totalPack =
-    data.items?.reduce((sum, item) => sum + (item.pack_quantity || 0), 0) || 0;
+export const printSTB = (data, itemsPerPage = 6) => {
+  // Calculate pagination
+  const items = data.items || [];
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  // Generate pages HTML
+  const generatePagesHTML = () => {
+    let pagesHTML = "";
+
+    for (let page = 0; page < totalPages; page++) {
+      const startIndex = page * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, items.length);
+      const pageItems = items.slice(startIndex, endIndex);
+      const isLastPage = page === totalPages - 1;
+
+      // Generate rows for current page
+      const rowsHTML = pageItems
+        .map((item, index) => {
+          const globalIndex = startIndex + index + 1;
+          return `
+          <tr>
+            <td class="col-kode">${item.product_code || "-"}</td>
+            <td class="col-barcode">-</td>
+            <td class="col-nama">${item.product_name || "-"}</td>
+            <td class="col-kp">${item.supplier_name || "-"}</td>
+            <td class="col-packing">${item.packing || "-"}</td>
+            <td class="col-carton">${formatNumberWithDot(
+              item.carton_quantity || 0
+            )}</td>
+            <td class="col-pack">${formatNumberWithDot(
+              item.pack_quantity || 0
+            )}</td>
+          </tr>
+        `;
+        })
+        .join("");
+
+      // Calculate total for current page only
+      const pageCartonTotal = pageItems.reduce(
+        (sum, item) => sum + (item.carton_quantity || 0),
+        0
+      );
+      const pagePackTotal = pageItems.reduce(
+        (sum, item) => sum + (item.pack_quantity || 0),
+        0
+      );
+
+      // Add page break only every 2 pages (for A4 paper with 2 sections)
+      // page-break after every 2nd section (when page is odd-numbered: 1, 3, 5, etc.)
+      // DISABLED: Remove page break to allow continuous printing
+      const shouldBreakPage = false; // Disabled page break
+      const pageBreakClass = ""; // No page break class
+      const isFirstPage = page === 0;
+      // Check if this is the first section on a new paper (after page break)
+      const isFirstOnNewPaper = false; // Disabled since no page breaks
+      // Determine section height: first page = 5.5in, all other pages = 5.5in
+      const sectionHeightClass = isFirstPage ? "first-page" : "other-page";
+      // Add extra padding for odd pages (3, 5, 7...) that are not the first page
+      const isOddPage = (page + 1) % 2 === 1;
+      const oddPageNotFirstClass =
+        isOddPage && !isFirstPage ? "odd-page-not-first" : "";
+
+      pagesHTML += `
+        <div class="page-container ${pageBreakClass} ${
+        !isFirstPage ? "next-page" : ""
+      } ${
+        isFirstOnNewPaper ? "first-on-paper" : ""
+      } ${sectionHeightClass} ${oddPageNotFirstClass}">
+          <div class="header">
+            <h1>SURAT TERIMA BARANG (STB)</h1>
+          </div>
+
+          <div class="documentInfo">
+            <div class="leftInfo">
+              <div class="infoRow">
+                <span class="label">TANGGAL </span>
+                <span class="value">: ${new Date(
+                  data.tanggal ||
+                    data.transaction_date ||
+                    data.created_at ||
+                    new Date()
+                ).toLocaleDateString("id-ID")}</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">NO STB </span>
+                <span class="value">: ${
+                  data.document_number || data.stb_number || data.id
+                }</span>
+              </div>
+            </div>
+            <div class="rightInfo">
+              <div class="infoRow">
+                <span class="label">No. SJ </span>
+                <span class="value">: ${
+                  data.no_sj || data.sj_number || "-"
+                }</span>
+              </div>
+              <div class="infoRow">
+                <span class="label">GUDANG TUJUAN </span>
+                <span class="value">: ${data.warehouse_name || "-"}</span>
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="col-kode-head">KODE PRODUK</th>
+                <th rowspan="2" class="col-barcode-head">BARCODE</th>
+                <th rowspan="2" class="col-nama-head">NAMA PRODUK</th>
+                <th rowspan="2" class="col-kp-head">KP</th>
+                <th rowspan="2" class="col-packing-head">PACKING</th>
+                <th colspan="2">JUMLAH</th>
+              </tr>
+              <tr class="subheader">
+                <th class="col-carton-head">CARTON</th>
+                <th class="col-pack-head">PACK</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHTML}
+              <tr class="total-row">
+                <td colspan="5" class="total-label">TOTAL</td>
+                <td class="col-carton">${formatNumberWithDot(
+                  pageCartonTotal
+                )}</td>
+                <td class="col-pack">${formatNumberWithDot(pagePackTotal)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">
+            <div class="notesSection">
+              <div class="notesLabel">
+                <p>CATATAN :</p>
+              </div>
+              <div class="notesContent">
+                ${data.notes || data.remarks || "-"}
+              </div>
+            </div>
+            
+            <div class="signatureSection">
+              <div class="signatureLeft">
+                <p>Yang menerima,</p>
+              </div>
+              <div class="signatureRight">
+                <p>${
+                  data.receiver_name ||
+                  data.user_username ||
+                  data.user_email ||
+                  "-"
+                }</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return pagesHTML;
+  };
 
   // Create complete HTML document
   const htmlContent = `
@@ -20,8 +174,9 @@ export const printSTB = (data) => {
         <style>
           @page {
             margin: 0; /* Custom margin - set to zero for manual control */
-            size: 9.5in 11in; /* Portrait size for continuous form */
-            /* Epson LX-310 ESC/P settings */
+            padding: 0;
+            size: letter; /* Letter size for documents (8.5" x 11") */
+            /* Print settings */
             marks: none;
             orphans: 1;
             widows: 1;
@@ -36,8 +191,9 @@ export const printSTB = (data) => {
           /* Epson LX-310 optimized settings */
           @media print {
             @page {
-              size: 9.5in 11in !important; /* Portrait orientation for physical printer */
+              size: letter !important; /* Letter size (8.5" x 11") */
               margin: 0 !important; /* Custom margin control */
+              padding: 0 !important;
             }
             
             * {
@@ -45,10 +201,40 @@ export const printSTB = (data) => {
               print-color-adjust: exact !important;
             }
             
+            .page-break {
+              page-break-after: always;
+              break-after: always;
+            }
+            
+            .page-container {
+              box-sizing: border-box !important;
+            }
+            
+            .page-container.first-page {
+              height: 5.5in !important; /* First page is 5.5 inches */
+            }
+            
+            .page-container.other-page {
+              height: 5.5in !important; /* All other pages are 5.5 inches */
+            }
+            
+            .page-container.odd-page-not-first {
+              padding-top: 40px !important; /* Add extra padding for odd pages (not first page) */
+            }
+            
+            .page-container.next-page {
+              margin-top: 0 !important; /* No gap between sections */
+            }
+            
+            .page-container.first-on-paper {
+              margin-top: 0 !important; /* Reset margin for first section on new paper */
+              padding-top: 0 !important; /* Add top padding instead for spacing from paper edge */
+            }
+            
             body {
-              margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
+              margin: 0 !important;
               padding: 0 !important;
-              width: 100%; /* Adjust width based on margins */
+              width: 100% !important;
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -56,7 +242,6 @@ export const printSTB = (data) => {
             }
             
             table {
-              page-break-inside: avoid;
               vertical-align: top !important;
               position: relative !important;
               margin-top: 0 !important;
@@ -102,17 +287,32 @@ export const printSTB = (data) => {
               white-space: normal !important;
               line-height: 1.2 !important;
             }
+            
+            .col-barcode {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
+
+            .col-barcode-head {
+              font-size: 11px !important; /* Increased by 1 point */
+              padding: 6px 2px !important;
+              word-break: break-all !important;
+              white-space: normal !important;
+              line-height: 1.2 !important;
+            }
           }
           body {
-            font-family: 'Courier New', Courier, monospace;
-            margin: 10mm auto 5mm auto; /* Top margin larger, auto horizontal centering */
+            font-family: Arial, sans-serif;
+            margin: 0; /* No margin for compact form */
             padding: 0;
-            width: calc(100% - 10mm); /* Adjust width based on margins */
-            max-width: 8.1in; /* Reduced max-width significantly */
-            font-size: 12px; /* Standard font size */
+            width: 100%; /* Full width */
+            font-size: 11px;
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
-            font-weight: 400;
+            font-weight: 100;
             /* 10cpi character spacing */
             letter-spacing: 0.2px;
             /* Force content to start from top center */
@@ -122,55 +322,110 @@ export const printSTB = (data) => {
             vertical-align: top;
             text-align: left; /* Reset text alignment for content */
           }
+          
+          .page-container {
+            position: relative;
+            width: 100%; /* Full width */
+            padding: 0.3in 0.4in; /* Padding for content */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent content overflow */
+          }
+          
+          .page-container.first-page {
+            height: 5.5in; /* First page is 5.5 inches tall */
+          }
+          
+          .page-container.other-page {
+            height: 5.5in; /* All other pages are 5.5 inches tall */
+          }
+          
+          .page-container.odd-page-not-first {
+            padding-top: 40px !important; /* Add extra padding for odd pages (not first page) */
+          }
+          
+          .page-container.next-page {
+            margin-top: 0; /* No gap between sections */
+            padding-top: 0.3in; /* Add top padding for sections after first */
+          }
+          
+          .page-container.first-on-paper {
+            margin-top: 0; /* Reset margin for first section on new paper */
+            padding-top: 0.5in; /* Add top padding instead for spacing from paper edge */
+          }
+          
+          .page-break {
+            page-break-after: always;
+            break-after: always;
+          }
+          
           .header {
             text-align: center;
-            margin-top: 0; /* Start from very top */
-            margin-bottom: 25px; /* Reduced for continuous form */
+            margin-bottom: 10px; /* Reduced for compact layout */
             border-bottom: 0.1px solid black; /* Solid border for header */
-            padding-top: 0; /* No top padding */
-            padding-bottom: 8px;
+            padding-bottom: 4px;
+            padding-top: 20px;
           }
           .header h1 {
-            font-size: 12px; /* Standardized header size */
-            font-weight: 400; /* Normal weight */
+            font-size: 13px; /* Reduced for compact layout */
+            font-weight: 400; /* Reduced by another 100 points */
             margin: 0;
             letter-spacing: 1.0px; /* Character spacing */
             text-transform: uppercase;
           }
+          
+          .page-number {
+            font-size: 9px; /* Smaller font */
+            margin: 3px 0 0 0;
+            font-weight: 200;
+            color: #333;
+          }
           .documentInfo {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 25px; /* Reduced spacing */
-            gap: 30px; /* Reduced gap */
+            margin-bottom: 10px; /* Reduced spacing for compact layout */
+            letter-spacing: 0.5px; /* Character spacing */
+            gap: 15px; /* Reduced gap */
           }
           .leftInfo, .rightInfo {
             flex: 1;
           }
           .infoRow {
             display: flex;
+            gap: 3px; /* Reduced gap */
+            align-items: center;
+            margin-bottom: 3px; /* Tighter spacing for compact layout */
+          }
+          .infoRow .label {
+            font-weight: 200; /* Reduced by another 100 points */
+            min-width: 70px; /* Reduced for compact */
+            font-size: 9px; /* Smaller for compact layout */
+          }
+          .infoRow .value {
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact layout */
+          }
+          .infoRowBigger {
+            display: flex;
             gap: 12px; /* Reduced gap */
             align-items: center;
             margin-bottom: 6px; /* Tighter spacing */
           }
-          .infoRow .label {
-            font-weight: 400; /* Normal weight */
+          .infoRowBigger .label {
+            font-weight: 200; /* Reduced by another 100 points */
             min-width: 85px; /* Slightly reduced */
-            font-size: 12px; /* Standard font size */
+            font-size: 12px; /* Increased by 1 point */
           }
-          .infoRow .value {
-            font-weight: 400; /* Normal weight */
-            font-size: 12px; /* Standard font size */
-          }
-          .infoRow .sj {
-            margin-left: 32px;
+          .infoRowBigger .value {
+            font-weight: 100; /* Reduced by another 100 points */
+            font-size: 12px; /* Increased by 1 point */
           }
           table {
             width: 100%;
             border-collapse: collapse; /* Changed to collapse for cleaner borders */
             border-spacing: 0; /* No spacing between cells */
-            margin: 0 auto 20px auto; /* Center table */
+            margin: 0 auto 10px auto; /* Center table with reduced margin */
             border: 0.1px solid black; /* Solid border for table */
-            font-size: 12px; /* Standard font size */
+            font-size: 9px; /* Reduced for compact layout */
             table-layout: fixed;
             min-height: auto;
             vertical-align: top;
@@ -178,140 +433,188 @@ export const printSTB = (data) => {
           }
           th, td {
             border: 0.1px solid black; /* Solid border for cells */
-            padding: 4px 2px; /* Reduced padding to save space */
+            padding: 2px 1px; /* Reduced padding for compact layout */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
-            font-size: 12px; /* Standard font size */
-            line-height: 1.2; /* Optimized line height */
+            font-size: 9px; /* Smaller font for compact */
+            line-height: 1.1; /* Tighter line height */
             word-break: keep-all;
             white-space: nowrap;
             height: auto; /* Allow natural height */
-            min-height: 18px; /* Reduced minimum row height */
+            min-height: 14px; /* Reduced minimum row height */
             box-sizing: border-box; /* Include padding in width calculation */
           }
           th {
             background: white !important;
-            font-weight: 400; /* Normal weight for headers */
-            font-size: 12px; /* Standard font size */
-            height: 22px; /* Reduced height for headers */
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact */
+            height: 18px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            line-height: 1.1; /* Tighter line height for headers */
+            line-height: 1.0; /* Tighter line height for headers */
             text-align: center; /* Center align all headers */
             vertical-align: middle; /* Center vertically in header cells */
-            padding: 3px 1px; /* Reduced padding for headers */
+            padding: 2px 1px; /* Reduced padding for headers */
           }
           /* Column widths optimized for STB documents */
-          .col-no { 
-            width: 35px; 
-            font-size: 12px;
-          }
           .col-kode { 
-            width: 110px; 
-            font-size: 12px; /* Standard font size */
-            padding: 4px 1px; /* Reduced horizontal padding for better fit */
-            word-break: break-all; /* Allow breaking long codes */
-            white-space: normal; /* Allow wrapping if needed */
-            line-height: 1.1; /* Tighter line spacing */
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-kode-head { 
+            width: 120px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+          }
+          .col-barcode { 
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-barcode-head { 
+            width: 65px; 
+            font-size: 9px;
+            padding: 2px 1px;
+            word-break: break-all;
+            white-space: normal;
+            line-height: 1.1;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 220px; 
-            padding-left: 3px;
-            // font-weight: 500; /* Slightly bolder for better visibility */
-            font-size: 12px; /* Standard font size */
-            // text-align: left; /* Left align for product names */
-            /* Prevent text wrapping issues */
+            width: 300px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+          }
+          .col-nama-head { 
+            width: 300px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+          }
+          .col-kp { 
+            width: 60px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
-          .col-kp { 
-            width: 35px; 
-            font-size: 12px;
+          .col-kp-head { 
+            width: 60px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .col-packing { 
-            width: 70px; 
-            font-size: 12px;
-            /* Prevent wrapping */
+            width: 60px; 
+            font-size: 9px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .col-packing-head { 
+            width: 60px; 
+            font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
           }
           .col-carton { 
-            width: 30px; 
-            // font-weight: 400;
-            font-size: 12px; /* Standard font size */
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
+          }
+          .col-carton-head { 
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           .col-pack { 
-            width: 30px; 
-            // font-weight: 400;
-            font-size: 12px;
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
-          .col-keterangan { 
-            width: 100px; 
-            // padding-left: 3px;
-            font-size: 12px;
-            // text-align: left; /* Left align for notes */
-            overflow: hidden;
-            text-overflow: ellipsis;
+          .col-pack-head { 
+            width: 10px; 
+            font-weight: 200;
+            font-size: 9px;
           }
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 25px; /* Minimum row height */
+            min-height: 16px; /* Reduced minimum row height for compact */
           }
           
           tbody td {
             height: auto;
-            min-height: 20px; /* Ensure minimum cell height */
+            min-height: 14px; /* Reduced minimum cell height */
             vertical-align: top; /* Align content to top */
           }
           .subheader th {
             background: white !important;
-            font-size: 12px; /* Standard font size for subheaders */
-            height: 22px; /* Reduced height for better spacing */
-            font-weight: 400; /* Normal weight */
+            font-size: 9px; /* Smaller for compact */
+            height: 16px; /* Reduced height for better spacing */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 3px 1px; /* Consistent with main headers */
-            line-height: 1.1;
+            padding: 2px 1px; /* Consistent with main headers */
+            line-height: 1.0;
             text-align: center; /* Center align subheaders */
             vertical-align: middle; /* Center vertically */
           }
           .total-row {
             background: white !important;
-            font-weight: 400; /* Normal weight for total row */
+            font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             border-top: 0.2px solid black; /* Solid border for total row */
           }
           .total-row .total-label {
             text-align: right !important;
-            font-size: 12px;
-            font-weight: 400; /* Normal weight for total label */
-            padding-right: 10px; /* Reduced padding */
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 200; /* Reduced by another 100 points */
+            padding-right: 8px; /* Reduced padding */
           }
           .total-row td {
-            font-weight: 400; /* Normal weight for total values */
-            font-size: 12px;
+            font-weight: 200; /* Reduced by another 100 points */
+            font-size: 9px; /* Smaller for compact */
           }
           .footer {
-            padding: 15px;
+            padding: 8px;
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-top: 40px; /* Reduced by 10px (from 50px to 40px) */
           }
           .notesSection {
-            margin-bottom: 50px;
+            margin-bottom: 20px;
           }
           .notesLabel {
-            font-size: 12px;
-            font-weight: 400;
-            margin-bottom: 10px;
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 100; /* Reduced by another 100 points */
+            margin-bottom: 5px;
           }
           .notesContent {
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 9px; /* Smaller for compact */
+            line-height: 1.3;
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureSection {
             display: flex;
@@ -323,119 +626,16 @@ export const printSTB = (data) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 9px; /* Smaller for compact */
+            font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
-            margin-top: 50px;
+            margin-top: 25px;
           }
         </style>
       </head>
       <body>
-        <div class="header">
-          <h1>SURAT TERIMA BARANG (STB)</h1>
-        </div>
-
-        <div class="documentInfo">
-          <div class="leftInfo">
-            <div class="infoRow">
-              <span class="label">TANGGAL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${new Date(
-                data.tanggal ||
-                  data.transaction_date ||
-                  data.created_at ||
-                  new Date()
-              ).toLocaleDateString("id-ID")}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">NO STB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${
-                data.document_number || data.stb_number || data.id
-              }</span>
-            </div>
-          </div>
-          <div class="rightInfo">
-            <div class="infoRow">
-              <span class="label">No. SJ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
-              <span class="value">${data.no_sj || data.sj_number || "-"}</span>
-            </div>
-            <div class="infoRow">
-              <span class="label">GUDANG TUJUAN :</span>
-              <span class="value">${data.warehouse_name || "-"}</span>
-            </div>
-          </div>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th rowspan="2" class="col-no">NO</th>
-              <th rowspan="2" class="col-kode">KODE PRODUK</th>
-              <th rowspan="2" class="col-nama">NAMA PRODUK</th>
-              <th rowspan="2" class="col-kp">KP</th>
-              <th rowspan="2" class="col-packing">PACKING</th>
-              <th colspan="2" style="width: 100px;">JUMLAH</th>
-            </tr>
-            <tr class="subheader">
-              <th class="col-carton">CARTON</th>
-              <th class="col-pack">PACK</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              data.items
-                ?.map(
-                  (item, index) => `
-              <tr>
-                <td class="col-no">${index + 1}</td>
-                <td class="col-kode">${item.product_code || "-"}</td>
-                <td class="col-nama">${item.product_name || "-"}</td>
-                <td class="col-kp">${item.supplier_name || "-"}</td>
-                <td class="col-packing">${item.packing || "-"}</td>
-                <td class="col-carton">${formatNumberWithDot(
-                  item.carton_quantity || 0
-                )}</td>
-                <td class="col-pack">${formatNumberWithDot(
-                  item.pack_quantity || 0
-                )}</td>
-               
-              </tr>
-            `
-                )
-                .join("") || ""
-            }
-            <tr class="total-row">
-              <td colspan="5" class="total-label">TOTAL</td>
-              <td class="col-carton">${formatNumberWithDot(totalCarton)}</td>
-              <td class="col-pack">${formatNumberWithDot(totalPack)}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="footer">
-          <div class="notesSection">
-            <div class="notesLabel">
-              <p>CATATAN :</p>
-            </div>
-            <div class="notesContent">
-              ${data.notes || data.remarks || "-"}
-            </div>
-          </div>
-          
-          <div class="signatureSection">
-            <div class="signatureLeft">
-              <p>Yang menerima,</p>
-            </div>
-            <div class="signatureRight">
-              <p>${
-                data.receiver_name ||
-                data.user_username ||
-                data.user_email ||
-                "-"
-              }</p>
-            </div>
-          </div>
-        </div>
+        ${generatePagesHTML()}
       </body>
       </html>
     `;

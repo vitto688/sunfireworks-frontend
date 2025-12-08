@@ -1,6 +1,6 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printSuratJalan = (data, itemsPerPage = 6) => {
+export const printSuratJalan = (data, itemsPerPage = 7) => {
   // Calculate totals
   // const totalCarton =
   //   data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
@@ -61,8 +61,14 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
       const isFirstPage = page === 0;
       // Check if this is the first section on a new paper (after page break)
       const isFirstOnNewPaper = false; // Disabled since no page breaks
-      // Determine section height: first page = 5.43in, all other pages = 5.5in
-      const sectionHeightClass = isFirstPage ? "first-page" : "other-page";
+      // Determine section height based on itemsPerPage:
+      // If itemsPerPage > 7, use full page (11in), otherwise use half page (5.5in)
+      const sectionHeightClass =
+        itemsPerPage > 7
+          ? "full-page"
+          : isFirstPage
+          ? "first-page"
+          : "other-page";
       // Add extra padding for odd pages (3, 5, 7...) that are not the first page
       const isOddPage = (page + 1) % 2 === 1;
       const oddPageNotFirstClass =
@@ -223,6 +229,10 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
               height: 5.5in !important; /* All other pages are 5.49 inches */
             }
             
+            .page-container.full-page {
+              height: 11in !important; /* Full page for itemsPerPage > 7 */
+            }
+            
             .page-container.odd-page-not-first {
               padding-top: 40px !important; /* Add extra padding for odd pages (not first page) */
             }
@@ -237,9 +247,9 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
             }
             
             body {
-              margin: 0 !important;
+              margin: 0 0 0 1.8cm !important; /* Left margin 1.8cm for print */
               padding: 0 !important;
-              width: 100% !important;
+              width: calc(100% - 1.8cm) !important; /* Adjust width for left margin */
               position: relative !important;
               top: 0 !important;
               vertical-align: top !important;
@@ -311,9 +321,9 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           }
           body {
             font-family: Arial, sans-serif;
-            margin: 0; /* No margin for compact form */
+            margin: 0 0 0 1.8cm; /* Left margin 1.8cm, no other margins */
             padding: 0;
-            width: 100%; /* Full width */
+            width: calc(100% - 1.8cm); /* Adjust width for left margin */
             font-size: 11px;
             line-height: 1.2; /* Tighter line spacing for 10cpi */
             color: black;
@@ -342,6 +352,10 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           
           .page-container.other-page {
             height: 5.5in; /* All other pages are 5.5 inches tall */
+          }
+          
+          .page-container.full-page {
+            height: 11in; /* Full page for itemsPerPage > 7 */
           }
           
           .page-container.odd-page-not-first {
@@ -407,7 +421,7 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           }
           .infoRow .value {
             font-weight: 100; /* Reduced by another 100 points */
-            font-size: 9px; /* Smaller for compact layout */
+            font-size: 11px; /* Increased by 2 points */
           }
           .infoRowBigger {
             display: flex;
@@ -438,28 +452,28 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           }
           th, td {
             border: 0.1px solid black; /* Solid border for cells */
-            padding: 2px 1px; /* Reduced padding for compact layout */
+            padding: 1px 1px; /* Reduced padding for compact layout */
             text-align: center;
             vertical-align: top; /* Keep top alignment */
             font-size: 9px; /* Smaller font for compact */
-            line-height: 1.1; /* Tighter line height */
+            line-height: 1.0; /* Tighter line height */
             word-break: keep-all;
             white-space: nowrap;
             height: auto; /* Allow natural height */
-            min-height: 14px; /* Reduced minimum row height */
+            min-height: 10px; /* Reduced minimum row height */
             box-sizing: border-box; /* Include padding in width calculation */
           }
           th {
             background: white !important;
             font-weight: 200; /* Reduced by another 100 points */
             font-size: 9px; /* Smaller for compact */
-            height: 18px; /* Reduced height for headers */
+            height: 14px; /* Reduced height for headers */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             line-height: 1.0; /* Tighter line height for headers */
             text-align: center; /* Center align all headers */
             vertical-align: middle; /* Center vertically in header cells */
-            padding: 2px 1px; /* Reduced padding for headers */
+            padding: 1px 1px; /* Reduced padding for headers */
           }
           /* Column widths optimized for Surat Jalan documents */
           .col-no { 
@@ -493,7 +507,7 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
             text-align: center;
           }
           .col-barcode { 
-            width: 65px; 
+            width: 63px; 
             font-size: 9px;
             padding: 2px 1px;
             word-break: break-all;
@@ -503,7 +517,7 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
             text-overflow: ellipsis;
           }
           .col-barcode-head { 
-            width: 65px; 
+            width: 63px; 
             font-size: 9px;
             padding: 2px 1px;
             word-break: break-all;
@@ -513,14 +527,14 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
             text-overflow: ellipsis;
           }
           .col-nama { 
-            width: 340px; 
+            width: 300px; 
             font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
           }
           .col-nama-head { 
-            width: 340px; 
+            width: 300px; 
             font-size: 9px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -561,22 +575,22 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 16px; /* Reduced minimum row height for compact */
+            min-height: 12px; /* Reduced minimum row height for compact */
           }
           
           tbody td {
             height: auto;
-            min-height: 14px; /* Reduced minimum cell height */
+            min-height: 10px; /* Reduced minimum cell height */
             vertical-align: top; /* Align content to top */
           }
           .subheader th {
             background: white !important;
             font-size: 9px; /* Smaller for compact */
-            height: 16px; /* Reduced height for better spacing */
+            height: 12px; /* Reduced height for better spacing */
             font-weight: 200; /* Reduced by another 100 points */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 2px 1px; /* Consistent with main headers */
+            padding: 1px 1px; /* Consistent with main headers */
             line-height: 1.0;
             text-align: center; /* Center align subheaders */
             vertical-align: middle; /* Center vertically */
@@ -602,7 +616,7 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
             padding: 8px;
             display: flex;
             justify-content: space-between;
-            margin-top: 40px; /* Reduced by 10px (from 50px to 40px) */
+            margin-top: 10px; /* Reduced margin */
           }
           .notesSection {
             margin-bottom: 20px;
@@ -627,11 +641,11 @@ export const printSuratJalan = (data, itemsPerPage = 6) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 9px; /* Smaller for compact */
+            font-size: 13px; /* Increased font size */
             font-weight: 100; /* Reduced by another 100 points */
           }
           .signatureRight {
-            margin-top: 25px;
+            margin-top: 40px;
           }
         </style>
       </head>

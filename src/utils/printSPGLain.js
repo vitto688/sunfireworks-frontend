@@ -1,6 +1,6 @@
 import { formatNumberWithDot } from "./numberUtils";
 
-export const printSPGLain = (data, itemsPerPage = 6) => {
+export const printSPGLain = (data, itemsPerPage = 7) => {
   // Calculate pagination
   const items = data.items || [];
   const totalPages = Math.ceil(items.length / itemsPerPage);
@@ -377,7 +377,7 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
           }
           .infoRow .value {
             font-weight: 100;
-            font-size: 9px;
+            font-size: 11px;
           }
           table {
             width: 100%;
@@ -393,28 +393,28 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
           }
           th, td {
             border: 0.1px solid black;
-            padding: 2px 1px;
+            padding: 1px 1px;
             text-align: center;
             vertical-align: top;
             font-size: 9px;
-            line-height: 1.1;
+            line-height: 1.0;
             word-break: keep-all;
             white-space: nowrap;
             height: auto;
-            min-height: 14px;
+            min-height: 10px;
             box-sizing: border-box;
           }
           th {
             background: white !important;
             font-weight: 200;
             font-size: 9px;
-            height: 18px;
+            height: 14px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
             line-height: 1.0;
             text-align: center;
             vertical-align: middle;
-            padding: 2px 1px;
+            padding: 1px 1px;
           }
           /* Column widths optimized for SPG Lain documents */
           .col-kode { 
@@ -440,7 +440,7 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
             text-align: center;
           }
           .col-barcode { 
-            width: 65px; 
+            width: 63px; 
             font-size: 9px;
             padding: 2px 1px;
             word-break: break-all;
@@ -450,7 +450,7 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
             text-overflow: ellipsis;
           }
           .col-barcode-head { 
-            width: 65px; 
+            width: 63px; 
             font-size: 9px;
             padding: 2px 1px;
             word-break: break-all;
@@ -521,22 +521,22 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
           /* Data row specific styling to prevent overlapping */
           tbody tr {
             height: auto;
-            min-height: 16px;
+            min-height: 12px;
           }
           
           tbody td {
             height: auto;
-            min-height: 14px;
+            min-height: 10px;
             vertical-align: top;
           }
           .subheader th {
             background: white !important;
             font-size: 9px;
-            height: 16px;
+            height: 12px;
             font-weight: 200;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding: 2px 1px;
+            padding: 1px 1px;
             line-height: 1.0;
             text-align: center;
             vertical-align: middle;
@@ -562,7 +562,7 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
             padding: 8px;
             display: flex;
             justify-content: space-between;
-            margin-top: 40px;
+            margin-top: 10px;
           }
           .notesSection {
             margin-bottom: 20px;
@@ -587,11 +587,11 @@ export const printSPGLain = (data, itemsPerPage = 6) => {
           }
           .signatureLeft p, .signatureRight p {
             margin: 0;
-            font-size: 9px;
+            font-size: 13px;
             font-weight: 100;
           }
           .signatureRight {
-            margin-top: 25px;
+            margin-top: 40px;
           }
         </style>
       </head>

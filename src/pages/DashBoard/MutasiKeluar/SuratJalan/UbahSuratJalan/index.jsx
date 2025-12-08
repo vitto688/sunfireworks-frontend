@@ -167,7 +167,7 @@ const UbahSuratJalan = () => {
       vehicle_type: kendaraan,
       vehicle_number: noKendaraan,
       notes: keterangan,
-      items: [...(argument?.items ?? []), ...(argument?.items ?? [])],
+      items: argument?.items ?? [],
     });
   };
 

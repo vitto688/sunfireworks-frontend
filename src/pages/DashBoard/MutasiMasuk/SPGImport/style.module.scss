@@ -9,21 +9,7 @@
     border-radius: 15px;
     overflow: hidden;
 
-    // Loading indicator styles
-    .loadingIndicator {
-        padding: 16px;
-        text-align: center;
-        background-color: #f8f9fa;
-        border-left: 4px solid #007bff;
-        margin: 16px;
-        border-radius: 4px;
-        
-        p {
-            margin: 0;
-            color: #007bff;
-            font-weight: 500;
-        }
-    }
+    // Loading state is rendered via the shared <LoadingOverlay> component.
 
     // Success message styles
     .successMessage {

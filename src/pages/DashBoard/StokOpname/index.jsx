@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import { useDispatch, useSelector } from "react-redux";
 
 // import styles
@@ -207,11 +208,7 @@ const StokOpname = () => {
   return (
     <div className={styles.stokOpnameSection}>
       {/* Loading indicator */}
-      {isLoading && (
-        <div className={styles.loadingIndicator}>
-          <p>Loading Stok Opname data...</p>
-        </div>
-      )}
+      <LoadingOverlay show={isLoading} label="Memuat data Stok Opname..." />
 
       {/* Success/Error Messages */}
       {message && (

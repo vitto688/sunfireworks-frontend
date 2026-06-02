@@ -9,22 +9,6 @@
     border-radius: 15px;
     overflow: hidden;
 
-    // Loading indicator styles
-    .loadingIndicator {
-        padding: 16px;
-        text-align: center;
-        background-color: #f8f9fa;
-        border-left: 4px solid #007bff;
-        margin: 16px;
-        border-radius: 4px;
-        
-        p {
-            margin: 0;
-            color: #007bff;
-            font-weight: 500;
-        }
-    }
-
     // Success message styles
     .successMessage {
         padding: 16px;
@@ -153,15 +137,6 @@
                     font-size: 14px;
 
                 }
-            }
-
-            .loadingMessage {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 40px;
-                font-size: 16px;
-                color: $greyColor600;
             }
 
             .emptyStateContainer {

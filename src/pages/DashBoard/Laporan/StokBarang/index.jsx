@@ -37,7 +37,7 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 // Import number formatting utility
 import { formatNumberWithDot } from "../../../../utils/numberUtils";
@@ -555,7 +555,7 @@ const LaporanStokBarang = () => {
 
   return (
     <div className={styles.mutasiMasukSection}>
-      {(loading || printLoading || localExportLoading) && <Loading />}
+      <LoadingOverlay show={loading || printLoading || localExportLoading} label="Memuat laporan stok barang..." />
       <div className={styles.actionsSection}>
         <CustomButton
           label={localExportLoading ? "Exporting..." : "Export Excel"}

@@ -19,7 +19,7 @@ import {
   resetMasterMessages,
 } from "../../../../redux/actions/masterActions";
 import { UBAH_PELANGGAN_PATH } from "./UbahPelanggan";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 export const PELANGGAN_PATH = "/master-data/pelanggan";
 
@@ -142,9 +142,7 @@ const Pelanggan = () => {
         }}
         onConfirm={() => dispatch(deleteCustomerRequest({ id: modalOpen.id }))}
       />
-      {loading.customers && (
-        <Loading message="Sedang memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay show={loading.customers} label="Memuat data pelanggan..." />
     </div>
   );
 };

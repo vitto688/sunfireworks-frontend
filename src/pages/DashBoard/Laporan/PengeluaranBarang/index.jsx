@@ -23,7 +23,7 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 // Import number formatting utility
 import {
@@ -403,7 +403,7 @@ const LaporanPengeluaranBarang = () => {
 
   return (
     <div className={styles.mainSection}>
-      {(loading || printLoading || localExportLoading) && <Loading />}
+      <LoadingOverlay show={loading || printLoading || localExportLoading} label="Memuat laporan pengeluaran barang..." />
       <div className={styles.actionsSection}>
         <CustomButton
           label={printLoading ? "Printing..." : "Print"}

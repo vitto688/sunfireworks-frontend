@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 // import styles
 import styles from "./style.module.scss";
@@ -115,8 +117,15 @@ const SuratPengeluaranBarang = () => {
     };
   }, [query, fetchSuratPengeluaranBarangData]);
 
-  // Filter changes effect (immediate)
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
+  // Filter changes effect (immediate). Skipped on first mount so it doesn't
+  // duplicate the initial fetch from the mount effect above.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchSuratPengeluaranBarangData(1);
   }, [
     selectedWarehouseFilter,
@@ -193,6 +202,7 @@ const SuratPengeluaranBarang = () => {
 
   return (
     <div className={styles.suratPengeluaranBarangSection}>
+      <LoadingOverlay show={loading} label="Memuat data SPB..." />
       <div className={styles.actionsSection}>
         <CustomButton
           label={loading ? "Loading..." : "+ Tambah"}
@@ -281,9 +291,7 @@ const SuratPengeluaranBarang = () => {
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {loading ? (
-            <div className={styles.loadingMessage}>Loading SPB data...</div>
-          ) : filteredData.length === 0 ? (
+          {filteredData.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>

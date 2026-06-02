@@ -19,7 +19,7 @@ import { TAMBAH_EKSPORTIR_PATH } from "./TambahEksportir";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import { UBAH_EKSPORTIR_PATH } from "./UbahEksportir";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 export const EKSPORTIR_PATH = "/master-data/eksportir";
 
@@ -141,9 +141,7 @@ const Eksportir = () => {
         }}
         onConfirm={() => dispatch(deleteSupplierRequest({ id: modalOpen.id }))}
       />
-      {loading.suppliers && (
-        <Loading message="Sedamg memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay show={loading.suppliers} label="Memuat data eksportir..." />
     </div>
   );
 };

@@ -19,7 +19,7 @@ import { TAMBAH_KATEGORI_PATH } from "./TambahKategoriProduk";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import { UBAH_KATEGORI_PATH } from "./UbahKategoriProduk";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 export const KATEGORI_PRODUK_PATH = "/master-data/kategori-produk";
 
@@ -135,9 +135,10 @@ const KategoriProduk = () => {
         onConfirm={() => dispatch(deleteCategoryRequest({ id: modalOpen.id }))}
       />
 
-      {loading.categories && (
-        <Loading message="Sedamg memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay
+        show={loading.categories}
+        label="Memuat data kategori produk..."
+      />
     </div>
   );
 };

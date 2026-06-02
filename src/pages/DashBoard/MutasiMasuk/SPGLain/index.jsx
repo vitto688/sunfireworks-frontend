@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 import { useDispatch, useSelector } from "react-redux";
 
 // import styles
@@ -115,8 +116,15 @@ const SPGLain = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
-  // Handle filter changes (warehouse, dates) with immediate effect
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
+  // Handle filter changes (warehouse, dates) with immediate effect.
+  // Skipped on first mount so it doesn't duplicate the initial fetch.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchSPGData(1); // Reset to page 1 when filters change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWarehouseFilter, startDate, endDate]);
@@ -189,11 +197,7 @@ const SPGLain = () => {
   return (
     <div className={styles.spgLainSection}>
       {/* Loading indicator */}
-      {loading && (
-        <div className={styles.loadingIndicator}>
-          <p>Loading SPG Lain data...</p>
-        </div>
-      )}
+      <LoadingOverlay show={loading} label="Memuat data SPG Lain..." />
 
       {/* Success/Error Messages */}
       {message && (

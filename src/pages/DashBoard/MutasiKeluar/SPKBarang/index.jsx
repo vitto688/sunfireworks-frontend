@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 // Import Redux actions
 import {
@@ -132,8 +134,15 @@ const SPKBarang = () => {
     };
   }, [query, fetchSPKData]);
 
-  // Filter changes effect (immediate)
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
+  // Filter changes effect (immediate). Skipped on first mount so it doesn't
+  // duplicate the initial fetch from the mount effect above.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchSPKData(1);
   }, [selectedWarehouseFilter, startDate, endDate, fetchSPKData]);
 
@@ -219,6 +228,7 @@ const SPKBarang = () => {
 
   return (
     <div className={styles.mainSection}>
+      <LoadingOverlay show={loading} label="Memuat data SPK..." />
       <div className={styles.actionsSection}>
         <CustomButton
           // variant="outline"
@@ -318,9 +328,7 @@ const SPKBarang = () => {
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {loading ? (
-            <div className={styles.loadingMessage}>Loading SPK data...</div>
-          ) : data.length === 0 ? (
+          {data.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>

@@ -1,6 +1,10 @@
 import { formatNumberWithDot } from "./numberUtils";
+import { isAvailable as isQzAvailable, printRaw } from "./print/qzClient";
+import { buildSuratJalanEscp } from "./print/suratJalanEscp";
 
-export const printSuratJalan = (data, itemsPerPage = 7) => {
+// Existing browser-based print (HTML -> window.print). Kept intact as the fallback
+// for machines without QZ Tray. See printSuratJalan() below for the router.
+const printSuratJalanBrowser = (data, itemsPerPage = 7) => {
   // Calculate totals
   // const totalCarton =
   //   data.items?.reduce((sum, item) => sum + (item.carton_quantity || 0), 0) ||
@@ -858,4 +862,26 @@ export const printSuratJalan = (data, itemsPerPage = 7) => {
       window.print();
     }
   }
+};
+
+/**
+ * Print a Surat Jalan.
+ *
+ * Routing:
+ *   1. If QZ Tray is installed & reachable -> send native ESC/P text (crisp output
+ *      that matches the desktop app).
+ *   2. Otherwise -> fall back to the existing browser print (printSuratJalanBrowser),
+ *      so nothing breaks on machines without QZ Tray.
+ */
+export const printSuratJalan = async (data, itemsPerPage = 7) => {
+  try {
+    if (await isQzAvailable()) {
+      await printRaw(buildSuratJalanEscp(data, itemsPerPage));
+      return;
+    }
+  } catch (err) {
+    // QZ Tray present but printing failed -> fall back to browser print.
+    console.warn("ESC/P print via QZ Tray gagal, fallback ke browser print:", err);
+  }
+  printSuratJalanBrowser(data, itemsPerPage);
 };

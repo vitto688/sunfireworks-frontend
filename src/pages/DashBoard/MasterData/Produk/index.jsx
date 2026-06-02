@@ -19,7 +19,7 @@ import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import { TAMBAH_PRODUK_PATH } from "./TambahProduk";
 import { UBAH_PRODUK_PATH } from "./UbahProduk";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import EditButton from "../../../../components/EditButton";
 import { UBAH_STOK_PRODUK_PATH } from "./UbahStokProduk";
@@ -236,9 +236,7 @@ const Produk = () => {
         }}
         onConfirm={() => dispatch(deleteProductRequest({ id: modalOpen.id }))}
       />
-      {loading.products && (
-        <Loading message="Sedang memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay show={loading.products} label="Memuat data produk..." />
     </div>
   );
 };

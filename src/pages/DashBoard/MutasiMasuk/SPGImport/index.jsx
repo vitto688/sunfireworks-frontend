@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 // import styles
 import styles from "./style.module.scss";
@@ -40,6 +42,8 @@ const SPGImport = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
 
   // Redux state untuk SPG Import
   const { data, loading, message, errorMessage, pagination } = useSelector(
@@ -101,6 +105,7 @@ const SPGImport = () => {
     }
 
     setIsSearching(true);
+    console.log('Searching for:', query);
     const delayedSearch = setTimeout(() => {
       fetchSPGData(1);
       setIsSearching(false);
@@ -112,8 +117,13 @@ const SPGImport = () => {
     };
   }, [query, fetchSPGData]);
 
-  // Filter changes effect (immediate)
+  // Filter changes effect (immediate). Skipped on first mount so it doesn't
+  // duplicate the initial fetch from the mount effect above.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchSPGData(1);
   }, [selectedWarehouseFilter, startDate, endDate, fetchSPGData]);
 
@@ -185,11 +195,7 @@ const SPGImport = () => {
   return (
     <div className={styles.spgImportSection}>
       {/* Loading indicator */}
-      {loading && (
-        <div className={styles.loadingIndicator}>
-          <p>Loading SPG Import data...</p>
-        </div>
-      )}
+      <LoadingOverlay show={loading} label="Memuat data SPG Import..." />
 
       {/* Success/Error Messages */}
       {message && (

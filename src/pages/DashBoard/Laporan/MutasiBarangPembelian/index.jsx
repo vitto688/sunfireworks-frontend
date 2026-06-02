@@ -33,7 +33,7 @@ import SearchBar from "../../../../components/SearchBar";
 import CustomButton from "../../../../components/CustomButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import ItemSearchDialog from "../../../../components/ItemSearchDialog";
 
@@ -513,7 +513,7 @@ const LaporanMutasiBarangPembelian = () => {
 
   return (
     <div className={styles.mutasiMasukSection}>
-      {(loading || printLoading || localExportLoading) && <Loading />}
+      <LoadingOverlay show={loading || printLoading || localExportLoading} label="Memuat laporan mutasi barang pembelian..." />
 
       <div className={styles.actionsSection}>
         <CustomButton

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 import { useDispatch, useSelector } from "react-redux";
 
 // import styles
@@ -117,8 +118,15 @@ const TransferStok = () => {
     };
   }, [query, fetchTransferStokData]);
 
-  // Filter changes effect (immediate)
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
+  // Filter changes effect (immediate). Skipped on first mount so it doesn't
+  // duplicate the initial fetch from the mount effect above.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchTransferStokData(1);
   }, [selectedWarehouseFilter, startDate, endDate, fetchTransferStokData]);
 
@@ -189,6 +197,7 @@ const TransferStok = () => {
 
   return (
     <div className={styles.transferStokSection}>
+      <LoadingOverlay show={loading} label="Memuat data Transfer Stok..." />
       <div className={styles.actionsSection}>
         <CustomButton
           // variant="outline"
@@ -276,11 +285,7 @@ const TransferStok = () => {
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
         </div>
         <div className={styles.tableBody}>
-          {loading ? (
-            <div className={styles.emptyState}>
-              <p>Memuat data...</p>
-            </div>
-          ) : data.length === 0 ? (
+          {data.length === 0 ? (
             <div className={styles.emptyState}>
               <p>Tidak ada data transfer stok yang tersedia.</p>
               <p>Klik tombol "Tambah" untuk menambahkan transfer stok baru.</p>

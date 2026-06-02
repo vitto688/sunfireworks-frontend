@@ -14,6 +14,7 @@ import {
 // import components
 // import CustomButton from "../../../components/CustomButton";
 import SearchBar from "../../../components/SearchBar";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 // import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
 import FilterDropdown from "../../../components/FilterDropdown";
 // import { UBAH_STOK_PATH } from "./UbahStok";
@@ -37,7 +38,7 @@ const Stock = () => {
   const [supplierFilterOptions, setSupplierFilterOptions] = useState([]);
   const [selectedSupplierFilter, setSelectedSupplierFilter] = useState(0);
 
-  const { stocks, message, errorMessage, errorCode } = useSelector(
+  const { stocks, loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.stock
   );
   // const { user } = useSelector((state) => state.auth);
@@ -195,6 +196,7 @@ const Stock = () => {
 
   return (
     <div className={styles.stocksSection}>
+      <LoadingOverlay show={loading} label="Memuat data stok..." />
       <div className={styles.actionsSection}>
         {/* <CustomButton
           // variant="outline"

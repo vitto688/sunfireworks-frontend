@@ -19,7 +19,7 @@ import { TAMBAH_GUDANG_PATH } from "./TambahGudang";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import { UBAH_GUDANG_PATH } from "./UbahGudang";
-import Loading from "../../../../components/Loading";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 
 export const GUDANG_PATH = "/master-data/gudang";
 
@@ -137,9 +137,7 @@ const Gudang = () => {
           )
         }
       />
-      {loading.warehouses && (
-        <Loading message="Sedamg memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay show={loading.warehouses} label="Memuat data gudang..." />
     </div>
   );
 };

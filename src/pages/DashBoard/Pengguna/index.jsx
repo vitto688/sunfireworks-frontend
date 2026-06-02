@@ -20,7 +20,7 @@ import { EDIT_PENGGUNA_PATH } from "./EditPengguna";
 import SearchBar from "../../../components/SearchBar";
 import FilterDropdown from "../../../components/FilterDropdown";
 import { EDIT_ROLE_PATH } from "./EditRole";
-import Loading from "../../../components/Loading";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 // Define the path for the Users page
 export const PENGGUNA_PATH = "/pengaturan/pengguna";
@@ -206,9 +206,7 @@ const Pengguna = () => {
         </div>
       </div>
 
-      {loading.users && (
-        <Loading message="Sedamg memproses data, mohon tunggu..." />
-      )}
+      <LoadingOverlay show={loading.users} label="Memuat data pengguna..." />
     </div>
   );
 };

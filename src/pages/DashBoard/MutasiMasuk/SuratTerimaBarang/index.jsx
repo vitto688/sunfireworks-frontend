@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
 import { useDispatch, useSelector } from "react-redux";
 
 // Import Redux actions
@@ -116,8 +117,15 @@ const SuratTerimaBarang = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
-  // Handle filter changes (warehouse, dates) with immediate effect
+  // Skip the filter effect on first mount (the mount effect already loads page 1).
+  const isFirstFilterRun = useRef(true);
+  // Handle filter changes (warehouse, dates) with immediate effect.
+  // Skipped on first mount so it doesn't duplicate the initial fetch.
   useEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
     fetchSTBData(1); // Reset to page 1 when filters change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWarehouseFilter, startDate, endDate]);
@@ -184,6 +192,7 @@ const SuratTerimaBarang = () => {
 
   return (
     <div className={styles.mainSection}>
+      <LoadingOverlay show={loading || isSearching} label="Memuat data STB..." />
       <div className={styles.actionsSection}>
         <CustomButton
           label={loading ? "Loading..." : "+ Tambah"}
@@ -273,11 +282,7 @@ const SuratTerimaBarang = () => {
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
         <div className={styles.tableBody}>
-          {loading || isSearching ? (
-            <div className={styles.loadingMessage}>
-              {isSearching ? "Mencari data..." : "Loading STB data..."}
-            </div>
-          ) : data.length === 0 ? (
+          {data.length === 0 ? (
             <div className={styles.emptyStateContainer}>
               <div className={styles.emptyStateContent}>
                 <h3 className={styles.emptyStateTitle}>

@@ -31,10 +31,11 @@ const spkReducer = (state = initialSPKState, action) => {
       action.payload.data.results.forEach((item) => {
         let isNotCompleted = false;
         item.items.forEach((subItem) => {
-          if (
+          const subItemNotCompleted =
             subItem.unfulfilled_carton_quantity > 0 ||
-            subItem.unfulfilled_pack_quantity > 0
-          ) {
+            subItem.unfulfilled_pack_quantity > 0;
+          subItem.status = subItemNotCompleted ? "Belum Selesai" : "Selesai";
+          if (subItemNotCompleted) {
             isNotCompleted = true;
           }
         });
@@ -61,10 +62,11 @@ const spkReducer = (state = initialSPKState, action) => {
       action.payload.data.forEach((item) => {
         let isNotCompleted = false;
         item.items.forEach((subItem) => {
-          if (
+          const subItemNotCompleted =
             subItem.unfulfilled_carton_quantity > 0 ||
-            subItem.unfulfilled_pack_quantity > 0
-          ) {
+            subItem.unfulfilled_pack_quantity > 0;
+          subItem.status = subItemNotCompleted ? "Belum Selesai" : "Selesai";
+          if (subItemNotCompleted) {
             isNotCompleted = true;
           }
         });

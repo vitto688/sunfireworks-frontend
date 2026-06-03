@@ -108,8 +108,11 @@ const UbahSuratJalan = () => {
     }
 
     if (errorMessage !== null) {
-      alert(`${errorMessage}\nerror: ${errorCode}`);
-      dispatch(resetSuratJalanMessages());
+      // Tampilkan sebagai toast inline (lihat .errorMessage), auto-hilang setelah 5 detik
+      const timer = setTimeout(() => {
+        dispatch(resetSuratJalanMessages());
+      }, 5000);
+      return () => clearTimeout(timer);
     }
   }, [message, errorMessage, errorCode, navigate, dispatch]);
 
@@ -143,6 +146,7 @@ const UbahSuratJalan = () => {
       warehouse: argument.warehouse,
       is_customer: true,
       customer: argument.customer,
+      sj_type:argument.sj_type,
       vehicle_type: kendaraan,
       vehicle_number: noKendaraan,
       notes: keterangan,
@@ -213,25 +217,11 @@ const UbahSuratJalan = () => {
         return;
       }
 
-      if (oldPackQuantity > newPackQuantity) {
-        data.new_unfulfilled_carton_quantity =
-          data.unfulfilled_carton_quantity +
-          oldCartonQuantity -
-          newCartonQuantity;
-      } else {
-        data.new_unfulfilled_carton_quantity =
-          data.unfulfilled_carton_quantity +
-          newCartonQuantity -
-          oldCartonQuantity;
-      }
+      data.new_unfulfilled_carton_quantity =
+        data.unfulfilled_carton_quantity + oldCartonQuantity - newCartonQuantity;
 
-      if (oldCartonQuantity > newCartonQuantity) {
-        data.new_unfulfilled_pack_quantity =
-          data.unfulfilled_pack_quantity + oldPackQuantity - newPackQuantity;
-      } else {
-        data.new_unfulfilled_pack_quantity =
-          data.unfulfilled_pack_quantity + newPackQuantity - oldPackQuantity;
-      }
+      data.new_unfulfilled_pack_quantity =
+        data.unfulfilled_pack_quantity + oldPackQuantity - newPackQuantity;
     }
 
     // data.unfulfilled_carton_quantity -= newCartonQuantity;
@@ -273,7 +263,18 @@ const UbahSuratJalan = () => {
       </div>
       {errorMessage && (
         <div className={styles.errorMessage}>
-          <p>Error: {errorMessage}</p>
+          <p>
+            {errorMessage}
+            {errorCode ? ` (error: ${errorCode})` : ""}
+          </p>
+          <button
+            type="button"
+            className={styles.errorClose}
+            onClick={() => dispatch(resetSuratJalanMessages())}
+            aria-label="Tutup"
+          >
+            ×
+          </button>
         </div>
       )}
       <div className={styles.formSection}>
@@ -380,16 +381,20 @@ const UbahSuratJalan = () => {
               </div>
               <div className={styles.tableRowItem}>{stokItem.packing}</div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.carton_quantity)}
+                {formatNumberWithDot(Math.max(0, stokItem.carton_quantity || 0))}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.pack_quantity)}
+                {formatNumberWithDot(Math.max(0, stokItem.pack_quantity || 0))}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.new_unfulfilled_carton_quantity)}
+                {formatNumberWithDot(
+                  Math.max(0, stokItem.new_unfulfilled_carton_quantity || 0)
+                )}
               </div>
               <div className={styles.tableRowItem}>
-                {formatNumberWithDot(stokItem.new_unfulfilled_pack_quantity)}
+                {formatNumberWithDot(
+                  Math.max(0, stokItem.new_unfulfilled_pack_quantity || 0)
+                )}
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />

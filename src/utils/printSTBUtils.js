@@ -13,12 +13,10 @@ export const printSTB = (data, itemsPerPage = 6) => {
       const startIndex = page * itemsPerPage;
       const endIndex = Math.min(startIndex + itemsPerPage, items.length);
       const pageItems = items.slice(startIndex, endIndex);
-      const isLastPage = page === totalPages - 1;
 
       // Generate rows for current page
       const rowsHTML = pageItems
-        .map((item, index) => {
-          const globalIndex = startIndex + index + 1;
+        .map((item) => {
           return `
           <tr>
             <td class="col-kode">${item.product_code || "-"}</td>
@@ -50,7 +48,6 @@ export const printSTB = (data, itemsPerPage = 6) => {
       // Add page break only every 2 pages (for A4 paper with 2 sections)
       // page-break after every 2nd section (when page is odd-numbered: 1, 3, 5, etc.)
       // DISABLED: Remove page break to allow continuous printing
-      const shouldBreakPage = false; // Disabled page break
       const pageBreakClass = ""; // No page break class
       const isFirstPage = page === 0;
       // Check if this is the first section on a new paper (after page break)

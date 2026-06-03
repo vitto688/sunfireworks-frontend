@@ -41,6 +41,17 @@ export const TYPEFACE_ROMAN = ESC + "k\x00";
  */
 export const leftMargin = (cols) => ESC + "l" + String.fromCharCode(cols);
 
+// Line spacing 1/6 inch = 6 LPI (the dot-matrix default). Set this BEFORE
+// formLengthLines() so the lines->inches math holds.
+export const LINE_SPACING_1_6 = ESC + "2";
+
+/**
+ * Set the form (page) length in lines: ESC C n  (n = 1..127).
+ * At 6 LPI, lines = inches * 6. So a 5.5" half-form = 33 lines, 11" full = 66.
+ * This aligns the printer's form feed (FF) with the physical paper perforation.
+ */
+export const formLengthLines = (lines) => ESC + "C" + String.fromCharCode(lines);
+
 // --- Text layout helpers -----------------------------------------------------
 
 /** Coerce to string and strip control chars that would corrupt the stream. */

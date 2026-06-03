@@ -14,6 +14,7 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
+import { formatDateSlash } from "../../../../utils/dateUtils";
 import { UBAH_SPGBAWANG_PATH } from "./UbahSPGBawang";
 import { TAMBAH_SPGBAWANG_PATH } from "./TambahSPGBawang";
 
@@ -313,7 +314,7 @@ const SPGBawang = () => {
                   {((pagination?.current_page || 1) - 1) * 10 + index + 1}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {new Date(item.transaction_date).toLocaleDateString("id-ID")}
+                  {formatDateSlash(item.transaction_date)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number}

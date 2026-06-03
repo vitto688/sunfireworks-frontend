@@ -12,13 +12,22 @@ import {
 } from "../../../redux/actions/stockActions";
 
 // import components
-// import CustomButton from "../../../components/CustomButton";
+import CustomButton from "../../../components/CustomButton";
 import SearchBar from "../../../components/SearchBar";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 // import { TAMBAH_PRODUK_PATH } from "../MasterData/Produk/TambahProduk";
 import FilterDropdown from "../../../components/FilterDropdown";
+import DatePicker from "../../../components/DatePicker";
 // import { UBAH_STOK_PATH } from "./UbahStok";
 import { formatNumberWithDot } from "../../../utils/numberUtils";
+
+// import print & export utilities (khusus halaman Stok, kolom flat = sama dengan tabel website)
+import {
+  printStockReport,
+  exportStockToExcel,
+  exportStockToCsv,
+  groupStockByProduct,
+} from "../../../utils/printStockReport";
 
 // Define the path for the Penyesuaian Stok page
 export const STOCK_PATH = "/stok";
@@ -37,6 +46,12 @@ const Stock = () => {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(0);
   const [supplierFilterOptions, setSupplierFilterOptions] = useState([]);
   const [selectedSupplierFilter, setSelectedSupplierFilter] = useState(0);
+
+  // Filter tanggal (range) berdasarkan updated_at, untuk cek pergerakan stok
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  // Flag: hanya tampilkan gudang yang ada stoknya di filter gudang
+  const [showOnlyWithStock, setShowOnlyWithStock] = useState(false);
 
   const { stocks, loading, message, errorMessage, errorCode } = useSelector(
     (state) => state.stock
@@ -119,7 +134,15 @@ const Stock = () => {
     }
   }, [suppliers]);
 
-  // Filter stocks based on selected filters
+  // Nama gudang yang sedang dipilih (untuk header laporan print/export)
+  const selectedWarehouseName = useMemo(() => {
+    if (selectedWarehouseFilter === 0) return null;
+    return (
+      warehouses.find((w) => w.id === selectedWarehouseFilter)?.name || null
+    );
+  }, [selectedWarehouseFilter, warehouses]);
+
+  // Filter stocks based on selected filters (semua filter dikerjakan di sini / client-side)
   useEffect(() => {
     let filteredStocks = stocks;
 
@@ -144,11 +167,33 @@ const Stock = () => {
       );
     }
 
+    // Apply date range filter berdasarkan updated_at (bandingkan bagian tanggal YYYY-MM-DD)
+    if (startDate) {
+      filteredStocks = filteredStocks.filter(
+        (stock) => stock.updated_at && stock.updated_at.slice(0, 10) >= startDate
+      );
+    }
+    if (endDate) {
+      filteredStocks = filteredStocks.filter(
+        (stock) => stock.updated_at && stock.updated_at.slice(0, 10) <= endDate
+      );
+    }
+
+    // Apply "tampilkan yang ada stok": hanya baris dengan carton/pack > 0
+    if (showOnlyWithStock) {
+      filteredStocks = filteredStocks.filter(
+        (stock) => (stock.carton_quantity || 0) + (stock.pack_quantity || 0) > 0
+      );
+    }
+
     setFilteredData(filteredStocks);
   }, [
     selectedWarehouseFilter,
     selectedCategoryFilter,
     selectedSupplierFilter,
+    startDate,
+    endDate,
+    showOnlyWithStock,
     stocks,
   ]);
 
@@ -176,6 +221,37 @@ const Stock = () => {
     // if (user?.role !== 3) navigate(UBAH_STOK_PATH, { state: item });
   };
 
+  // Bangun objek filter untuk header laporan print/export (sesuai yang sedang tampil)
+  const buildReportFilters = () => ({
+    ...(query && { search: query }),
+    ...(startDate && { start_date: startDate }),
+    ...(endDate && { end_date: endDate }),
+    ...(selectedWarehouseName && { warehouse: selectedWarehouseName }),
+    ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
+    ...(selectedSupplierFilter !== 0 && { supplier: selectedSupplierFilter }),
+    ...(showOnlyWithStock && { only_with_stock: true }),
+  });
+
+  const handlePrintClick = () => {
+    printStockReport(groupedStok, buildReportFilters());
+  };
+
+  const handleExportExcelClick = () => {
+    exportStockToExcel(groupedStok, buildReportFilters());
+  };
+
+  const handleExportCsvClick = () => {
+    exportStockToCsv(groupedStok, buildReportFilters());
+  };
+
+  // Toggle flag "tampilkan yang ada stok" (filter baris dengan carton/pack > 0)
+  const handleToggleOnlyWithStock = () => {
+    setShowOnlyWithStock((prev) => !prev);
+  };
+
+  // Data hasil grouping per produk (carton & pack dijumlahkan lintas gudang)
+  const groupedStok = useMemo(() => groupStockByProduct(stok), [stok]);
+
   // Calculate totals for footer
   const totals = useMemo(() => {
     const totalCarton = stok.reduce(
@@ -198,11 +274,24 @@ const Stock = () => {
     <div className={styles.stocksSection}>
       <LoadingOverlay show={loading} label="Memuat data stok..." />
       <div className={styles.actionsSection}>
-        {/* <CustomButton
-          // variant="outline"
-          label="+ Tambah"
-          onClick={handleAddClick}
-        /> */}
+        <CustomButton
+          variant="outline"
+          label="Print"
+          onClick={handlePrintClick}
+          inactive={stok.length === 0}
+        />
+        <CustomButton
+          variant="outline"
+          label="Download Excel"
+          onClick={handleExportExcelClick}
+          inactive={stok.length === 0}
+        />
+        <CustomButton
+          variant="outline"
+          label="Download CSV"
+          onClick={handleExportCsvClick}
+          inactive={stok.length === 0}
+        />
       </div>
       <div className={styles.searchFilterSection}>
         <SearchBar
@@ -214,6 +303,16 @@ const Stock = () => {
           {/* <CustomButton label="Cari" onClick={handleFindClick} /> */}
         </SearchBar>
         <div className={styles.filterSection}>
+          <DatePicker label="Dari" value={startDate} onChange={setStartDate} />
+          <DatePicker label="Sampai" value={endDate} onChange={setEndDate} />
+          <label className={styles.stockToggle}>
+            <input
+              type="checkbox"
+              checked={showOnlyWithStock}
+              onChange={handleToggleOnlyWithStock}
+            />
+            <span>Tampilkan yang ada stok</span>
+          </label>
           <FilterDropdown
             options={categoryFilterOptions}
             placeholder="Filter Kategori"
@@ -239,23 +338,22 @@ const Stock = () => {
           {/* <div className={styles.tableHeaderItem}>Barcode</div> */}
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Packing</div>
-          <div className={styles.tableHeaderItem}>KP</div>
-          <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
+          <div className={styles.tableHeaderItem}>Total</div>
           {/* <div className={styles.tableHeaderItem}>Kuantitas</div>
           <div className={styles.tableHeaderItem}>Gudang</div> */}
         </div>
         <div className={styles.tableBody}>
-          {stok.length === 0 ? (
+          {groupedStok.length === 0 ? (
             <div className={styles.emptyState}>
               <p>Tidak ada data stok yang ditemukan</p>
             </div>
           ) : (
-            stok.map((stokItem, index) => (
+            groupedStok.map((stokItem, index) => (
               <div
                 role="presentation"
-                key={stokItem.id}
+                key={stokItem.product ?? `${stokItem.product_code}-${index}`}
                 className={styles.tableRow}
                 onClick={() => handleItemClick(stokItem)}
               >
@@ -268,18 +366,18 @@ const Stock = () => {
                   {stokItem.product_name}
                 </div>
                 <div className={styles.tableRowItem}>{stokItem.packing}</div>
-                <div className={styles.tableRowItem}>
-                  {stokItem.supplier_name}
-                </div>
-                <div className={styles.tableRowItem}>
-                  {stokItem.warehouse_name}
-                </div>
 
                 <div className={`${styles.tableRowItem} ${styles.quantity}`}>
                   {formatNumberWithDot(stokItem.carton_quantity)}
                 </div>
                 <div className={`${styles.tableRowItem} ${styles.quantity}`}>
                   {formatNumberWithDot(stokItem.pack_quantity)}
+                </div>
+                <div className={`${styles.tableRowItem} ${styles.quantity}`}>
+                  {formatNumberWithDot(
+                    (stokItem.carton_quantity || 0) +
+                      (stokItem.pack_quantity || 0)
+                  )}
                 </div>
                 {/* <div className={styles.tableRowItem}>{stokItem.quantity}</div>
               <div className={styles.tableRowItem}>
@@ -294,13 +392,16 @@ const Stock = () => {
         <div className={styles.tableFooter}>
           <div className={styles.footerContent}>
             <div className={`${styles.footerItem} ${styles.totalItems}`}>
-              <strong>Total Items: {stok.length}</strong>
+              <strong>Total Items: {groupedStok.length}</strong>
             </div>
             <div className={`${styles.footerItem} ${styles.totalKarton}`}>
               <strong>{formatNumberWithDot(totals.carton)}</strong>
             </div>
             <div className={`${styles.footerItem} ${styles.totalPack}`}>
               <strong>{formatNumberWithDot(totals.pack)}</strong>
+            </div>
+            <div className={`${styles.footerItem} ${styles.totalTotal}`}>
+              <strong>{formatNumberWithDot(totals.carton + totals.pack)}</strong>
             </div>
           </div>
         </div>

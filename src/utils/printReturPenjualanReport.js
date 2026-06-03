@@ -1,4 +1,5 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
+import { writeStyledReport } from "./excelReportStyle";
 
 // Function to generate Excel file from retur penjualan data
 export const exportReturPenjualanToExcel = (reportData, filters = {}) => {
@@ -264,10 +265,12 @@ export const exportReturPenjualanToExcelAdvanced = (
     const currentDate = new Date().toISOString().split("T")[0];
     const filename = `Laporan_Retur_Penjualan_${currentDate}.xlsx`;
 
-    // Write and download file
-    xlsxLib.writeFile(wb, filename);
-
-    return filename;
+    // Tulis & unduh file dengan styling tabel seragam
+    return writeStyledReport(wsData, {
+      colWidths,
+      sheetName: "Laporan Retur Penjualan",
+      filename,
+    });
   } catch (error) {
     console.error("Error creating Excel file:", error);
     // Fallback to CSV export

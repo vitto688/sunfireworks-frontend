@@ -15,6 +15,7 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
+import { formatDateSlash } from "../../../../utils/dateUtils";
 import { UBAH_SPB_PATH } from "./UbahSPB";
 import { TAMBAH_SPB_PATH } from "./TambahSPB";
 
@@ -320,7 +321,7 @@ const SuratPengeluaranBarang = () => {
                   {((pagination?.current_page || 1) - 1) * 10 + index + 1}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {new Date(item.created_at).toLocaleDateString("id-ID")}
+                  {formatDateSlash(item.created_at)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number || item.no_faktur || item.id}

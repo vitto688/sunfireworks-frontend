@@ -127,7 +127,10 @@
             }
 
         }
-       
+
     }
-    
+
+    .pagination {
+        @include paginationBar;
+    }
 }

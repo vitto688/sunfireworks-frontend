@@ -22,6 +22,7 @@ import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import FilterDropdown from "../../../../components/FilterDropdown";
 import DatePicker from "../../../../components/DatePicker";
+import { formatDateSlash } from "../../../../utils/dateUtils";
 import { UBAH_SURAT_JALAN_PATH } from "./UbahSuratJalan";
 import { TAMBAH_SURAT_JALAN_PATH } from "./TambahSuratJalan";
 
@@ -327,8 +328,7 @@ const SuratJalan = () => {
           <div className={styles.tableHeaderItem}>No Bukti</div>
           <div className={styles.tableHeaderItem}>Nama Pelanggan</div>
           <div className={styles.tableHeaderItem}>Gudang Tujuan</div>
-          <div className={styles.tableHeaderItem}>Kendaraan</div>
-          <div className={styles.tableHeaderItem}>No Kendaraan</div>
+          <div className={styles.tableHeaderItem}>No SPK</div>
           <div className={styles.tableHeaderItem}>Di Input Oleh</div>
           <div className={styles.tableHeaderItem}>Keterangan</div>
         </div>
@@ -362,8 +362,7 @@ const SuratJalan = () => {
                   {((pagination?.current_page || 1) - 1) * 10 + index + 1}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {item.request_date ||
-                    new Date(item.transaction_date).toLocaleDateString()}
+                  {item.request_date || formatDateSlash(item.transaction_date)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number || item.id}
@@ -375,10 +374,7 @@ const SuratJalan = () => {
                   {item.warehouse_name || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {item.vehicle_type || "-"}
-                </div>
-                <div className={styles.tableRowItem}>
-                  {item.vehicle_number || "-"}
+                  {item.spk_document_number || "-"}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.user_username || "-"}

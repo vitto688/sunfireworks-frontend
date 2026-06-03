@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from "xlsx";
@@ -15,6 +15,7 @@ Both export options are now available and fully functional.
 // Import Redux actions
 import {
   fetchStockReportRequest,
+  fetchStockReportNPRequest,
   exportStockReportRequest,
   resetStockReportMessages,
   setStockReportFilters,
@@ -42,12 +43,13 @@ import LoadingOverlay from "../../../../components/LoadingOverlay";
 // Import number formatting utility
 import { formatNumberWithDot } from "../../../../utils/numberUtils";
 
-// Import print and export utilities
+// Import print and export utilities (util flat bersama dengan halaman Stok — kolom sama, tanpa KP)
 import {
-  printStokBarangReport,
-  exportStokBarangToExcel,
-  exportStokBarangToExcelAdvanced,
-} from "../../../../utils/printStokBarangReport";
+  printStockReport,
+  exportStockToExcel,
+  exportStockToCsv,
+  groupStockByProduct,
+} from "../../../../utils/printStockReport";
 
 // Import API function for fetching all data
 import { fetchAllStockReportData } from "../../../../api/reportStock";
@@ -82,6 +84,7 @@ const LaporanStokBarang = () => {
 
   const {
     stockReport,
+    stockReportNP,
     totalCount,
     totalPages,
     currentPage,
@@ -117,58 +120,53 @@ const LaporanStokBarang = () => {
     [searchParams]
   );
 
-  const fetchStockData = useCallback(
-    (page) => {
-      const params = {
-        page,
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
+  const fetchStockData = useCallback(() => {
+    // Ambil SEMUA data sekali (tanpa pagination & tanpa param filter).
+    // Semua filter (kategori & tanggal) dikerjakan di frontend.
+    dispatch(fetchStockReportNPRequest({}));
+  }, [dispatch]);
 
-      dispatch(fetchStockReportRequest(params));
-    },
-    [
-      dispatch,
-      query,
-      selectedWarehouseFilter,
-      selectedCategoryFilter,
-      selectedSupplierFilter,
-      startDate,
-      endDate,
-    ]
+  // Filter data di frontend: Kategori + rentang tanggal (updated_at)
+  const filteredReport = useMemo(() => {
+    let data = stockReportNP || [];
+
+    if (selectedCategoryFilter !== 0) {
+      data = data.filter(
+        (item) => item.product_category === selectedCategoryFilter
+      );
+    }
+    if (startDate) {
+      data = data.filter(
+        (item) => item.updated_at && item.updated_at.slice(0, 10) >= startDate
+      );
+    }
+    if (endDate) {
+      data = data.filter(
+        (item) => item.updated_at && item.updated_at.slice(0, 10) <= endDate
+      );
+    }
+
+    return data;
+  }, [stockReportNP, selectedCategoryFilter, startDate, endDate]);
+
+  // Data hasil grouping per produk (carton & pack dijumlahkan lintas gudang)
+  const groupedData = useMemo(
+    () => groupStockByProduct(filteredReport),
+    [filteredReport]
   );
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      const params = {
-        page: newPage,
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      dispatch(fetchStockReportRequest(params));
-    }
-  };
+  // Total keseluruhan untuk footer (dihitung dari data hasil grouping)
+  const reportTotals = useMemo(() => {
+    const carton = groupedData.reduce(
+      (sum, item) => sum + (item.carton_quantity || 0),
+      0
+    );
+    const pack = groupedData.reduce(
+      (sum, item) => sum + (item.pack_quantity || 0),
+      0
+    );
+    return { carton, pack };
+  }, [groupedData]);
   //#endregion
 
   //#region Effects
@@ -249,7 +247,7 @@ const LaporanStokBarang = () => {
         { label: "Semua Kategori", value: 0, id: 0 },
         ...categories.map((category) => ({
           label: category.name,
-          value: category.id,
+          value: category.name,
           id: category.id,
         })),
       ];
@@ -271,17 +269,10 @@ const LaporanStokBarang = () => {
     }
   }, [suppliers]);
 
-  // Handle filter changes (warehouse, dates) with immediate effect
+  // Ambil data sekali saat mount; filter dikerjakan di frontend (lihat filteredReport)
   useEffect(() => {
-    fetchStockData(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedWarehouseFilter,
-    selectedCategoryFilter,
-    selectedSupplierFilter,
-    startDate,
-    endDate,
-  ]);
+    fetchStockData();
+  }, [fetchStockData]);
 
   // Effect to sync filter values from query string when options are loaded
   useEffect(() => {
@@ -377,165 +368,42 @@ const LaporanStokBarang = () => {
     dispatch(exportStockReportRequest(params));
   };
 
-  const handlePrintClick = async () => {
+  // Bangun info filter aktif untuk header laporan print/export
+  const buildReportFilters = () => ({
+    ...(startDate && { start_date: startDate }),
+    ...(endDate && { end_date: endDate }),
+    ...(selectedCategoryFilter !== 0 && { category: selectedCategoryFilter }),
+  });
+
+  const handlePrintClick = () => {
     setPrintLoading(true);
-
     try {
-      // Create filter object for API call
-      const apiParams = {
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      // Fetch all data from API
-      const allData = await fetchAllStockReportData(apiParams);
-
-      // Create filter object for print function
-      const filters = {
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      // Use fetched data for print
-      printStokBarangReport(allData, filters);
+      // Pakai data hasil grouping (yang sedang tampil) agar print = tampilan website
+      printStockReport(groupedData, buildReportFilters());
     } catch (error) {
-      console.error("Error fetching data for print:", error);
-      alert("Gagal mengambil data untuk print. Silakan coba lagi.");
+      console.error("Error print:", error);
+      alert("Gagal mencetak. Silakan coba lagi.");
     } finally {
       setPrintLoading(false);
     }
   };
 
-  const handleExportExcelClick = async () => {
+  const handleExportExcelClick = () => {
     setLocalExportLoading(true);
-
-    // Create filter object for API call
-    const apiParams = {
-      ...(query && { search: query }),
-      ...(selectedWarehouseFilter.id !== 0 && {
-        warehouse: selectedWarehouseFilter.id,
-      }),
-      ...(selectedCategoryFilter.id !== 0 && {
-        category: selectedCategoryFilter.id,
-      }),
-      ...(selectedSupplierFilter.id !== 0 && {
-        supplier: selectedSupplierFilter.id,
-      }),
-      ...(startDate && { start_date: startDate }),
-      ...(endDate && { end_date: endDate }),
-    };
-
     try {
-      // Fetch all data from API
-      const allData = await fetchAllStockReportData(apiParams);
-
-      // Create filter object for export function
-      const filters = {
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      // Try advanced Excel export with XLSX library using fetched data
-      const filename = exportStokBarangToExcelAdvanced(allData, filters, XLSX);
+      exportStockToExcel(groupedData, buildReportFilters());
     } catch (error) {
       console.error("Error exporting Excel:", error);
-      // Fallback to CSV export
-      try {
-        const allData = await fetchAllStockReportData(apiParams);
-        const filters = {
-          ...(query && { search: query }),
-          ...(selectedWarehouseFilter.id !== 0 && {
-            warehouse: selectedWarehouseFilter.id,
-          }),
-          ...(selectedCategoryFilter.id !== 0 && {
-            category: selectedCategoryFilter.id,
-          }),
-          ...(selectedSupplierFilter.id !== 0 && {
-            supplier: selectedSupplierFilter.id,
-          }),
-          ...(startDate && { start_date: startDate }),
-          ...(endDate && { end_date: endDate }),
-        };
-        const filename = exportStokBarangToExcel(allData, filters);
-      } catch (csvError) {
-        console.error("Error exporting CSV:", csvError);
-        alert("Gagal mengexport data. Silakan coba lagi.");
-      }
+      alert("Gagal mengexport data. Silakan coba lagi.");
     } finally {
       setLocalExportLoading(false);
     }
   };
 
-  const handleExportCSVClick = async () => {
+  const handleExportCSVClick = () => {
     setLocalExportLoading(true);
-
     try {
-      // Create filter object for API call
-      const apiParams = {
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      // Fetch all data from API
-      const allData = await fetchAllStockReportData(apiParams);
-
-      // Create filter object for export function
-      const filters = {
-        ...(query && { search: query }),
-        ...(selectedWarehouseFilter.id !== 0 && {
-          warehouse: selectedWarehouseFilter.id,
-        }),
-        ...(selectedCategoryFilter.id !== 0 && {
-          category: selectedCategoryFilter.id,
-        }),
-        ...(selectedSupplierFilter.id !== 0 && {
-          supplier: selectedSupplierFilter.id,
-        }),
-        ...(startDate && { start_date: startDate }),
-        ...(endDate && { end_date: endDate }),
-      };
-
-      const filename = exportStokBarangToExcel(allData, filters);
+      exportStockToCsv(groupedData, buildReportFilters());
     } catch (error) {
       console.error("Error exporting CSV:", error);
       alert("Gagal mengexport data CSV. Silakan coba lagi.");
@@ -562,7 +430,7 @@ const LaporanStokBarang = () => {
           onClick={handleExportExcelClick}
           disabled={
             loading ||
-            stockReport.length === 0 ||
+            stockReportNP.length === 0 ||
             localExportLoading ||
             printLoading
           }
@@ -572,7 +440,7 @@ const LaporanStokBarang = () => {
           onClick={handleExportCSVClick}
           disabled={
             loading ||
-            stockReport.length === 0 ||
+            stockReportNP.length === 0 ||
             localExportLoading ||
             printLoading
           }
@@ -582,7 +450,7 @@ const LaporanStokBarang = () => {
           onClick={handlePrintClick}
           disabled={
             loading ||
-            stockReport.length === 0 ||
+            stockReportNP.length === 0 ||
             localExportLoading ||
             printLoading
           }
@@ -601,25 +469,13 @@ const LaporanStokBarang = () => {
             onChange={setQuery}
           /> */}
         </div>
-        {/* <div className={styles.filterSection}>
-          <DatePicker label="Dari " value={startDate} onChange={setStartDate} />
-          <DatePicker label="Sampai " value={endDate} onChange={setEndDate} />
-        </div> */}
         <div className={styles.filterSection}>
+          <DatePicker label="Dari" value={startDate} onChange={setStartDate} />
+          <DatePicker label="Sampai" value={endDate} onChange={setEndDate} />
           <FilterDropdown
             options={categoryFilterOptions}
             placeholder="Filter Kategori"
-            onChange={handleCategoryFilterChange}
-          />
-          <FilterDropdown
-            options={supplierFilterOptions}
-            placeholder="Filter Eksportir"
-            onChange={handleSupplierFilterChange}
-          />
-          <FilterDropdown
-            options={warehouseFilterOptions}
-            placeholder="Filter Gudang"
-            onChange={handleWarehouseFilterChange}
+            onChange={(val) => setSelectedCategoryFilter(val.value)}
           />
         </div>
       </div>
@@ -629,65 +485,62 @@ const LaporanStokBarang = () => {
           <div className={styles.tableHeaderItem}>Kode Produk</div>
           <div className={styles.tableHeaderItem}>Nama Produk</div>
           <div className={styles.tableHeaderItem}>Packing</div>
-          <div className={styles.tableHeaderItem}>KP</div>
-          <div className={styles.tableHeaderItem}>Gudang</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
+          <div className={styles.tableHeaderItem}>Total</div>
         </div>
         <div className={styles.tableBody}>
-          {stockReport.length === 0 && !loading ? (
+          {groupedData.length === 0 && !loading ? (
             <div className={styles.emptyState}>
               <p>Tidak ada data stok barang</p>
             </div>
           ) : (
-            stockReport.map((item, index) => (
+            groupedData.map((item, index) => (
               <div
                 role="presentation"
-                key={`${item.product_code}-${item.warehouse_name}-${index}`}
+                key={item.product ?? `${item.product_code}-${index}`}
                 className={styles.tableRow}
                 onClick={() => handleItemClick(item)}
               >
-                <div className={styles.tableRowItem}>
-                  {(currentPage - 1) * 10 + index + 1}
-                </div>
+                <div className={styles.tableRowItem}>{index + 1}</div>
                 <div className={styles.tableRowItem}>{item.product_code}</div>
                 <div className={styles.tableRowItem}>{item.product_name}</div>
                 <div className={styles.tableRowItem}>{item.packing}</div>
-                <div className={styles.tableRowItem}>{item.supplier_name}</div>
-                <div className={styles.tableRowItem}>{item.warehouse_name}</div>
                 <div className={styles.tableRowItem}>
                   {formatNumberWithDot(item.carton_quantity)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {formatNumberWithDot(item.pack_quantity)}
                 </div>
+                <div className={styles.tableRowItem}>
+                  {formatNumberWithDot(
+                    (item.carton_quantity || 0) + (item.pack_quantity || 0)
+                  )}
+                </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            <button
-              className={styles.paginationButton}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1 || loading}
-            >
-              Previous
-            </button>
-            <span className={styles.paginationInfo}>
-              Page {currentPage} of {totalPages} ({totalCount} items)
-            </span>
-            <button
-              className={styles.paginationButton}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages || loading}
-            >
-              Next
-            </button>
+        {/* Footer with totals */}
+        <div className={styles.tableFooter}>
+          <div className={styles.footerContent}>
+            <div className={`${styles.footerItem} ${styles.totalItems}`}>
+              <strong>Total Items: {groupedData.length}</strong>
+            </div>
+            <div className={`${styles.footerItem} ${styles.totalKarton}`}>
+              <strong>{formatNumberWithDot(reportTotals.carton)}</strong>
+            </div>
+            <div className={`${styles.footerItem} ${styles.totalPack}`}>
+              <strong>{formatNumberWithDot(reportTotals.pack)}</strong>
+            </div>
+            <div className={`${styles.footerItem} ${styles.totalTotal}`}>
+              <strong>
+                {formatNumberWithDot(reportTotals.carton + reportTotals.pack)}
+              </strong>
+            </div>
           </div>
-        )}
+        </div>
       </div>
       <ConfirmDeleteModal
         label="Apakah anda yakin untuk menghapus item ini?"

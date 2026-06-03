@@ -21,6 +21,7 @@ import FilterDropdown from "../../../../components/FilterDropdown";
 import CustomDeleteButton from "../../../../components/CustomDeleteButton";
 import ConfirmDeleteModal from "../../../../components/ConfirmDeleteModal";
 import DatePicker from "../../../../components/DatePicker";
+import { formatDateSlash } from "../../../../utils/dateUtils";
 import { TAMBAH_RETUR_PENJUALAN_PATH } from "./TambahReturPenjualan";
 import { UBAH_RETUR_PENJUALAN_PATH } from "./UbahReturPenjualan";
 
@@ -318,7 +319,7 @@ const ReturPenjualan = () => {
                   {((pagination?.current_page || 1) - 1) * 10 + index + 1}
                 </div>
                 <div className={styles.tableRowItem}>
-                  {new Date(item.transaction_date).toLocaleDateString()}
+                  {formatDateSlash(item.transaction_date)}
                 </div>
                 <div className={styles.tableRowItem}>
                   {item.document_number || item.id}

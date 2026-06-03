@@ -1,4 +1,5 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
+import { writeStyledReport } from "./excelReportStyle";
 
 /**
  * Preview Mutasi Barang Penjualan Report
@@ -652,21 +653,56 @@ export const exportMutasiBarangPenjualanToExcelAdvanced = (
       throw new Error("XLSX library is not available");
     }
 
-    // Prepare data for Excel
-    const excelData = data.map((item, index) => ({
-      No: index + 1,
-      "Kode Produk": item.product_code || "",
-      "Nama Produk": item.product_name || "",
-      Packing: item.packing || "",
-      "Total Carton": item.total_carton_quantity || 0,
-      "Total Pack": item.total_pack_quantity || 0,
-    }));
+    // Susun data (format aoa) dengan judul, header, dan baris total
+    const worksheetData = [];
+    worksheetData.push(["LAPORAN MUTASI BARANG PENJUALAN"]);
+    worksheetData.push([""]);
+    if (filters.supplier_name) {
+      worksheetData.push([`Supplier: ${filters.supplier_name}`]);
+    }
+    if (filters.warehouse_name) {
+      worksheetData.push([`Gudang: ${filters.warehouse_name}`]);
+    }
+    if (filters.start_date && filters.end_date) {
+      worksheetData.push([
+        `Periode: ${formatDate(filters.start_date)} - ${formatDate(
+          filters.end_date
+        )}`,
+      ]);
+    }
+    worksheetData.push([""]);
+    worksheetData.push([
+      "No",
+      "Kode Produk",
+      "Nama Produk",
+      "Packing",
+      "Total Carton",
+      "Total Pack",
+    ]);
 
-    // Create workbook and worksheet
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    data.forEach((item, index) => {
+      worksheetData.push([
+        index + 1,
+        item.product_code || "-",
+        item.product_name || "-",
+        item.packing || "-",
+        item.total_carton_quantity || 0,
+        item.total_pack_quantity || 0,
+      ]);
+    });
 
-    // Set column widths
+    if (data.length > 0) {
+      const totalCarton = data.reduce(
+        (sum, item) => sum + (item.total_carton_quantity || 0),
+        0
+      );
+      const totalPack = data.reduce(
+        (sum, item) => sum + (item.total_pack_quantity || 0),
+        0
+      );
+      worksheetData.push(["TOTAL", "", "", "", totalCarton, totalPack]);
+    }
+
     const columnWidths = [
       { wch: 5 }, // No
       { wch: 15 }, // Kode Produk
@@ -675,23 +711,15 @@ export const exportMutasiBarangPenjualanToExcelAdvanced = (
       { wch: 12 }, // Total Carton
       { wch: 12 }, // Total Pack
     ];
-    worksheet["!cols"] = columnWidths;
 
-    // Add worksheet to workbook
-    XLSX.utils.book_append_sheet(
-      workbook,
-      worksheet,
-      "Mutasi Barang Penjualan"
-    );
-
-    // Generate filename
     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
     const filename = `laporan_mutasi_barang_penjualan_${timestamp}.xlsx`;
 
-    // Write and download file
-    XLSX.writeFile(workbook, filename);
-
-    return filename;
+    return writeStyledReport(worksheetData, {
+      colWidths: columnWidths,
+      sheetName: "Mutasi Barang Penjualan",
+      filename,
+    });
   } catch (error) {
     console.error("Error exporting mutasi barang penjualan to Excel:", error);
     throw error;

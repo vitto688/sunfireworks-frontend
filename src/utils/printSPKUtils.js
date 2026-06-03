@@ -1,4 +1,5 @@
 import { formatNumberWithDot, formatDate } from "./numberUtils";
+import { writeStyledReport } from "./excelReportStyle";
 
 // Function to generate Excel file from SPK data
 export const exportSPKToExcel = (data, filters = {}) => {
@@ -283,10 +284,12 @@ export const exportSPKToExcelAdvanced = (data, filters = {}, XLSX = null) => {
     const spkNumber = data.document_number || data.spk_number || data.id;
     const filename = `SPK_${spkNumber}_${currentDate}.xlsx`;
 
-    // Write and download file
-    xlsxLib.writeFile(wb, filename);
-
-    return filename;
+    // Tulis & unduh file dengan styling tabel seragam
+    return writeStyledReport(wsData, {
+      colWidths,
+      sheetName: "SPK",
+      filename,
+    });
   } catch (error) {
     console.error("Error creating Excel file:", error);
     // Fallback to CSV export
@@ -307,12 +310,10 @@ export const printSPK = (data, itemsPerPage = 6) => {
       const startIndex = page * itemsPerPage;
       const endIndex = Math.min(startIndex + itemsPerPage, items.length);
       const pageItems = items.slice(startIndex, endIndex);
-      const isLastPage = page === totalPages - 1;
 
       // Generate rows for current page
       const rowsHTML = pageItems
-        .map((item, index) => {
-          const globalIndex = startIndex + index + 1;
+        .map((item) => {
           return `
           <tr>
             <td class="col-kode">${item.product_code || "-"}</td>
@@ -344,7 +345,6 @@ export const printSPK = (data, itemsPerPage = 6) => {
       // Add page break only every 2 pages (for A4 paper with 2 sections)
       // page-break after every 2nd section (when page is odd-numbered: 1, 3, 5, etc.)
       // DISABLED: Remove page break to allow continuous printing
-      const shouldBreakPage = false; // Disabled page break
       const pageBreakClass = ""; // No page break class
       const isFirstPage = page === 0;
       // Check if this is the first section on a new paper (after page break)

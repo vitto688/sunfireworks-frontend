@@ -61,10 +61,10 @@
 
         .tableHeader{
             display: grid;
-            grid-template-columns:  60px 60px 200px 200px 150px 150px 150px 140px 140px 140px;
+            grid-template-columns:  60px 60px 200px 200px 150px 150px 140px 140px 140px;
             align-items: center;
             padding: 15px 10px;
-            min-width: 1490px; 
+            min-width: 1340px;
             border-bottom: 1px solid #eaeaea;
             color: $greyColor600;
             gap: 10px;
@@ -81,7 +81,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: scroll;
-            min-width: 1510px;
+            min-width: 1360px;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
           
@@ -91,7 +91,7 @@
 
             .tableRow{
                 display: grid;
-                grid-template-columns: 60px 60px 200px 200px 150px 150px 150px 140px 140px 140px;
+                grid-template-columns: 60px 60px 200px 200px 150px 150px 140px 140px 140px;
                 padding: 20px 10px;
                 border-bottom: 1px solid #eaeaea;
                 gap: 10px;
@@ -135,7 +135,11 @@
             }
 
         }
-       
+
     }
-    
+
+    .pagination {
+        @include paginationBar;
+    }
+
 }

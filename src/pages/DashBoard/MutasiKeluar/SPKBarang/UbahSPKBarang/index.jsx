@@ -318,6 +318,7 @@ const UbahSPKBarang = () => {
           <div className={styles.tableHeaderItem}>Packing</div>
           <div className={styles.tableHeaderItem}>Karton</div>
           <div className={styles.tableHeaderItem}>Pack</div>
+          <div className={styles.tableHeaderItem}>Status</div>
         </div>
         <div className={styles.tableBody}>
           {stok.map((stokItem, index) => (
@@ -340,6 +341,17 @@ const UbahSPKBarang = () => {
               </div>
               <div className={styles.tableRowItem}>
                 {formatNumberWithDot(stokItem.pack_quantity)}
+              </div>
+              <div className={styles.tableRowItem}>
+                <span
+                  className={
+                    stokItem.status === "Selesai"
+                      ? styles.statusCompleted
+                      : styles.statusPending
+                  }
+                >
+                  {stokItem.status || "Belum Selesai"}
+                </span>
               </div>
               <div>
                 <EditButton onClick={(e) => handleEdit(e, stokItem)} />

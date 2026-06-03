@@ -12,14 +12,22 @@ import {
   BOLD_OFF,
   DOUBLE_STRIKE_ON,
   DOUBLE_STRIKE_OFF,
+  DOUBLE_WIDTH_ON,
+  DOUBLE_WIDTH_OFF,
   leftMargin,
+  LINE_SPACING_1_6,
+  formLengthLines,
   pad,
-  center,
   rule,
   row,
   LF,
   FF,
 } from "./escpBuilder";
+
+// Half-form (form pendek) 9.5" x 5.5" continuous paper.
+// 5.5 inch x 6 LPI = 33 lines per page. FF jumps to the next 5.5" form top,
+// keeping content aligned with the paper perforation.
+const HALF_PAGE_LINES = 33;
 
 // Column layout at 10 cpi. Sum (incl. single-space separators) defines the table width.
 const COLS = [
@@ -73,8 +81,19 @@ const totalRow = (cartonTotal, packTotal) =>
 const buildPage = (data, pageItems) => {
   let out = "";
 
-  // Title
-  out += BOLD_ON + DOUBLE_STRIKE_ON + center("SURAT JALAN", TABLE_WIDTH) + BOLD_OFF + DOUBLE_STRIKE_OFF + LF;
+  // Top margin: keep the title off the perforation / faint top-of-form area.
+  out += LF + LF;
+
+  // Title — double-width + bold + double-strike so it prints big and dark.
+  // Double-width chars take 2 columns each, so center accordingly.
+  const titleText = "SURAT JALAN";
+  const titlePad = Math.max(0, Math.floor((TABLE_WIDTH - titleText.length * 2) / 2));
+  out +=
+    " ".repeat(titlePad) +
+    DOUBLE_WIDTH_ON + BOLD_ON + DOUBLE_STRIKE_ON +
+    titleText +
+    DOUBLE_STRIKE_OFF + BOLD_OFF + DOUBLE_WIDTH_OFF +
+    LF;
   out += rule(TABLE_WIDTH) + LF + LF;
 
   // Document info (two columns)
@@ -98,10 +117,10 @@ const buildPage = (data, pageItems) => {
 
   out += rule(TABLE_WIDTH) + LF;
   out += BOLD_ON + totalRow(cartonTotal, packTotal) + BOLD_OFF + LF;
-  out += rule(TABLE_WIDTH) + LF + LF + LF;
+  out += rule(TABLE_WIDTH) + LF + LF;
 
-  // Footer / signature
-  out += pad("Hormat kami,", TABLE_WIDTH, "right") + LF + LF + LF + LF;
+  // Footer / signature (kept compact so a page fits within the 5.5" half-form)
+  out += pad("Hormat kami,", TABLE_WIDTH, "right") + LF + LF + LF;
   out += pad("(__________________)", TABLE_WIDTH, "right") + LF;
 
   return out;
@@ -113,11 +132,19 @@ const buildPage = (data, pageItems) => {
  * @param {number} itemsPerPage rows per page (matches the HTML paginator)
  * @returns {string} ESC/P bytes ready for qzClient.printRaw()
  */
-export const buildSuratJalanEscp = (data, itemsPerPage = 7) => {
+export const buildSuratJalanEscp = (data, itemsPerPage = 5) => {
   const items = data.items || [];
   const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
 
-  let doc = INIT + LQ_ON + TYPEFACE_ROMAN + PICA + leftMargin(LEFT_MARGIN_COLS);
+  // Set 6 LPI then a 5.5" form length so each page = one physical half-form.
+  let doc =
+    INIT +
+    LQ_ON +
+    TYPEFACE_ROMAN +
+    PICA +
+    LINE_SPACING_1_6 +
+    formLengthLines(HALF_PAGE_LINES) +
+    leftMargin(LEFT_MARGIN_COLS);
 
   for (let page = 0; page < totalPages; page++) {
     const pageItems = items.slice(page * itemsPerPage, (page + 1) * itemsPerPage);

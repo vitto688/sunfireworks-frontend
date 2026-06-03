@@ -13,12 +13,10 @@ export const printSPGKawat = (data, itemsPerPage = 7) => {
       const startIndex = page * itemsPerPage;
       const endIndex = Math.min(startIndex + itemsPerPage, items.length);
       const pageItems = items.slice(startIndex, endIndex);
-      const isLastPage = page === totalPages - 1;
 
       // Generate rows for current page
       const rowsHTML = pageItems
-        .map((item, index) => {
-          const globalIndex = startIndex + index + 1;
+        .map((item) => {
           return `
           <tr>
             <td class="col-kode">${item.product_code || "-"}</td>
@@ -48,7 +46,6 @@ export const printSPGKawat = (data, itemsPerPage = 7) => {
       );
 
       // Pagination control - no page breaks for continuous printing
-      const shouldBreakPage = false;
       const pageBreakClass = "";
       const isFirstPage = page === 0;
       const isFirstOnNewPaper = false;

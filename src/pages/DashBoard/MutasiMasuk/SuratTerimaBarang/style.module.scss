@@ -122,16 +122,8 @@
        
     }
 
-    .paginationInfo {
-        padding: 10px 16px;
-        border-top: 1px solid #eaeaea;
-        background-color: #f9f9f9;
-        
-        p {
-            margin: 0;
-            font-size: 14px;
-            color: $greyColor600;
-        }
+    .pagination {
+        @include paginationBar;
     }
     
 }

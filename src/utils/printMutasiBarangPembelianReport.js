@@ -1,4 +1,5 @@
 import { formatDate } from "./dateUtils";
+import { writeStyledReport } from "./excelReportStyle";
 import { formatNumberWithDot } from "./numberUtils";
 
 /**
@@ -676,10 +677,12 @@ export const exportMutasiBarangPembelianToExcelAdvanced = (
     const timestamp = now.toISOString().slice(0, 19).replace(/:/g, "-");
     const filename = `Laporan_Mutasi_Barang_Pembelian_${timestamp}.xlsx`;
 
-    // Save file
-    XLSX.writeFile(workbook, filename);
-
-    return filename;
+    // Tulis & unduh file dengan styling tabel seragam
+    return writeStyledReport(worksheetData, {
+      colWidths: columnWidths,
+      sheetName: "Mutasi Barang Pembelian",
+      filename,
+    });
   } catch (error) {
     console.error("Error generating Excel file:", error);
     throw new Error("Gagal menggenerate file Excel: " + error.message);

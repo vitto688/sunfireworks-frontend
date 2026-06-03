@@ -54,36 +54,86 @@ export const isAvailable = (timeoutMs = 1500) => {
   return Promise.race([attempt, timeout]);
 };
 
+// Force a specific OS printer queue by name. Leave null to auto-detect
+// (match "LX-310"/"Epson LX", else OS default). On the test Mac the USB queue
+// was named "EPSON LX-310" — set that here when re-enabling ESC/P on that machine.
+export const PRINTER_NAME = null;
+
 /**
- * Pick the target printer. Prefers a printer whose name looks like an Epson
- * LX-310, otherwise falls back to the OS default printer.
+ * Pick the target printer. Logs every printer QZ can see (so we can identify
+ * the USB LX-310 queue), then picks PRINTER_NAME / an LX-310 match / the default.
  */
 const resolvePrinter = async (preferredName) => {
-  if (preferredName) return preferredName;
   try {
-    const matches = await qz.printers.find(["LX-310", "LX310", "Epson LX"]);
-    if (Array.isArray(matches) && matches.length) return matches[0];
-    if (typeof matches === "string" && matches) return matches;
-  } catch {
-    // find() throws when no match -> fall through to default
+    const all = await qz.printers.find();
+    console.info("[QZ] Printer tersedia:", all);
+  } catch (e) {
+    console.info("[QZ] Gagal ambil daftar printer:", e);
   }
-  return qz.printers.getDefault();
+
+  let chosen = preferredName || PRINTER_NAME || null;
+  if (!chosen) {
+    try {
+      const matches = await qz.printers.find(["LX-310", "LX310", "Epson LX"]);
+      if (Array.isArray(matches) && matches.length) chosen = matches[0];
+      else if (typeof matches === "string" && matches) chosen = matches;
+    } catch {
+      // find() throws when no match -> fall through to default
+    }
+  }
+  if (!chosen) chosen = await qz.printers.getDefault();
+  console.info("[QZ] Printer dipilih:", chosen);
+  return chosen;
 };
+
+// Direct network printing for the dot-matrix (JetDirect / raw socket, port 9100).
+// Sending ESC/P straight to the printer's socket BYPASSES the OS print driver,
+// which often silently drops/mangles raw text on a network dot-matrix. Set `host`
+// to the printer IP (the 192.168.x.x shown in QZ Tray's "print to ..." dialog).
+// Set host to null to instead print via an OS-installed printer by name.
+export const RAW_PRINTER = { host: null, port: 9100 };
 
 /**
  * Send a raw ESC/P string to the printer via QZ Tray.
+ * Prefers a direct network socket (opts.host / RAW_PRINTER.host); otherwise
+ * falls back to an OS-installed printer by name.
  * @param {string} escpData the full ESC/P document (text + control bytes)
- * @param {{ printer?: string }} [opts]
+ * @param {{ printer?: string, host?: string, port?: number }} [opts]
  */
 export const printRaw = async (escpData, opts = {}) => {
   await connect();
-  const printerName = await resolvePrinter(opts.printer);
-  if (!printerName) throw new Error("Tidak ada printer yang ditemukan di QZ Tray.");
 
-  const config = qz.configs.create(printerName, { encoding: "CP1252" });
-  await qz.print(config, [
+  const host = opts.host || RAW_PRINTER.host;
+  let config;
+  if (host) {
+    // Raw TCP socket straight to the printer — no OS driver in the path.
+    config = qz.configs.create(
+      { host, port: opts.port || RAW_PRINTER.port },
+      { encoding: "CP1252" }
+    );
+  } else {
+    const printerName = await resolvePrinter(opts.printer);
+    if (!printerName) throw new Error("Tidak ada printer yang ditemukan di QZ Tray.");
+    config = qz.configs.create(printerName, { encoding: "CP1252" });
+  }
+
+  // Guard against a hung socket (e.g. raw port 9100 filtered/closed) so the
+  // caller can surface an error and fall back instead of hanging forever.
+  const printJob = qz.print(config, [
     { type: "raw", format: "plain", data: escpData },
   ]);
+  const timeout = new Promise((_, reject) =>
+    setTimeout(
+      () =>
+        reject(
+          new Error(
+            "Timeout: printer tidak merespons (cek IP/port — raw 9100 mungkin tertutup)."
+          )
+        ),
+      8000
+    )
+  );
+  await Promise.race([printJob, timeout]);
 };
 
 const qzClient = { isAvailable, printRaw };
